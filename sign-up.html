@@ -7,6 +7,8 @@
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/folio-mark.png">
+  <link rel="stylesheet" href="colors.css">
   <link rel="stylesheet" href="auth.css">
 </head>
 <body>
@@ -14,31 +16,59 @@
 
   <div class="auth">
     <aside class="auth__brand" aria-label="About Folio">
-      <a class="wordmark" href="index.html" aria-label="Folio home">
-        <span class="wordmark__mark" aria-hidden="true">f.</span>
-        <span>folio</span>
+      <a class="logo" href="index.html">
+        <img class="logo__img" src="images/folio-logo-light.png" alt="Folio home" width="108" height="44">
       </a>
 
-      <div>
-        <p class="brand__tagline">Put Your Potential on Paper.</p>
+      <div class="brand__copy">
+        <p class="brand__tagline">Put Your <span class="brand__accent">Potential</span> on Paper.</p>
+        <p class="brand__lede">Pick a template, fill in your details and download a polished CV in minutes.</p>
       </div>
 
-      <div class="sample-card" aria-hidden="true">
-        <p class="sample-card__name">Alex Morgan</p>
-        <p class="sample-card__role">Product designer</p>
-        <div class="sample-card__rule"></div>
-        <p class="sample-card__heading">Experience</p>
-        <div class="sample-card__line"></div>
-        <div class="sample-card__line sample-card__line--mid"></div>
-        <div class="sample-card__line sample-card__line--short"></div>
+      <!-- Decorative CV preview -->
+      <div class="showcase" aria-hidden="true">
+        <span class="showcase__badge"><span class="showcase__dot"></span>Modern template</span>
+
+        <div class="cv">
+          <div class="cv__head">
+            <span class="cv__avatar">AM</span>
+            <div>
+              <p class="cv__name">Alex Morgan</p>
+              <p class="cv__role">Product designer · Amsterdam</p>
+            </div>
+          </div>
+
+          <div class="cv__cols">
+            <div>
+              <p class="cv__heading">Experience</p>
+              <p class="cv__item">Senior designer, Northwind</p>
+              <div class="cv__line"></div>
+              <div class="cv__line cv__line--mid"></div>
+              <p class="cv__item">Designer, Studio Kite</p>
+              <div class="cv__line cv__line--short"></div>
+            </div>
+            <div>
+              <p class="cv__heading">Skills</p>
+              <div class="cv__chips">
+                <span class="cv__chip">Figma</span>
+                <span class="cv__chip">Research</span>
+                <span class="cv__chip">Prototyping</span>
+              </div>
+            </div>
+          </div>
+        </div>
+
+        <span class="showcase__toast">
+          <svg viewBox="0 0 16 16" aria-hidden="true" focusable="false"><path d="M4 8.5l2.5 2.5L12 5.5" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"/></svg>
+          Saved to your account
+        </span>
       </div>
     </aside>
 
     <main class="auth__main" id="main">
       <div class="auth__panel">
-        <a class="wordmark wordmark--dark" href="index.html" aria-label="Folio home">
-          <span class="wordmark__mark" aria-hidden="true">f.</span>
-          <span>folio</span>
+        <a class="logo logo--mobile" href="index.html">
+          <img class="logo__img" src="images/folio-logo-light.png" alt="Folio home" width="98" height="40">
         </a>
 
         <h1 class="auth__title">Make your next move</h1>

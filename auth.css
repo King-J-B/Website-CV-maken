@@ -1,30 +1,10 @@
 /* ==========================================================================
    Folio — authentication pages (Sign in, Sign up, Forgot password)
-   Tokens mirror the Figma variables in "Folio — CV Builder · Complete Design".
+   Colours come from colors.css; other tokens mirror the Figma variables in "Folio — CV Builder · Complete Design".
    ========================================================================== */
 
 :root {
-  /* Color */
-  --bg-canvas: #f5f7fb;
-  --bg-surface: #ffffff;
-  --bg-brand: #14243c;
-  --bg-selected: #edf1ff;
-  --bg-disabled: #e4e9f1;
-  --text-primary: #17233b;
-  --text-secondary: #53627a;
-  --text-disabled: #637087;
-  --text-on-brand: #d9e2f2;
-  --border-control: #8794a8;
-  --border-decorative: #e4e9f1;
-  --action-primary: #3454d1;
-  --action-primary-hover: #2943aa;
-  --action-primary-active: #203580;
-  --success: #176346;
-  --success-bg: #eaf6ef;
-  --warning: #805300;
-  --warning-bg: #fff5dc;
-  --danger: #b42318;
-  --danger-bg: #fff0ef;
+  /* Colours live in colors.css (shared by every page). */
 
   /* Spacing */
   --space-1: 4px;
@@ -58,8 +38,9 @@
   /* Controls */
   --control-height: 44px;
   --input-height: 48px;
-  --focus-ring: 0 0 0 3px rgba(52, 84, 209, 0.35);
-  --shadow-card: 0 24px 48px rgba(8, 17, 33, 0.28);
+  --shadow-float: 0 32px 64px -24px rgba(31, 64, 160, 0.35), 0 0 0 1px rgba(23, 35, 59, 0.05);
+  --shadow-button: 0 1px 2px rgba(23, 35, 59, 0.08);
+
 }
 
 *,
@@ -159,9 +140,30 @@ a:active {
   flex-direction: column;
   justify-content: space-between;
   gap: var(--space-10);
+  position: relative;
+  overflow: hidden;
   padding: var(--space-16) var(--space-20);
-  background: var(--bg-brand);
-  color: var(--text-on-brand);
+  background:
+    radial-gradient(circle at 0% 0%, rgba(76, 201, 255, 0.55), transparent 45%),
+    radial-gradient(circle at 100% 100%, rgba(31, 107, 255, 0.45), transparent 55%),
+    radial-gradient(circle at 100% 0%, rgba(31, 107, 255, 0.12), transparent 40%),
+    linear-gradient(160deg, #eef5ff 0%, var(--bg-brand) 100%);
+  color: var(--text-primary);
+}
+
+.auth__brand::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background-image: radial-gradient(rgba(31, 107, 255, 0.18) 1px, transparent 1px);
+  background-size: 22px 22px;
+  -webkit-mask-image: linear-gradient(180deg, transparent 0%, #000 45%, transparent 100%);
+  mask-image: linear-gradient(180deg, transparent 0%, #000 45%, transparent 100%);
+  pointer-events: none;
+}
+
+.auth__brand > * {
+  position: relative;
 }
 
 .auth__main {
@@ -170,115 +172,243 @@ a:active {
   justify-content: center;
   align-items: center;
   padding: var(--space-16) var(--space-20);
-  background: var(--bg-surface);
+  background:
+    radial-gradient(circle at 100% 0%, rgba(76, 201, 255, 0.22), transparent 40%),
+    radial-gradient(circle at 0% 100%, rgba(31, 107, 255, 0.12), transparent 45%),
+    var(--bg-canvas);
 }
 
 .auth__panel {
+  position: relative;
+  overflow: hidden;
   width: 100%;
-  max-width: 400px;
+  max-width: 464px;
+  padding: var(--space-10) var(--space-8) var(--space-8);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: 0 24px 56px -28px rgba(31, 64, 160, 0.4), 0 0 0 1px rgba(31, 107, 255, 0.08);
 }
 
-/* Wordmark */
-.wordmark {
+/* Logo-gradient strip along the top of the card */
+.auth__panel::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 4px;
+  background: var(--brand-gradient);
+}
+
+/* Logo (light version: dark wordmark, for light backgrounds) */
+.logo {
   display: inline-flex;
-  align-items: center;
-  gap: var(--space-2);
-  font: var(--text-h3);
-  letter-spacing: -0.01em;
-  color: #ffffff;
+  align-self: flex-start;
+  border-radius: var(--radius-sm);
 }
 
-.wordmark:hover {
-  color: #ffffff;
+.logo:hover {
   text-decoration: none;
 }
 
-.wordmark__mark {
-  display: grid;
-  place-items: center;
-  width: 32px;
-  height: 32px;
-  border-radius: var(--radius-sm);
-  background: var(--action-primary);
-  color: #ffffff;
-  font-weight: 700;
-  font-size: 16px;
-  line-height: 1;
+.logo__img {
+  display: block;
+  height: 44px;
+  width: auto;
 }
 
-.wordmark--dark {
+.logo--mobile {
   display: none;
-  color: var(--text-primary);
   margin-bottom: var(--space-8);
 }
 
-.wordmark--dark:hover {
-  color: var(--text-primary);
+.logo--mobile .logo__img {
+  height: 40px;
+}
+
+/* Brand panel copy */
+.brand__copy {
+  position: relative;
+  max-width: 30rem;
 }
 
 .brand__tagline {
-  max-width: 11em;
   font: var(--text-display);
-  line-height: 1.15;
-  letter-spacing: -0.02em;
-  color: #ffffff;
+  font-size: 48px;
+  line-height: 1.1;
+  letter-spacing: -0.03em;
+  color: var(--text-strong);
+}
+
+.brand__accent {
+  background: var(--brand-gradient);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
 }
 
 .brand__lede {
-  max-width: 28em;
-  margin-top: var(--space-4);
+  max-width: 26em;
+  margin-top: var(--space-5);
   font-size: 16px;
-  color: var(--text-on-brand);
-}
-
-/* Sample resume card (decorative) */
-.sample-card {
-  width: 100%;
-  max-width: 360px;
-  padding: var(--space-6);
-  border-radius: var(--radius-lg);
-  background: var(--bg-surface);
-  color: var(--text-primary);
-  box-shadow: var(--shadow-card);
-}
-
-.sample-card__name {
-  font: var(--text-h3);
-}
-
-.sample-card__role {
-  color: var(--action-primary);
-  font: var(--text-label);
-}
-
-.sample-card__rule {
-  height: 1px;
-  margin: var(--space-4) 0;
-  background: var(--border-decorative);
-}
-
-.sample-card__heading {
-  margin-bottom: var(--space-2);
-  font: var(--text-caption);
-  font-weight: 600;
-  letter-spacing: 0.08em;
-  text-transform: uppercase;
   color: var(--text-secondary);
 }
 
-.sample-card__line {
-  height: 8px;
+/* Decorative CV preview */
+.showcase {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  margin-top: var(--space-6);
+}
+
+.cv {
+  position: relative;
+  overflow: hidden;
+  padding: var(--space-8) var(--space-6) var(--space-6);
+  border-radius: var(--radius-lg);
+  background: var(--bg-surface);
+  box-shadow: var(--shadow-float);
+  transform: rotate(-1.5deg);
+}
+
+.cv::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 6px;
+  background: var(--brand-gradient);
+}
+
+.cv__head {
+  display: flex;
+  align-items: center;
+  gap: var(--space-3);
+  padding-bottom: var(--space-4);
+  border-bottom: 1px solid var(--border-decorative);
+}
+
+.cv__avatar {
+  display: grid;
+  flex: none;
+  place-items: center;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: var(--brand-gradient);
+  color: var(--text-on-action);
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.cv__name {
+  font: var(--text-h3);
+  font-size: 18px;
+  line-height: 1.3;
+}
+
+.cv__role {
+  font: var(--text-caption);
+  color: var(--text-secondary);
+}
+
+.cv__cols {
+  display: grid;
+  grid-template-columns: minmax(0, 1.5fr) minmax(0, 1fr);
+  gap: var(--space-5);
+  margin-top: var(--space-4);
+}
+
+.cv__heading {
   margin-bottom: var(--space-2);
-  border-radius: 4px;
+  font: var(--text-caption);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--action-primary);
+}
+
+.cv__item {
+  margin: var(--space-2) 0 6px;
+  font: var(--text-caption);
+  font-weight: 600;
+}
+
+.cv__line {
+  height: 6px;
+  margin-bottom: 6px;
+  border-radius: 3px;
   background: var(--border-decorative);
 }
 
-.sample-card__line--short {
-  width: 60%;
+.cv__line--mid {
+  width: 80%;
 }
 
-.sample-card__line--mid {
-  width: 82%;
+.cv__line--short {
+  width: 55%;
+}
+
+.cv__chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px;
+}
+
+.cv__chip {
+  padding: 2px var(--space-2);
+  border-radius: 999px;
+  background: var(--bg-selected);
+  color: var(--action-primary);
+  font: var(--text-caption);
+  font-size: 11px;
+  font-weight: 500;
+}
+
+.showcase__badge,
+.showcase__toast {
+  position: absolute;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--space-2);
+  border-radius: 999px;
+  font: var(--text-label);
+  font-weight: 600;
+  white-space: nowrap;
+}
+
+.showcase__badge {
+  top: -14px;
+  right: var(--space-6);
+  padding: 6px var(--space-3);
+  background: var(--text-strong);
+  color: var(--text-on-action);
+  font-size: 12px;
+}
+
+.showcase__dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: var(--brand-cyan);
+}
+
+.showcase__toast {
+  right: calc(var(--space-6) * -1);
+  bottom: var(--space-6);
+  padding: var(--space-2) var(--space-4) var(--space-2) var(--space-2);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: 0 12px 28px -8px rgba(23, 35, 59, 0.28), 0 0 0 1px rgba(23, 35, 59, 0.05);
+}
+
+.showcase__toast svg {
+  width: 22px;
+  height: 22px;
+  padding: 3px;
+  border-radius: 50%;
+  background: var(--success-bg);
+  color: var(--success);
 }
 
 /* --------------------------------------------------------------------------
@@ -287,8 +417,9 @@ a:active {
 
 .auth__title {
   font: var(--text-h1);
-  line-height: 1.25;
-  letter-spacing: -0.01em;
+  line-height: 1.2;
+  letter-spacing: -0.02em;
+  color: var(--text-strong);
 }
 
 .auth__subtitle {
@@ -366,29 +497,31 @@ a:active {
 }
 
 .btn--primary {
-  background: var(--action-primary);
-  color: #ffffff;
+  background: var(--action-gradient);
+  color: var(--text-on-action);
+  box-shadow: var(--shadow-action);
 }
 
 .btn--primary:hover {
   background: var(--action-primary-hover);
-  color: #ffffff;
+  color: var(--text-on-action);
 }
 
 .btn--primary:active {
   background: var(--action-primary-active);
-  color: #ffffff;
+  color: var(--text-on-action);
 }
 
 .btn--secondary {
   background: var(--bg-surface);
-  border-color: var(--border-control);
+  border-color: var(--border-subtle);
   color: var(--text-primary);
+  box-shadow: var(--shadow-button);
 }
 
 .btn--secondary:hover {
   background: var(--bg-canvas);
-  border-color: var(--text-secondary);
+  border-color: var(--action-primary);
   color: var(--text-primary);
 }
 
@@ -415,6 +548,7 @@ a:active {
 
 .btn:disabled,
 .btn[aria-disabled="true"] {
+  box-shadow: none;
   background: var(--bg-disabled);
   border-color: transparent;
   color: var(--text-disabled);
@@ -431,6 +565,18 @@ a:active {
 .btn[data-loading="true"] {
   position: relative;
   color: transparent !important;
+}
+
+/* A primary button stays blue while loading instead of turning grey */
+.btn--primary[data-loading="true"] {
+  background: var(--action-gradient);
+  box-shadow: var(--shadow-action);
+  cursor: progress;
+}
+
+.btn--primary[data-loading="true"]::after {
+  border-color: var(--text-on-action);
+  border-right-color: transparent;
 }
 
 .btn[data-loading="true"]::after {
@@ -672,7 +818,11 @@ a:active {
   }
 
   .brand__tagline {
-    font-size: 40px;
+    font-size: 38px;
+  }
+
+  .showcase__toast {
+    right: calc(var(--space-2) * -1);
   }
 }
 
@@ -690,7 +840,7 @@ a:active {
     padding: var(--space-16) var(--space-10);
   }
 
-  .wordmark--dark {
+  .logo--mobile {
     display: inline-flex;
   }
 }
@@ -698,6 +848,10 @@ a:active {
 @media (max-width: 767px) {
   .auth__main {
     padding: var(--space-8) var(--space-5);
+  }
+
+  .auth__panel {
+    padding: var(--space-8) var(--space-5) var(--space-6);
   }
 
   .auth__title {

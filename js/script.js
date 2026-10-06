@@ -186,10 +186,10 @@ function toggleTheme() {
 
   if (isDark) {
     document.body.dataset.theme = "light";
-    logo.src = "assets/logo-folio-light.png";
+    logo.src = "images/folio-logo-light.png";
   } else {
     document.body.dataset.theme = "dark";
-    logo.src = "assets/logo-folio-dark.png";
+    logo.src = "images/folio-logo-dark.png";
   }
 }
 
