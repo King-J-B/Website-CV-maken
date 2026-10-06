@@ -1,0 +1,108 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>CV Builder - My resumes</title>
+
+    <link rel="stylesheet" href="base.css" />
+    <link rel="stylesheet" href="layout.css" />
+    <link rel="stylesheet" href="components.css" />
+    <link rel="stylesheet" href="pages.css" />
+    <link rel="stylesheet" href="responsive.css" />
+  </head>
+
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="#" aria-label="Folio home">
+          <img class="brand-logo" src="assets/logo-folio-light.png" alt="Folio" />
+        </a>
+
+        <nav class="topnav" aria-label="Hoofdnavigatie">
+          <a class="active" href="#">Mijn cv's</a>
+          <a href="#">Templates</a>
+          <a href="#">Account</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <button class="icon-button" id="themeButton" type="button" aria-label="Donkere modus wisselen">
+            ◐
+          </button>
+          <button class="avatar-button" type="button" aria-label="Account openen">
+            JB
+          </button>
+        </div>
+      </header>
+
+      <main class="page-card">
+        <section class="page-heading">
+          <div>
+            <p class="eyebrow" id="pageLabel">Resume page</p>
+            <h1>Mijn cv's</h1>
+            <p class="intro">
+              Bewaar, bewerk en exporteer je cv's vanaf een overzichtelijke plek.
+            </p>
+          </div>
+
+          <div class="heading-actions">
+            <button class="secondary-button" id="clearDemoButton" type="button">
+              Demo: verwijder alle cv's
+            </button>
+            <button class="secondary-button" id="showEmptyButton" type="button">
+              Toon empty state
+            </button>
+            <button class="primary-button" id="addResumeButton" type="button">
+              Nieuw cv
+            </button>
+          </div>
+        </section>
+
+        <section class="toolbar" aria-label="Cv zoeken en filteren">
+          <label class="search-field">
+            <span>Zoeken</span>
+            <input id="searchInput" type="search" placeholder="Zoek op naam of template" />
+          </label>
+
+          <label class="select-field">
+            <span>Sorteer</span>
+            <select id="sortSelect">
+              <option value="recent">Laatst bewerkt</option>
+              <option value="name">Naam</option>
+            </select>
+          </label>
+        </section>
+
+        <section id="resumeView" class="resume-grid" aria-live="polite"></section>
+
+        <section id="emptyView" class="empty-state hidden" aria-live="polite">
+          <div class="empty-illustration" aria-hidden="true">
+            <span></span>
+            <span></span>
+            <span></span>
+          </div>
+
+          <p class="eyebrow">Empty state</p>
+          <h2>Nog geen cv's</h2>
+          <p>
+            Begin met een template en bouw stap voor stap je eerste cv. Je kunt
+            later altijd wisselen van ontwerp.
+          </p>
+
+          <div class="empty-actions">
+            <button class="primary-button" id="emptyCreateButton" type="button">
+              Kies template
+            </button>
+            <button class="secondary-button" id="backToResumesButton" type="button">
+              Bekijk voorbeelddata
+            </button>
+          </div>
+        </section>
+      </main>
+    </div>
+
+    <div class="toast hidden" id="toastMessage" aria-live="polite"></div>
+
+    <script src="js/script.js"></script>
+  </body>
+</html>
