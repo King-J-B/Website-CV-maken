@@ -125,6 +125,31 @@
         </div>
       </section>
 
+      <!-- About me -->
+      <section class="ed-panel" data-panel="about" hidden>
+        <h1 class="ed-title" tabindex="-1">About me</h1>
+        <p class="ed-sub">A short introduction that goes right under your name. Say who you are, what you are good at and what you are looking for.</p>
+
+        <div class="ed-field ed-about">
+          <div class="ed-about__head">
+            <label class="ed-label" for="about-text">Your introduction</label>
+            <span class="ed-counter" data-about-count aria-hidden="true">0 / 700</span>
+          </div>
+          <p class="ed-hint" id="about-hint">2 to 4 sentences works best. Recruiters often read this part first.</p>
+          <textarea class="ed-input ed-textarea ed-textarea--tall" id="about-text" rows="7" aria-describedby="about-hint"
+                    placeholder="For example: Creative UX design student who loves turning messy problems into simple screens. I have run usability tests with real customers and built a design system in Figma. I am looking for a graduation internship in a product team."></textarea>
+        </div>
+
+        <div class="ed-tips">
+          <p class="ed-tips__title">Tips</p>
+          <ul>
+            <li>Start with who you are: "UX design student", "Junior developer".</li>
+            <li>Name one or two strengths, with proof if you can.</li>
+            <li>End with what you are looking for.</li>
+          </ul>
+        </div>
+      </section>
+
       <!-- Education -->
       <section class="ed-panel" data-panel="education" hidden>
         <h1 class="ed-title" tabindex="-1">Education</h1>
@@ -175,6 +200,12 @@
             <p class="cv-page__role is-placeholder" data-preview-title>Job title</p>
             <ul class="cv-page__contact" data-preview-contact hidden></ul>
           </header>
+
+          <section class="cv-page__section">
+            <h2 class="cv-page__heading">About me</h2>
+            <p class="cv-page__about" data-preview-about hidden></p>
+            <p class="cv-page__empty" data-preview-about-empty>A short introduction about you will appear here.</p>
+          </section>
 
           <section class="cv-page__section">
             <h2 class="cv-page__heading">Education</h2>
