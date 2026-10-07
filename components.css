@@ -80,6 +80,9 @@
 }
 
 .primary-button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
   padding: 0 18px;
   background: var(--action-gradient);
   color: var(--text-on-action);
