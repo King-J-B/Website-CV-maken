@@ -6,7 +6,7 @@ body {
   margin: 0;
   min-height: 100vh;
   background:
-    radial-gradient(circle at top left, rgba(86, 216, 255, 0.26), transparent 34rem),
+    radial-gradient(circle at top left, rgba(76, 201, 255, 0.26), transparent 34rem),
     var(--color-page);
   color: var(--color-ink);
   font-family: var(--font-main);
@@ -43,6 +43,11 @@ h1 {
 h2 {
   margin-bottom: 10px;
   font-size: 1.7rem;
+}
+
+:focus-visible {
+  outline: 2px solid var(--color-primary);
+  outline-offset: 2px;
 }
 
 .hidden {

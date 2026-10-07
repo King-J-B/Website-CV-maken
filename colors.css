@@ -1,0 +1,53 @@
+/* ==========================================================================
+   Folio — shared colours. Every page loads this file first, so all screens
+   use the same palette. The blues are sampled from the Folio logo.
+   Change a colour here, not in the page stylesheets.
+   ========================================================================== */
+
+:root {
+  /* Brand (from the logo) */
+  --brand-blue: #1f6bff;
+  --brand-cyan: #4cc9ff;
+  --brand-cyan-soft: #d6f2ff;
+  --brand-gradient: linear-gradient(135deg, var(--brand-blue) 0%, var(--brand-cyan) 100%);
+
+  /* Backgrounds */
+  --bg-canvas: #f2f6ff;      /* page background */
+  --bg-surface: #ffffff;     /* cards, inputs, CV paper */
+  --bg-selected: #e8f0ff;    /* hover / active / soft blue fills */
+  --bg-brand: #dce8ff;       /* sign-in side panel */
+  --bg-disabled: #e6ecf6;
+
+  /* Text */
+  --text-strong: #0e1830;    /* headings, logo navy */
+  --text-primary: #17233b;
+  --text-secondary: #4f6080;
+  --text-disabled: #627395;
+  --text-on-action: #ffffff; /* text on blue buttons */
+
+  /* Borders */
+  --border-control: #7d8fb3;    /* inputs and checkboxes (3:1 contrast) */
+  --border-subtle: #c3d3f2;     /* secondary buttons */
+  --border-decorative: #e2e9f6; /* dividers, card outlines */
+
+  /* Actions */
+  --action-primary: #1a5ff0;
+  --action-primary-hover: #1550d0;
+  --action-primary-active: #1042a8;
+  --action-gradient: linear-gradient(135deg, var(--action-primary) 0%, var(--brand-blue) 100%);
+
+  /* Status */
+  --success: #176346;
+  --success-bg: #eaf6ef;
+  --warning: #805300;
+  --warning-bg: #fff5dc;
+  --danger: #b42318;
+  --danger-bg: #fff0ef;
+  --danger-bg-hover: #ffe1de;
+  --danger-border: #f4c7c3;
+
+  /* Shadows and focus */
+  --shadow-tint: rgba(31, 64, 160, 0.14);
+  --shadow-action: 0 1px 2px rgba(23, 35, 59, 0.12), 0 8px 20px -8px rgba(31, 107, 255, 0.7);
+  --focus-ring: 0 0 0 3px rgba(31, 107, 255, 0.35);
+}

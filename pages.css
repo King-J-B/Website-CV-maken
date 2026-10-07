@@ -1,14 +1,20 @@
 :root {
-  --color-page: #f5f9ff;
-  --color-surface: #ffffff;
-  --color-surface-soft: #eef7ff;
-  --color-ink: #071125;
-  --color-muted: #66748a;
-  --color-primary: #0060ff;
-  --color-primary-hover: #004fd1;
-  --color-accent: #56d8ff;
-  --color-line: #dce8f5;
-  --color-shadow: rgba(7, 17, 37, 0.12);
+  /* Light theme: same palette as the sign-in pages (see colors.css) */
+  --color-page: var(--bg-canvas);
+  --color-surface: var(--bg-surface);
+  --color-surface-soft: var(--bg-selected);
+  --color-ink: var(--text-primary);
+  --color-muted: var(--text-secondary);
+  --color-primary: var(--action-primary);
+  --color-primary-hover: var(--action-primary-hover);
+  --color-accent: var(--brand-cyan);
+  --color-line: var(--border-decorative);
+  --color-control: var(--border-control);
+  --color-button-line: var(--border-subtle);
+  --color-shadow: var(--shadow-tint);
+
+  /* Same font as the sign-in pages (auth.css --font-sans) */
+  --font-main: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   --radius-sm: 6px;
   --radius-md: 8px;
@@ -24,6 +30,8 @@
   --color-ink: #ffffff;
   --color-muted: #a8b9d2;
   --color-line: #1d3d70;
+  --color-control: #4a6799;
+  --color-button-line: #2a4f8a;
   --color-shadow: rgba(0, 0, 0, 0.35);
 }
 
@@ -95,8 +103,8 @@
   border-radius: var(--radius-md);
   background:
     linear-gradient(90deg, var(--color-surface-soft) 0 34%, transparent 34%),
-    linear-gradient(135deg, rgba(0, 96, 255, 0.08), transparent 48%),
-    #ffffff;
+    linear-gradient(135deg, rgba(31, 107, 255, 0.08), transparent 48%),
+    var(--bg-surface);
   padding: 18px;
 }
 
@@ -121,7 +129,7 @@
   display: grid;
   place-items: center;
   background:
-    linear-gradient(135deg, rgba(86, 216, 255, 0.18), transparent 60%),
+    linear-gradient(135deg, rgba(76, 201, 255, 0.18), transparent 60%),
     var(--color-surface-soft);
 }
 
@@ -132,8 +140,8 @@
   display: grid;
   place-items: center;
   border-radius: 50%;
-  background: var(--color-primary);
-  color: white;
+  background: var(--action-gradient);
+  color: var(--text-on-action);
   font-size: 2rem;
   font-weight: 900;
 }
@@ -191,7 +199,7 @@
   display: block;
   border: 1px solid var(--color-line);
   border-radius: var(--radius-md);
-  background: white;
+  background: var(--color-surface);
 }
 
 .empty-illustration span:nth-child(1) {
@@ -205,7 +213,7 @@
 
 .empty-illustration span:nth-child(3) {
   inset: 52px 14px 24px 92px;
-  background: #d8f5ff;
+  background: var(--brand-cyan-soft);
 }
 
 .page-card.is-empty .toolbar {
