@@ -923,9 +923,33 @@
 
     // Removing an entry that has content asks first; an empty one just goes.
     function removeEntry(index) {
+      var item = items()[index];
+      if (!hasContent(item)) {
+        finishRemove(item);
+        return;
+      }
+      var question = cfg.confirmRemove(headline(item));
+      folioConfirm({
+        title: question.title,
+        message: question.message,
+        confirmLabel: "Remove",
+        cancelLabel: "Cancel"
+      }).then(function (confirmed) {
+        if (confirmed) {
+          finishRemove(item);
+        } else {
+          // Back to the Remove button the user came from.
+          var li = list.querySelector('[data-entry-id="' + item.id + '"]');
+          var button = li && li.querySelector(".skill-item__remove");
+          if (button) button.focus();
+        }
+      });
+    }
+
+    function finishRemove(item) {
       var all = items();
-      var item = all[index];
-      if (hasContent(item) && !window.confirm(cfg.confirmRemove(headline(item)))) return;
+      var index = all.indexOf(item);
+      if (index === -1) return;
       all.splice(index, 1);
       delete expanded[item.id];
       render();
@@ -989,7 +1013,10 @@
     newTitle: "New education",
     currentLabel: "I still study here",
     confirmRemove: function (name) {
-      return "Remove " + name + " from your CV? This can't be undone.";
+      return {
+        title: "Remove this education?",
+        message: "\u201c" + name + "\u201d will be removed from your CV. This can't be undone."
+      };
     },
     fields: [
       {
@@ -1028,7 +1055,10 @@
     currentLabel: "I currently work here",
     bullets: true,
     confirmRemove: function (name) {
-      return "Remove " + name + " from your CV? This can't be undone.";
+      return {
+        title: "Remove this job?",
+        message: "\u201c" + name + "\u201d will be removed from your CV. This can't be undone."
+      };
     },
     fields: [
       {

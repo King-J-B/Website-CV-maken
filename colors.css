@@ -45,6 +45,8 @@
   --danger-bg: #fff0ef;
   --danger-bg-hover: #ffe1de;
   --danger-border: #f4c7c3;
+  --danger-solid: #b42318;       /* filled delete buttons, same in dark mode */
+  --danger-solid-hover: #8f1c13;
 
   /* Shadows and focus */
   --shadow-tint: rgba(31, 64, 160, 0.14);

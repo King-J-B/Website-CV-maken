@@ -250,19 +250,28 @@ function addResume() {
   showToast(getText("Cv aangemaakt", "Resume created"));
 }
 
-function deleteResume(id) {
-  const message = getText(
-    "Weet je zeker dat je deze cv wilt verwijderen?",
-    "Are you sure you want to delete this resume?"
-  );
+async function deleteResume(id) {
+  const resume = resumes.find((item) => item.id === id);
+  if (!resume) {
+    return;
+  }
 
-  const confirmed = confirm(message);
+  const name = getText(resume.title, translateResumeText(resume.title));
+  const confirmed = await folioConfirm({
+    title: getText("Dit cv verwijderen?", "Delete this resume?"),
+    message: getText(
+      `"${name}" wordt definitief verwijderd. Dit kun je niet ongedaan maken.`,
+      `"${name}" will be deleted permanently. This can't be undone.`
+    ),
+    confirmLabel: getText("Verwijderen", "Delete"),
+    cancelLabel: getText("Annuleren", "Cancel"),
+  });
 
   if (!confirmed) {
     return;
   }
 
-  const resumeIndex = resumes.findIndex((resume) => resume.id === id);
+  const resumeIndex = resumes.findIndex((item) => item.id === id);
 
   if (resumeIndex !== -1) {
     resumes.splice(resumeIndex, 1);
@@ -273,13 +282,16 @@ function deleteResume(id) {
   renderResumes();
 }
 
-function clearAllResumes() {
-  const message = getText(
-    "Demo: wil je alle opgeslagen cv's verwijderen?",
-    "Demo: do you want to delete all saved resumes?"
-  );
-
-  const confirmed = confirm(message);
+async function clearAllResumes() {
+  const confirmed = await folioConfirm({
+    title: getText("Alle cv's verwijderen?", "Delete all resumes?"),
+    message: getText(
+      "Demo: al je opgeslagen cv's worden definitief verwijderd. Dit kun je niet ongedaan maken.",
+      "Demo: all your saved resumes will be deleted permanently. This can't be undone."
+    ),
+    confirmLabel: getText("Alles verwijderen", "Delete all"),
+    cancelLabel: getText("Annuleren", "Cancel"),
+  });
 
   if (!confirmed) {
     return;
