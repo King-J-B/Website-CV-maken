@@ -719,6 +719,7 @@ a {
 
 .cv-page {
   position: absolute;
+  overflow-wrap: anywhere; /* very long words wrap instead of running off the page */
   top: 0;
   left: 0;
   width: 794px;

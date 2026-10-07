@@ -88,6 +88,7 @@
 
   function writeDraft() {
     window.clearTimeout(saveTimer);
+    saveTimer = null;
     try {
       draft.updatedAt = new Date().toISOString();
       window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
@@ -103,6 +104,17 @@
     window.clearTimeout(saveTimer);
     saveTimer = window.setTimeout(writeDraft, SAVE_DELAY);
   }
+
+  // Leaving the page (reload, close, a link) right after typing would skip
+  // the delayed save, so write any pending change straight away.
+  function flushSave() {
+    if (saveTimer) writeDraft();
+  }
+
+  window.addEventListener("pagehide", flushSave);
+  document.addEventListener("visibilitychange", function () {
+    if (document.visibilityState === "hidden") flushSave();
+  });
 
   saveRetry.addEventListener("click", writeDraft);
   if (draft.updatedAt) setSaveState("saved");
@@ -382,6 +394,15 @@
     return button;
   }
 
+  // After a move, keep focus on the same move button so it can be pressed
+  // again. At the top or bottom that button is disabled, so use the other
+  // move button; never fall through to Remove, where one more Enter deletes.
+  function focusMoveButton(buttons, delta) {
+    var same = delta < 0 ? buttons[0] : buttons[1];
+    var other = delta < 0 ? buttons[1] : buttons[0];
+    (same.disabled ? other : same).focus();
+  }
+
   function moveSkill(index, delta) {
     var items = skills();
     var target = index + delta;
@@ -389,8 +410,7 @@
     items.splice(target, 0, moved);
     update();
     var buttons = skillList.querySelectorAll(".skill-item")[target].querySelectorAll(".ed-icon-btn");
-    var focusTarget = delta < 0 ? buttons[0] : buttons[1];
-    (focusTarget.disabled ? buttons[2] : focusTarget).focus();
+    focusMoveButton(buttons, delta);
   }
 
   function update() {
@@ -564,7 +584,8 @@
     var start = formatDate(item.startMonth, item.startYear);
     var end = item.current ? "Present" : formatDate(item.endMonth, item.endYear);
     if (start && end) return start + " – " + end;
-    return start || end;
+    if (end) return item.current ? "Present" : "Until " + end;
+    return start;
   }
 
   // Compare as months since year 0; a missing start month counts as January,
@@ -841,8 +862,7 @@
       renderPreview();
       scheduleSave();
       var buttons = list.querySelectorAll(".entry")[index + delta].querySelectorAll(".entry__head .ed-icon-btn");
-      var target = delta < 0 ? buttons[0] : buttons[1];
-      (target.disabled ? buttons[2] : target).focus();
+      focusMoveButton(buttons, delta);
     }
 
     // Removing an entry that has content asks first; an empty one just goes.
