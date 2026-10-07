@@ -534,6 +534,53 @@ a {
   margin-top: 24px;
 }
 
+/* About me */
+.ed-about {
+  margin-top: 24px;
+}
+
+.ed-about__head {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.ed-counter {
+  font-size: 12px;
+  color: var(--text-secondary);
+  font-variant-numeric: tabular-nums;
+}
+
+.ed-counter.is-long {
+  color: var(--warning);
+  font-weight: 600;
+}
+
+.ed-textarea--tall {
+  min-height: 168px;
+}
+
+.ed-tips {
+  margin-top: 20px;
+  padding: 16px 20px;
+  border-radius: var(--radius-md);
+  background: var(--bg-selected);
+  color: var(--text-secondary);
+}
+
+.ed-tips__title {
+  margin-bottom: 6px;
+  color: var(--text-primary);
+  font-weight: 600;
+}
+
+.ed-tips ul {
+  display: grid;
+  gap: 4px;
+  padding-left: 18px;
+}
+
 /* Entry lists (Education, Experience) */
 .entry-list {
   display: grid;
@@ -762,6 +809,12 @@ a {
 
 .is-placeholder {
   color: var(--border-subtle);
+}
+
+.cv-page__about {
+  color: var(--text-primary);
+  line-height: 1.6;
+  white-space: pre-line;
 }
 
 .cv-page__contact {

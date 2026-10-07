@@ -17,7 +17,7 @@
   // Order matches the flow diagram. `built: false` shows a placeholder panel.
   var SECTIONS = [
     { id: "personal", label: "Personal details", built: true },
-    { id: "about", label: "About me", built: false },
+    { id: "about", label: "About me", built: true },
     { id: "education", label: "Education", built: true },
     { id: "experience", label: "Experience", built: true },
     { id: "skills", label: "Skills", built: true, optional: true }
@@ -28,6 +28,9 @@
 
   // Sections whose draft data is a list: { items: [...] }
   var LIST_SECTIONS = ["education", "experience", "skills"];
+
+  // Sections whose draft data is a set of fields: { name: "...", ... }
+  var FIELD_SECTIONS = ["personal", "about"];
 
   var LEVELS = ["Beginner", "Intermediate", "Advanced", "Expert"];
   var MAX_SKILLS = 30;
@@ -41,7 +44,9 @@
     LIST_SECTIONS.forEach(function (id) {
       draft.sections[id] = { items: [] };
     });
-    draft.sections.personal = {};
+    FIELD_SECTIONS.forEach(function (id) {
+      draft.sections[id] = {};
+    });
     return draft;
   }
 
@@ -62,8 +67,10 @@
       var section = draft.sections[id];
       if (!section || !Array.isArray(section.items)) draft.sections[id] = { items: [] };
     });
-    var details = draft.sections.personal;
-    if (!details || typeof details !== "object" || Array.isArray(details)) draft.sections.personal = {};
+    FIELD_SECTIONS.forEach(function (id) {
+      var fields = draft.sections[id];
+      if (!fields || typeof fields !== "object" || Array.isArray(fields)) draft.sections[id] = {};
+    });
     return draft;
   }
 
@@ -142,6 +149,12 @@
     return "?section=" + encodeURIComponent(id);
   }
 
+  // Field sections get a check mark once their main field has text.
+  function isFilledIn(id) {
+    var mainField = { personal: "name", about: "text" }[id];
+    return !!mainField && !!(draft.sections[id][mainField] || "").trim();
+  }
+
   function countFor(section) {
     var data = draft.sections[section.id];
     return data && Array.isArray(data.items) ? data.items.length : 0;
@@ -174,7 +187,7 @@
       var count = countFor(section);
       if (!section.built) {
         link.appendChild(tag("Soon", "ed-tag ed-tag--muted"));
-      } else if (section.id === "personal" && (draft.sections.personal.name || "").trim()) {
+      } else if (isFilledIn(section.id)) {
         link.appendChild(tag("✓", "ed-tag", "Filled in"));
       } else if (count) {
         link.appendChild(tag(String(count), "ed-tag", count + " added"));
@@ -563,6 +576,49 @@
   // Show messages for saved values that are not valid (for example after a reload).
   personalInputs.forEach(function (input) {
     if (input.value) checkPersonal(input);
+  });
+
+  /* ------------------------------------------------------------------------
+     About me: one short introduction under the name on the CV.
+     The counter is advice, not a rule: only the hard maximum stops typing.
+     ------------------------------------------------------------------------ */
+
+  var ABOUT_MAX = 700;
+  var ABOUT_ADVICE = 450; // past this, suggest keeping it short
+
+  var aboutInput = document.getElementById("about-text");
+  var aboutCount = document.querySelector("[data-about-count]");
+  var previewAbout = document.querySelector("[data-preview-about]");
+  var previewAboutEmpty = document.querySelector("[data-preview-about-empty]");
+
+  function aboutText() {
+    return (draft.sections.about.text || "").trim();
+  }
+
+  function renderAboutCount() {
+    var length = aboutInput.value.length;
+    aboutCount.textContent = length + " / " + ABOUT_MAX;
+    aboutCount.classList.toggle("is-long", length > ABOUT_ADVICE);
+    aboutCount.title = length > ABOUT_ADVICE ? "Recruiters skim: 2 to 4 sentences works best." : "";
+  }
+
+  function renderAboutPreview() {
+    previewAbout.textContent = aboutText();
+    previewAbout.hidden = !aboutText();
+    previewAboutEmpty.hidden = !!aboutText();
+  }
+
+  aboutInput.maxLength = ABOUT_MAX;
+  aboutInput.value = draft.sections.about.text || "";
+  renderAboutCount();
+
+  aboutInput.addEventListener("input", function () {
+    var wasFilled = !!aboutText();
+    draft.sections.about.text = aboutInput.value;
+    renderAboutCount();
+    renderAboutPreview();
+    if (wasFilled !== !!aboutText()) renderNav();
+    scheduleSave();
   });
 
   /* ------------------------------------------------------------------------
@@ -1032,6 +1088,7 @@
      ------------------------------------------------------------------------ */
 
   renderPersonalPreview();
+  renderAboutPreview();
   fillLevelOptions(skillLevel, "");
   renderSkills();
   education.render();
