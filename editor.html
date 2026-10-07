@@ -9,6 +9,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/folio-mark.png">
   <link rel="stylesheet" href="colors.css">
+  <link rel="stylesheet" href="cv-templates.css">
   <link rel="stylesheet" href="editor.css">
   <link rel="stylesheet" href="confirm-dialog.css">
 </head>
@@ -205,39 +206,39 @@
       </div>
 
       <div class="ed-preview__stage" data-preview-stage>
-        <article class="cv-page" data-cv-page>
+        <article class="cv-page" data-cv-page data-template="modern">
           <header class="cv-page__head">
             <p class="cv-page__name is-placeholder" data-preview-name>Your name</p>
             <p class="cv-page__role is-placeholder" data-preview-title>Job title</p>
             <ul class="cv-page__contact" data-preview-contact hidden></ul>
           </header>
 
-          <section class="cv-page__section">
+          <section class="cv-page__section" data-cv-section="about">
             <h2 class="cv-page__heading">About me</h2>
             <p class="cv-page__about" data-preview-about hidden></p>
             <p class="cv-page__empty" data-preview-about-empty>A short introduction about you will appear here.</p>
           </section>
 
-          <section class="cv-page__section">
+          <section class="cv-page__section" data-cv-section="education">
             <h2 class="cv-page__heading">Education</h2>
             <div class="cv-page__entries" data-preview-entries="education"></div>
             <p class="cv-page__empty" data-preview-empty="education">Your education will appear here.</p>
           </section>
 
-          <section class="cv-page__section">
+          <section class="cv-page__section" data-cv-section="experience">
             <h2 class="cv-page__heading">Experience</h2>
             <div class="cv-page__entries" data-preview-entries="experience"></div>
             <p class="cv-page__empty" data-preview-empty="experience">Your experience will appear here.</p>
           </section>
 
-          <section class="cv-page__section" data-preview-skills>
+          <section class="cv-page__section" data-cv-section="skills" data-preview-skills>
             <h2 class="cv-page__heading">Skills</h2>
             <ul class="cv-page__skills" data-preview-skill-list></ul>
             <p class="cv-page__empty" data-preview-skill-empty>Your skills will appear here.</p>
           </section>
         </article>
       </div>
-      <p class="ed-preview__caption">A4 · Modern template</p>
+      <p class="ed-preview__caption" data-template-caption>A4 · Modern template</p>
     </aside>
   </div>
 
