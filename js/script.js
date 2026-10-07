@@ -34,6 +34,17 @@ const pageTitle = document.querySelector(".page-heading h1");
 const pageIntro = document.querySelector(".intro");
 const showEmptyButton = document.querySelector("#showEmptyButton");
 const toastMessage = document.querySelector("#toastMessage");
+const accountButton = document.querySelector("#accountButton");
+const accountDropdown = document.querySelector("#accountDropdown");
+
+function pageIsEnglish() {
+  const languageButton = document.querySelector("#languageButton");
+  return languageButton && languageButton.textContent.trim() === "NL";
+}
+
+function getText(dutchText, englishText) {
+  return pageIsEnglish() ? englishText : dutchText;
+}
 
 function showToast(message) {
   toastMessage.textContent = message;
@@ -46,14 +57,22 @@ function showToast(message) {
 
 function createResumeCard(resume) {
   const isExisting = resume.type === "existing";
-  const buttonText = isExisting ? "Verder werken" : "Start nieuw";
+  const buttonText = isExisting
+    ? getText("Verder werken", "Continue editing")
+    : getText("Start nieuw", "Start new");
+
   const cardClass = isExisting ? "" : "is-new-card";
+  const startAttribute = isExisting ? "" : 'data-start-card="true"';
+
+  const title = getText(resume.title, translateResumeText(resume.title));
+  const template = getText(resume.template, translateResumeText(resume.template));
+  const updated = getText(resume.updated, translateResumeText(resume.updated));
 
   const actionButtons = isExisting
     ? `
-      <a class="primary-button" href="editor.html">Verder werken</a>
+      <a class="primary-button" href="editor.html">${buttonText}</a>
       <button class="delete-button" type="button" data-delete-id="${resume.id}">
-        Verwijder
+        ${getText("Verwijder", "Delete")}
       </button>
     `
     : `
@@ -63,7 +82,7 @@ function createResumeCard(resume) {
     `;
 
   return `
-    <article class="resume-card ${cardClass}">
+    <article class="resume-card ${cardClass}" ${startAttribute}>
       <div class="resume-preview">
         <div class="preview-line short"></div>
         <div class="preview-line medium"></div>
@@ -72,9 +91,9 @@ function createResumeCard(resume) {
       </div>
 
       <div>
-        <h3>${resume.title}</h3>
-        <p class="resume-meta">${resume.template}</p>
-        <p class="resume-updated">${resume.updated}</p>
+        <h3>${title}</h3>
+        <p class="resume-meta">${template}</p>
+        <p class="resume-updated">${updated}</p>
       </div>
 
       <div class="card-actions">
@@ -82,6 +101,25 @@ function createResumeCard(resume) {
       </div>
     </article>
   `;
+}
+
+function translateResumeText(text) {
+  const translations = {
+    "Stage UX Designer": "UX Designer Internship",
+    "Modern template": "Modern template",
+    "Vandaag bewerkt": "Edited today",
+    "Nieuwe cv starten": "Start new resume",
+    "Kies een template": "Choose a template",
+    "Begin vanaf nul": "Start from scratch",
+    "Template bekijken": "View template",
+    "Ontdek ontwerpen": "Explore designs",
+    "Start met voorbeeld": "Start with example",
+    "Nieuw cv": "New resume",
+    "Nog geen template gekozen": "No template selected yet",
+    "Net aangemaakt": "Just created",
+  };
+
+  return translations[text] || text;
 }
 
 function getExistingResumes() {
@@ -93,10 +131,13 @@ function showResumes() {
   resumeView.classList.remove("hidden");
   emptyView.classList.add("hidden");
 
-  pageLabel.textContent = "Resume page";
-  pageTitle.textContent = "Mijn cv's";
-  pageIntro.textContent = "Bewaar, bewerk en exporteer je cv's vanaf een overzichtelijke plek.";
-  showEmptyButton.textContent = "Toon empty state";
+  pageLabel.textContent = getText("Resume page", "Resume page");
+  pageTitle.textContent = getText("Mijn cv's", "My resumes");
+  pageIntro.textContent = getText(
+    "Bewaar, bewerk en exporteer je cv's vanaf een overzichtelijke plek.",
+    "Save, edit and export your resumes from one clear place."
+  );
+  showEmptyButton.textContent = getText("Toon empty state", "Show empty state");
 }
 
 function showEmpty() {
@@ -104,10 +145,13 @@ function showEmpty() {
   resumeView.classList.add("hidden");
   emptyView.classList.remove("hidden");
 
-  pageLabel.textContent = "Empty state";
-  pageTitle.textContent = "Nog geen cv's";
-  pageIntro.textContent = "Er zijn nog geen cv's opgeslagen. Kies een template om je eerste cv te maken.";
-  showEmptyButton.textContent = "Terug naar mijn cv's";
+  pageLabel.textContent = getText("Empty state", "Empty state");
+  pageTitle.textContent = getText("Nog geen cv's", "No resumes yet");
+  pageIntro.textContent = getText(
+    "Er zijn nog geen cv's opgeslagen. Kies een template om je eerste cv te maken.",
+    "No resumes have been saved yet. Choose a template to create your first resume."
+  );
+  showEmptyButton.textContent = getText("Terug naar mijn cv's", "Back to my resumes");
 }
 
 function renderResumes() {
@@ -143,11 +187,16 @@ function addResume() {
 
   searchInput.value = "";
   renderResumes();
-  showToast("Cv aangemaakt");
+  showToast(getText("Cv aangemaakt", "Resume created"));
 }
 
 function deleteResume(id) {
-  const confirmed = confirm("Weet je zeker dat je deze cv wilt verwijderen?");
+  const message = getText(
+    "Weet je zeker dat je deze cv wilt verwijderen?",
+    "Are you sure you want to delete this resume?"
+  );
+
+  const confirmed = confirm(message);
 
   if (!confirmed) {
     return;
@@ -157,14 +206,19 @@ function deleteResume(id) {
 
   if (resumeIndex !== -1) {
     resumes.splice(resumeIndex, 1);
-    showToast("Cv verwijderd");
+    showToast(getText("Cv verwijderd", "Resume deleted"));
   }
 
   renderResumes();
 }
 
 function clearAllResumes() {
-  const confirmed = confirm("Demo: wil je alle opgeslagen cv's verwijderen?");
+  const message = getText(
+    "Demo: wil je alle opgeslagen cv's verwijderen?",
+    "Demo: do you want to delete all saved resumes?"
+  );
+
+  const confirmed = confirm(message);
 
   if (!confirmed) {
     return;
@@ -178,7 +232,7 @@ function clearAllResumes() {
 
   searchInput.value = "";
   showEmpty();
-  showToast("Alle cv's verwijderd");
+  showToast(getText("Alle cv's verwijderd", "All resumes deleted"));
 }
 
 function toggleTheme() {
@@ -210,10 +264,28 @@ resumeView.addEventListener("click", (event) => {
   if (deleteButton) {
     const id = Number(deleteButton.dataset.deleteId);
     deleteResume(id);
+    return;
   }
 
   if (startButton) {
     addResume();
+  }
+});
+
+accountButton.addEventListener("click", (event) => {
+  event.stopPropagation();
+  accountDropdown.classList.toggle("hidden");
+});
+
+accountDropdown.addEventListener("click", () => {
+  accountDropdown.classList.add("hidden");
+});
+
+document.addEventListener("click", (event) => {
+  const clickedInsideMenu = event.target.closest(".account-menu");
+
+  if (!clickedInsideMenu) {
+    accountDropdown.classList.add("hidden");
   }
 });
 

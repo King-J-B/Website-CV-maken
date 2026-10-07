@@ -19,23 +19,37 @@
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <a class="brand" href="#" aria-label="Folio home">
-          <img class="brand-logo" src="images/folio-logo-light.png" alt="Folio" width="98" height="40" />
+        <a class="brand" href="index.html" aria-label="Folio home">
+          <img class="brand-logo" src="images/folio-logo-light.png" alt="Folio" />
         </a>
 
         <nav class="topnav" aria-label="Hoofdnavigatie">
-          <a class="active" href="#">Mijn cv's</a>
+          <a class="active" href="index.html">Mijn cv's</a>
           <a href="#">Templates</a>
-          <a href="#">Account</a>
+          <a href="about-us.html">About us</a>
         </nav>
 
         <div class="topbar-actions">
           <button class="icon-button" id="themeButton" type="button" aria-label="Donkere modus wisselen">
             ◐
           </button>
-          <button class="avatar-button" type="button" aria-label="Account openen">
-            JB
+
+          <button class="language-button" id="languageButton" type="button">
+            EN
           </button>
+
+          <div class="account-menu">
+            <button class="avatar-button" id="accountButton" type="button" aria-label="Account menu openen">
+              JB
+            </button>
+
+            <div class="account-dropdown hidden" id="accountDropdown">
+              <a href="personal-details.html">Personal details</a>
+              <a href="#">Mijn account</a>
+              <a href="#">Instellingen</a>
+              <a href="sign-in.html">Uitloggen</a>
+            </div>
+          </div>
         </div>
       </header>
 
@@ -108,5 +122,6 @@
     <div class="toast hidden" id="toastMessage" aria-live="polite"></div>
 
     <script src="js/script.js"></script>
+    <script src="js/translate.js"></script>
   </body>
 </html>

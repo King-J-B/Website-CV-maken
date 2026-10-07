@@ -17,8 +17,8 @@
 
 .brand-logo {
   display: block;
-  width: auto;
-  height: 40px;
+  width: 148px;
+  height: auto;
 }
 
 .topnav a {
@@ -172,4 +172,94 @@ select:focus {
   color: var(--color-surface);
   box-shadow: var(--shadow-card);
   font-weight: 800;
+}
+
+.brand-logo {
+  width: 148px !important;
+  height: auto !important;
+  max-height: none !important;
+}
+
+.topbar .brand .brand-logo {
+  display: block !important;
+  width: 148px !important;
+  height: auto !important;
+  max-width: 148px !important;
+  max-height: none !important;
+}
+
+.avatar-button {
+  text-decoration: none;
+}
+
+.account-menu {
+  position: relative;
+}
+
+.account-dropdown {
+  position: absolute;
+  top: calc(100% + 10px);
+  right: 0;
+  z-index: 30;
+  display: grid;
+  min-width: 190px;
+  overflow: hidden;
+  border: 1px solid var(--color-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  box-shadow: var(--shadow-card);
+}
+
+.account-dropdown a,
+.account-dropdown button {
+  width: 100%;
+  padding: 12px 14px;
+  border: 0;
+  background: transparent;
+  color: var(--color-ink);
+  font: inherit;
+  font-weight: 700;
+  text-align: left;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.account-dropdown a:hover,
+.account-dropdown button:hover {
+  background: var(--color-surface-soft);
+  color: var(--color-primary);
+}
+
+.hidden {
+  display: none !important;
+}
+
+.account-dropdown.hidden {
+  display: none !important;
+}
+
+.resume-card.is-new-card {
+  cursor: pointer;
+}
+
+.resume-card.is-new-card:hover {
+  border-color: var(--color-primary);
+  transform: translateY(-2px);
+  transition: 0.2s ease;
+}
+
+.language-button {
+  min-height: 42px;
+  padding: 0 14px;
+  border: 1px solid var(--color-button-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+  color: var(--color-ink);
+  font-weight: 800;
+  cursor: pointer;
+}
+
+.language-button:hover {
+  background: var(--color-surface-soft);
+  border-color: var(--color-primary);
 }
