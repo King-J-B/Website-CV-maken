@@ -754,6 +754,18 @@ a {
   min-width: 160px;
 }
 
+.ed-link-button {
+  padding: 8px 4px;
+  border-radius: 6px;
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+}
+
+.ed-link-button:hover {
+  text-decoration: underline;
+}
+
 /* One-page warning */
 .ed-fit-warning {
   margin-bottom: 12px;

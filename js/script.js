@@ -99,7 +99,7 @@ function createResumeCard(resume) {
     : getText("Start nieuw", "Start new");
 
   const cardClass = isExisting ? "" : "is-new-card";
-  const startAttribute = isExisting ? "" : 'data-start-card="true"';
+  const startAttribute = isExisting ? "" : `data-start-card="${resume.type}"`;
 
   const title = getText(resume.title, translateResumeText(resume.title));
   const template = getText(resume.template, translateResumeText(resume.template));
@@ -113,7 +113,7 @@ function createResumeCard(resume) {
       </button>
     `
     : `
-      <button class="primary-button" type="button" data-start-card="true">
+      <button class="primary-button" type="button" data-start-card="${resume.type}">
         ${buttonText}
       </button>
     `;
@@ -234,20 +234,14 @@ function renderResumes() {
   showResumes();
 }
 
-function addResume() {
-  resumes.unshift({
-    id: Date.now(),
-    title: "Nieuw cv",
-    template: "Nog geen template gekozen",
-    updated: "Net aangemaakt",
-    updatedAt: Date.now(),
-    type: "existing",
-  });
-  saveResumes();
+// A new CV starts by choosing a template (flow v4: Choose template → Editor).
+// templates.html adds the CV card here and then opens the editor.
+function startNewResume() {
+  window.location.href = "templates.html?new=1";
+}
 
-  searchInput.value = "";
-  renderResumes();
-  showToast(getText("Cv aangemaakt", "Resume created"));
+function browseTemplates() {
+  window.location.href = "templates.html";
 }
 
 async function deleteResume(id) {
@@ -357,7 +351,11 @@ resumeView.addEventListener("click", (event) => {
   }
 
   if (startButton) {
-    addResume();
+    if (startButton.dataset.startCard === "template") {
+      browseTemplates();
+    } else {
+      startNewResume();
+    }
   }
 });
 
@@ -378,8 +376,8 @@ document.addEventListener("click", (event) => {
   }
 });
 
-document.querySelector("#addResumeButton").addEventListener("click", addResume);
-document.querySelector("#emptyCreateButton").addEventListener("click", addResume);
+document.querySelector("#addResumeButton").addEventListener("click", startNewResume);
+document.querySelector("#emptyCreateButton").addEventListener("click", startNewResume);
 document.querySelector("#backToResumesButton").addEventListener("click", restoreExample);
 document.querySelector("#clearDemoButton").addEventListener("click", clearAllResumes);
 themeButton.addEventListener("click", toggleTheme);
