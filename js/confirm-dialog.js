@@ -1,0 +1,122 @@
+/* ==========================================================================
+   Folio — confirmation box (shared by My resumes and the editor)
+
+   Replaces the browser's built-in confirm() pop-up, which some browsers
+   (like the Claude desktop browser pane) never show and silently treat as
+   "Cancel". This box is part of the page, so it works everywhere.
+
+   Usage:
+     folioConfirm({
+       title: "Delete this resume?",
+       message: "It will be deleted permanently.",
+       confirmLabel: "Delete",
+       cancelLabel: "Cancel"
+     }).then(function (confirmed) { ... });
+
+   Resolves true only when the user clicks the confirm button. Escape, the
+   Cancel button and a click outside the box all resolve false. The answer
+   comes straight from those actions, not from the dialog's "close" event.
+   ========================================================================== */
+
+(function () {
+  "use strict";
+
+  var dialog = null;
+  var titleEl = null;
+  var messageEl = null;
+  var confirmButton = null;
+  var cancelButton = null;
+  var resolveCurrent = null;
+
+  function build() {
+    dialog = document.createElement("dialog");
+    dialog.className = "folio-confirm";
+    dialog.setAttribute("aria-labelledby", "folio-confirm-title");
+    dialog.setAttribute("aria-describedby", "folio-confirm-message");
+    dialog.innerHTML =
+      '<form method="dialog" class="folio-confirm__box">' +
+      '  <h2 class="folio-confirm__title" id="folio-confirm-title"></h2>' +
+      '  <p class="folio-confirm__message" id="folio-confirm-message"></p>' +
+      '  <div class="folio-confirm__actions">' +
+      '    <button class="folio-confirm__button folio-confirm__button--cancel" value="cancel" type="submit"></button>' +
+      '    <button class="folio-confirm__button folio-confirm__button--danger" value="confirm" type="submit"></button>' +
+      "  </div>" +
+      "</form>";
+    document.body.appendChild(dialog);
+
+    titleEl = dialog.querySelector(".folio-confirm__title");
+    messageEl = dialog.querySelector(".folio-confirm__message");
+    cancelButton = dialog.querySelector('[value="cancel"]');
+    confirmButton = dialog.querySelector('[value="confirm"]');
+
+    // Answer straight from the button, Escape or outside click. Chrome only
+    // fires the dialog's "close" event with the next screen update, which a
+    // hidden or background tab may not do for a long time, so the answer must
+    // not depend on it.
+    confirmButton.addEventListener("click", function (event) {
+      event.preventDefault();
+      settle(true);
+    });
+
+    cancelButton.addEventListener("click", function (event) {
+      event.preventDefault();
+      settle(false);
+    });
+
+    dialog.addEventListener("cancel", function (event) {
+      event.preventDefault(); // Escape
+      settle(false);
+    });
+
+    // A click on the dimmed area outside the box counts as Cancel.
+    dialog.addEventListener("click", function (event) {
+      if (event.target === dialog) settle(false);
+    });
+
+    // Backup for any other way the box gets closed. A late "close" event from
+    // an earlier box must not cancel a newer box that is open again by now.
+    dialog.addEventListener("close", function () {
+      if (!dialog.open) settle(false);
+    });
+  }
+
+  // Give the answer once and close the box.
+  function settle(confirmed) {
+    var resolve = resolveCurrent;
+    resolveCurrent = null;
+    if (dialog.open) dialog.close();
+    if (resolve) resolve(confirmed);
+  }
+
+  function folioConfirm(options) {
+    options = options || {};
+
+    // Very old browsers without <dialog>: fall back to the built-in pop-up.
+    if (typeof window.HTMLDialogElement !== "function") {
+      return Promise.resolve(window.confirm(options.message || options.title || ""));
+    }
+
+    if (!dialog) build();
+
+    // If a box is still open, treat it as cancelled before opening a new one.
+    if (resolveCurrent) {
+      resolveCurrent(false);
+      resolveCurrent = null;
+    }
+
+    titleEl.textContent = options.title || "";
+    messageEl.textContent = options.message || "";
+    messageEl.hidden = !options.message;
+    confirmButton.textContent = options.confirmLabel || "OK";
+    cancelButton.textContent = options.cancelLabel || "Cancel";
+
+    return new Promise(function (resolve) {
+      resolveCurrent = resolve;
+      if (!dialog.open) dialog.showModal();
+      // Start on Cancel, so a quick Enter never deletes anything.
+      cancelButton.focus();
+    });
+  }
+
+  window.folioConfirm = folioConfirm;
+})();
