@@ -1098,19 +1098,67 @@
   var page = document.querySelector("[data-cv-page]");
   var A4_WIDTH = 794; // 210 mm at 96 dpi
   var A4_HEIGHT = 1123; // 297 mm at 96 dpi
+  var PAGE_PADDING_BOTTOM = 64; // keep in sync with .cv-page padding
+
+  /* A CV is one A4 page. When the content no longer fits, the part that
+     falls off stays visible below a red line, and a warning explains what
+     to do. Nothing is cut off silently. */
+  var overflowArea = document.createElement("div");
+  overflowArea.className = "cv-page__overflow";
+  overflowArea.setAttribute("aria-hidden", "true");
+  overflowArea.innerHTML = '<span class="cv-page__overflow-label">Doesn\u2019t fit on one page</span>';
+  page.appendChild(overflowArea);
+
+  var fitWarnings = document.querySelectorAll("[data-fit-warning]");
+  var overflowPx = 0;
+
+  // How far the content runs past the page, in page pixels (0 = it fits).
+  function measureOverflow() {
+    var bottom = 0;
+    Array.prototype.forEach.call(page.children, function (child) {
+      if (child === overflowArea || child.hidden) return;
+      bottom = Math.max(bottom, child.offsetTop + child.offsetHeight);
+    });
+    return Math.max(0, Math.ceil(bottom + PAGE_PADDING_BOTTOM - A4_HEIGHT));
+  }
+
+  function updateFit() {
+    var overflow = measureOverflow();
+    if (overflow === overflowPx) return;
+    overflowPx = overflow;
+
+    var tooLong = overflow > 0;
+    page.classList.toggle("is-overflowing", tooLong);
+    overflowArea.style.height = overflow + "px";
+    fitWarnings.forEach(function (warning) {
+      warning.hidden = !tooLong;
+    });
+    fitPreview();
+  }
 
   function fitPreview() {
     var width = stage.clientWidth;
     if (!width) return;
     var scale = Math.min(width / A4_WIDTH, 1);
     page.style.transform = "scale(" + scale + ")";
-    stage.style.height = Math.round(A4_HEIGHT * scale) + "px";
+    // Make room under the page for the part that does not fit.
+    stage.style.height = Math.round((A4_HEIGHT + overflowPx) * scale) + "px";
   }
 
   if ("ResizeObserver" in window) {
     new ResizeObserver(fitPreview).observe(stage);
   } else {
     window.addEventListener("resize", fitPreview);
+  }
+
+  // Every edit changes the preview, so check the fit whenever it changes.
+  if ("MutationObserver" in window) {
+    new MutationObserver(function (records) {
+      var onlyOverlay = records.every(function (record) {
+        return record.target === overflowArea || overflowArea.contains(record.target);
+      });
+      if (!onlyOverlay) updateFit();
+    }).observe(page, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["hidden"] });
   }
 
   /* ------------------------------------------------------------------------
@@ -1127,5 +1175,6 @@
   experience.renderPreview();
   // Flow: the editor opens at Personal details unless a section is linked.
   showSection(new URLSearchParams(window.location.search).get("section") || SECTIONS[0].id);
+  updateFit();
   fitPreview();
 })();
