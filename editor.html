@@ -1,0 +1,113 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Edit CV · Folio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/folio-mark.png">
+  <link rel="stylesheet" href="colors.css">
+  <link rel="stylesheet" href="editor.css">
+</head>
+<body>
+  <a class="skip-link" href="#editor-main">Skip to editor</a>
+
+  <header class="ed-topbar">
+    <a class="ed-logo" href="index.html">
+      <img src="images/folio-logo-light.png" alt="Folio – My resumes" width="79" height="32">
+    </a>
+
+    <div class="ed-save" data-save>
+      <p class="ed-save__status" role="status" data-save-status>Nothing to save yet</p>
+      <p class="ed-save__hint" data-save-hint hidden>Clearing your browser data removes it.</p>
+      <button class="ed-link" type="button" data-save-retry hidden>Retry</button>
+    </div>
+
+    <a class="ed-btn ed-btn--secondary" href="index.html">My resumes</a>
+  </header>
+
+  <!-- Tablet and mobile: section picker plus Edit / Preview toggle -->
+  <div class="ed-mobilebar">
+    <label class="visually-hidden" for="section-picker">Section</label>
+    <select class="ed-select" id="section-picker" data-section-picker></select>
+
+    <div class="ed-toggle" role="group" aria-label="View">
+      <button type="button" data-mode-button="edit" aria-pressed="true">Edit</button>
+      <button type="button" data-mode-button="preview" aria-pressed="false">Preview</button>
+    </div>
+  </div>
+
+  <div class="editor" data-editor data-mode="edit">
+    <nav class="ed-nav" aria-label="CV sections">
+      <p class="ed-nav__title">Sections</p>
+      <ol class="ed-nav__list" data-section-nav></ol>
+    </nav>
+
+    <main class="ed-form" id="editor-main" tabindex="-1">
+      <!-- Skills -->
+      <section class="ed-panel" data-panel="skills" hidden>
+        <p class="ed-eyebrow">Optional</p>
+        <h1 class="ed-title" tabindex="-1">Skills</h1>
+        <p class="ed-sub">Add the tools and strengths you want employers to notice. Five to ten skills is plenty.</p>
+
+        <form class="ed-add" data-skill-form novalidate>
+          <div class="ed-field ed-field--grow">
+            <label class="ed-label" for="skill-name">Skill</label>
+            <input class="ed-input" id="skill-name" name="name" type="text" maxlength="40"
+                   placeholder="For example: Figma" autocomplete="off" aria-describedby="skill-error">
+          </div>
+
+          <div class="ed-field">
+            <label class="ed-label" for="skill-level">Level <span class="ed-optional">(optional)</span></label>
+            <select class="ed-select" id="skill-level" name="level" data-level-select></select>
+          </div>
+
+          <button class="ed-btn ed-btn--primary" type="submit">Add skill</button>
+          <p class="ed-error" id="skill-error" hidden></p>
+        </form>
+
+        <h2 class="ed-list-title" data-skill-count>Your skills</h2>
+        <ul class="skill-list" data-skill-list></ul>
+        <p class="ed-empty" data-skill-empty>No skills yet. Your first skill appears here and in the preview.</p>
+      </section>
+
+      <!-- Sections that are not built yet -->
+      <section class="ed-panel" data-panel="placeholder" hidden>
+        <h1 class="ed-title" tabindex="-1" data-placeholder-title></h1>
+        <div class="ed-soon">
+          <p class="ed-soon__title">This section isn't built yet</p>
+          <p>It's on the planning. You can still jump to any other section and come back later.</p>
+        </div>
+      </section>
+
+      <nav class="ed-steps" aria-label="Previous and next section">
+        <a class="ed-btn ed-btn--ghost" href="#" data-step="prev" hidden></a>
+        <a class="ed-btn ed-btn--primary" href="#" data-step="next" hidden></a>
+        <p class="ed-steps__note" data-step-note hidden></p>
+      </nav>
+    </main>
+
+    <aside class="ed-preview" aria-label="Live preview">
+      <div class="ed-preview__stage" data-preview-stage>
+        <article class="cv-page" data-cv-page>
+          <header class="cv-page__head">
+            <p class="cv-page__name is-placeholder">Your name</p>
+            <p class="cv-page__role is-placeholder">Job title</p>
+          </header>
+
+          <section class="cv-page__section" data-preview-skills>
+            <h2 class="cv-page__heading">Skills</h2>
+            <ul class="cv-page__skills" data-preview-skill-list></ul>
+            <p class="cv-page__empty" data-preview-skill-empty>Your skills will appear here.</p>
+          </section>
+        </article>
+      </div>
+      <p class="ed-preview__caption">A4 · Modern template</p>
+    </aside>
+  </div>
+
+  <script src="editor.js"></script>
+</body>
+</html>

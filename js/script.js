@@ -51,7 +51,7 @@ function createResumeCard(resume) {
 
   const actionButtons = isExisting
     ? `
-      <button class="primary-button" type="button">Verder werken</button>
+      <a class="primary-button" href="editor.html">Verder werken</a>
       <button class="delete-button" type="button" data-delete-id="${resume.id}">
         Verwijder
       </button>
