@@ -73,6 +73,58 @@
         <p class="ed-empty" data-skill-empty>No skills yet. Your first skill appears here and in the preview.</p>
       </section>
 
+      <!-- Personal details -->
+      <section class="ed-panel" data-panel="personal" hidden>
+        <p class="ed-eyebrow">Start here</p>
+        <h1 class="ed-title" tabindex="-1">Personal details</h1>
+        <p class="ed-sub">This goes at the top of your CV. Only your name is needed; add the contact details you want employers to use.</p>
+
+        <div class="ed-grid">
+          <div class="ed-field ed-field--wide">
+            <label class="ed-label" for="personal-name">Full name</label>
+            <input class="ed-input" id="personal-name" type="text" autocomplete="name" maxlength="80"
+                   placeholder="For example: Alex Morgan" data-personal="name" aria-describedby="personal-name-error" required>
+            <p class="ed-error" id="personal-name-error" hidden></p>
+          </div>
+          <div class="ed-field ed-field--wide">
+            <label class="ed-label" for="personal-title">Job title <span class="ed-optional">(optional)</span></label>
+            <input class="ed-input" id="personal-title" type="text" autocomplete="organization-title" maxlength="80"
+                   placeholder="For example: Junior UX designer" data-personal="title" aria-describedby="personal-title-error">
+            <p class="ed-error" id="personal-title-error" hidden></p>
+          </div>
+          <div class="ed-field">
+            <label class="ed-label" for="personal-email">Email <span class="ed-optional">(optional)</span></label>
+            <input class="ed-input" id="personal-email" type="email" autocomplete="email" maxlength="80"
+                   placeholder="name@example.com" data-personal="email" aria-describedby="personal-email-error" inputmode="email" autocapitalize="none" spellcheck="false">
+            <p class="ed-error" id="personal-email-error" hidden></p>
+          </div>
+          <div class="ed-field">
+            <label class="ed-label" for="personal-phone">Phone <span class="ed-optional">(optional)</span></label>
+            <input class="ed-input" id="personal-phone" type="tel" autocomplete="tel" maxlength="80"
+                   placeholder="+31 6 12345678" data-personal="phone" aria-describedby="personal-phone-error" inputmode="tel">
+            <p class="ed-error" id="personal-phone-error" hidden></p>
+          </div>
+          <div class="ed-field">
+            <label class="ed-label" for="personal-city">City <span class="ed-optional">(optional)</span></label>
+            <input class="ed-input" id="personal-city" type="text" autocomplete="address-level2" maxlength="80"
+                   placeholder="For example: Breda" data-personal="city" aria-describedby="personal-city-error">
+            <p class="ed-error" id="personal-city-error" hidden></p>
+          </div>
+          <div class="ed-field">
+            <label class="ed-label" for="personal-linkedin">LinkedIn <span class="ed-optional">(optional)</span></label>
+            <input class="ed-input" id="personal-linkedin" type="url" autocomplete="url" maxlength="120"
+                   placeholder="linkedin.com/in/your-name" data-personal="linkedin" aria-describedby="personal-linkedin-error" inputmode="url" autocapitalize="none" spellcheck="false">
+            <p class="ed-error" id="personal-linkedin-error" hidden></p>
+          </div>
+          <div class="ed-field ed-field--wide">
+            <label class="ed-label" for="personal-website">Website or portfolio <span class="ed-optional">(optional)</span></label>
+            <input class="ed-input" id="personal-website" type="url" autocomplete="url" maxlength="120"
+                   placeholder="yourname.com" data-personal="website" aria-describedby="personal-website-error" inputmode="url" autocapitalize="none" spellcheck="false">
+            <p class="ed-error" id="personal-website-error" hidden></p>
+          </div>
+        </div>
+      </section>
+
       <!-- Education -->
       <section class="ed-panel" data-panel="education" hidden>
         <h1 class="ed-title" tabindex="-1">Education</h1>
@@ -119,8 +171,9 @@
       <div class="ed-preview__stage" data-preview-stage>
         <article class="cv-page" data-cv-page>
           <header class="cv-page__head">
-            <p class="cv-page__name is-placeholder">Your name</p>
-            <p class="cv-page__role is-placeholder">Job title</p>
+            <p class="cv-page__name is-placeholder" data-preview-name>Your name</p>
+            <p class="cv-page__role is-placeholder" data-preview-title>Job title</p>
+            <ul class="cv-page__contact" data-preview-contact hidden></ul>
           </header>
 
           <section class="cv-page__section">
