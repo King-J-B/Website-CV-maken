@@ -10,7 +10,7 @@
      <script>
        window.FOLIO_AUTH_CONFIG = {
          apiBase: "/api/auth",          // omit to run in demo mode (no network)
-         afterAuthUrl: "my-resumes.html",
+         afterAuthUrl: "index.html", // My resumes (flow: Sign in / Sign up → My resumes)
          providers: { google: "/auth/google", linkedin: "/auth/linkedin" }
        };
      </script>
@@ -22,7 +22,7 @@
   var config = Object.assign(
     {
       apiBase: null,
-      afterAuthUrl: "my-resumes.html",
+      afterAuthUrl: "index.html", // My resumes (flow: Sign in / Sign up → My resumes)
       providers: { google: "/auth/google", linkedin: "/auth/linkedin" }
     },
     window.FOLIO_AUTH_CONFIG || {}
