@@ -230,6 +230,18 @@ body {
   background: var(--brand-cyan-soft);
 }
 
+.no-results {
+  display: grid;
+  grid-column: 1 / -1;
+  justify-items: center;
+  gap: 14px;
+  padding: 48px 24px;
+  border: 1px dashed var(--color-button-line);
+  border-radius: var(--radius-lg);
+  color: var(--color-muted);
+  text-align: center;
+}
+
 .page-card.is-empty .toolbar {
   display: none;
 }
