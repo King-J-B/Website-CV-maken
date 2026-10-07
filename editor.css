@@ -741,6 +741,19 @@ a {
   margin-top: 16px;
 }
 
+/* Template switch above the preview */
+.ed-template-bar {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: 10px;
+  margin-bottom: 12px;
+}
+
+.ed-template-bar .ed-select {
+  min-width: 160px;
+}
+
 /* One-page warning */
 .ed-fit-warning {
   margin-bottom: 12px;

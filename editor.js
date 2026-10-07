@@ -35,7 +35,9 @@
   // CV templates. The look of each one lives in cv-templates.css under
   // .cv-page[data-template="<id>"]. The first one is the default.
   var TEMPLATES = [
-    { id: "modern", name: "Modern" }
+    { id: "modern", name: "Modern" },
+    { id: "classic", name: "Classic" },
+    { id: "minimal", name: "Minimal" }
   ];
 
   var LEVELS = ["Beginner", "Intermediate", "Advanced", "Expert"];
@@ -1122,12 +1124,28 @@
   page.appendChild(overflowArea);
 
   var templateCaption = document.querySelector("[data-template-caption]");
+  var templatePicker = document.querySelector("[data-template-picker]");
 
-  // Show the draft in its template. Switching templates (next step) only
-  // changes draft.template and calls this again; the CV data stays the same.
+  TEMPLATES.forEach(function (template) {
+    var option = document.createElement("option");
+    option.value = template.id;
+    option.textContent = template.name;
+    templatePicker.appendChild(option);
+  });
+
+  // Switching only changes draft.template; the CV data stays the same.
+  templatePicker.addEventListener("change", function () {
+    draft.template = templatePicker.value;
+    applyTemplate();
+    updateFit(); // another template can take more or less space
+    scheduleSave();
+  });
+
+  // Show the draft in its template.
   function applyTemplate() {
     var template = templateById(draft.template) || TEMPLATES[0];
     page.dataset.template = template.id;
+    templatePicker.value = template.id;
     templateCaption.textContent = "A4 \u00b7 " + template.name + " template";
   }
 
