@@ -47,6 +47,11 @@
     </nav>
 
     <main class="ed-form" id="editor-main" tabindex="-1">
+      <div class="ed-fit-warning ed-fit-warning--form" data-fit-warning hidden>
+          <p class="ed-fit-warning__title">Your CV doesn’t fit on one A4 page</p>
+          <p>Everything below the red line falls off the page. Shorten a description, remove an older entry or list fewer skills.</p>
+        </div>
+
       <!-- Skills -->
       <section class="ed-panel" data-panel="skills" hidden>
         <p class="ed-eyebrow">Optional</p>
@@ -194,6 +199,11 @@
     </main>
 
     <aside class="ed-preview" aria-label="Live preview">
+      <div class="ed-fit-warning" data-fit-warning role="status" hidden>
+        <p class="ed-fit-warning__title">Your CV doesn’t fit on one A4 page</p>
+        <p>Everything below the red line falls off the page. Shorten a description, remove an older entry or list fewer skills.</p>
+      </div>
+
       <div class="ed-preview__stage" data-preview-stage>
         <article class="cv-page" data-cv-page>
           <header class="cv-page__head">
