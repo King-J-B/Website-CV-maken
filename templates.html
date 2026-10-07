@@ -1,0 +1,41 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Choose a template · Folio</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <link rel="icon" type="image/png" href="images/folio-mark.png">
+  <link rel="stylesheet" href="colors.css">
+  <link rel="stylesheet" href="cv-templates.css">
+  <link rel="stylesheet" href="templates.css">
+</head>
+<body>
+  <a class="skip-link" href="#main">Skip to templates</a>
+
+  <header class="tp-topbar">
+    <a class="tp-logo" href="index.html">
+      <img src="images/folio-logo-light.png" alt="Folio – My resumes" width="79" height="32">
+    </a>
+    <a class="tp-button tp-button--secondary" href="index.html">My resumes</a>
+  </header>
+
+  <main class="tp-main" id="main">
+    <p class="tp-eyebrow" data-new-only hidden>New CV</p>
+    <h1 class="tp-title">Choose a template</h1>
+    <p class="tp-sub">
+      Every template uses the same content, so you can switch any time in the editor without retyping anything.
+      A CV fits on one A4 page.
+    </p>
+
+    <p class="tp-error" role="alert" data-error hidden></p>
+
+    <ul class="tp-grid" data-template-grid></ul>
+  </main>
+
+  <script src="js/templates-data.js"></script>
+  <script src="js/templates-page.js"></script>
+</body>
+</html>

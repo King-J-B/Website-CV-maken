@@ -32,13 +32,9 @@
   // Sections whose draft data is a set of fields: { name: "...", ... }
   var FIELD_SECTIONS = ["personal", "about"];
 
-  // CV templates. The look of each one lives in cv-templates.css under
-  // .cv-page[data-template="<id>"]. The first one is the default.
-  var TEMPLATES = [
-    { id: "modern", name: "Modern" },
-    { id: "classic", name: "Classic" },
-    { id: "minimal", name: "Minimal" }
-  ];
+  // CV templates come from js/templates-data.js (shared with the
+  // "Choose a template" page). The first one is the default.
+  var TEMPLATES = window.FOLIO_TEMPLATES;
 
   var LEVELS = ["Beginner", "Intermediate", "Advanced", "Expert"];
   var MAX_SKILLS = 30;
