@@ -80,42 +80,42 @@
               <div class="form-row">
                 <label>
                   Voornaam
-                  <input id="firstName" type="text" value="Voornaam" />
+                  <input id="firstName" type="text" placeholder="Voornaam" />
                 </label>
 
                 <label>
                   Achternaam
-                  <input id="lastName" type="text" value="Achternaam" />
+                  <input id="lastName" type="text" placeholder="Achternaam" />
                 </label>
               </div>
 
               <div class="form-row">
                 <label>
                   Functietitel
-                  <input id="jobTitle" type="text" value="Functietitel" />
+                  <input id="jobTitle" type="text" placeholder="Functietitel" />
                 </label>
 
                 <label>
                   Woonplaats
-                  <input id="city" type="text" value="Woonplaats" />
+                  <input id="city" type="text" placeholder="Woonplaats" />
                 </label>
               </div>
 
               <div class="form-row">
                 <label>
                   E-mail
-                  <input id="email" type="email" value="naam@email.com" />
+                  <input id="email" type="email" placeholder="naam@email.com" />
                 </label>
 
                 <label>
                   Telefoon
-                  <input id="phone" type="text" value="+31 6 12345678" />
+                  <input id="phone" type="text" placeholder="+31 6 12345678" />
                 </label>
               </div>
 
               <label>
                 LinkedIn / portfolio
-                <input id="website" type="text" value="linkedin.com/in/gebruikersnaam" />
+                <input id="website" type="text" placeholder="linkedin.com/in/gebruikersnaam" />
               </label>
             </form>
           </article>
@@ -182,6 +182,34 @@
         previewInitials.textContent = `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
       }
 
+      // Account details are saved in this browser until there is a real account.
+      const ACCOUNT_KEY = "folio:account";
+      const fields = { firstName, lastName, jobTitle, city, email, phone, website };
+
+      function isEnglish() {
+        const languageButton = document.querySelector("#languageButton");
+        return languageButton && languageButton.textContent.trim() === "NL";
+      }
+
+      function loadAccount() {
+        try {
+          const saved = JSON.parse(localStorage.getItem(ACCOUNT_KEY)) || {};
+          Object.keys(fields).forEach((key) => {
+            if (typeof saved[key] === "string") fields[key].value = saved[key];
+          });
+        } catch (error) {
+          // Nothing saved yet, or unreadable: start with empty fields.
+        }
+      }
+
+      function saveAccount() {
+        const data = {};
+        Object.keys(fields).forEach((key) => {
+          data[key] = fields[key].value.trim();
+        });
+        localStorage.setItem(ACCOUNT_KEY, JSON.stringify(data));
+      }
+
       function showToast(message) {
         toast.textContent = message;
         toast.classList.remove("hidden");
@@ -222,8 +250,18 @@
         }
       });
 
+      // Only say "saved" (and go back) when saving really worked.
       saveButton.addEventListener("click", () => {
-        showToast("Persoonlijke gegevens opgeslagen");
+        try {
+          saveAccount();
+        } catch (error) {
+          showToast(isEnglish()
+            ? "Could not save your details. Please try again."
+            : "Opslaan is niet gelukt. Probeer het opnieuw.");
+          return;
+        }
+
+        showToast(isEnglish() ? "Personal details saved" : "Persoonlijke gegevens opgeslagen");
 
         setTimeout(() => {
           window.location.href = "index.html";
@@ -238,6 +276,7 @@
       phone.addEventListener("input", updatePreview);
       website.addEventListener("input", updatePreview);
 
+      loadAccount();
       updatePreview();
     </script>
 
