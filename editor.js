@@ -19,7 +19,7 @@
     { id: "personal", label: "Personal details", built: false },
     { id: "about", label: "About me", built: false },
     { id: "education", label: "Education", built: true },
-    { id: "experience", label: "Experience", built: false },
+    { id: "experience", label: "Experience", built: true },
     { id: "skills", label: "Skills", built: true, optional: true }
   ];
 
@@ -27,7 +27,7 @@
   var AFTER_LAST = "Next in the flow: custom sections like hobbies (not built yet).";
 
   // Sections whose draft data is a list: { items: [...] }
-  var LIST_SECTIONS = ["education", "skills"];
+  var LIST_SECTIONS = ["education", "experience", "skills"];
 
   var LEVELS = ["Beginner", "Intermediate", "Advanced", "Expert"];
   var MAX_SKILLS = 30;
@@ -429,7 +429,7 @@
   });
 
   /* ------------------------------------------------------------------------
-     Entry lists (Education now, Experience next): a list of cards, each with
+     Entry lists (Education, Experience): a list of cards, each with
      a title, a place, start and end dates and an optional description.
      Typing updates the item and the preview without re-rendering the card,
      so focus and cursor position are never lost.
@@ -486,6 +486,19 @@
       select.appendChild(option);
     });
     return select;
+  }
+
+  // One bullet per non-empty line; a single line stays a normal paragraph.
+  function bulletList(text) {
+    var lines = text.split(/\n+/).map(function (line) {
+      return line.replace(/^\s*[-•*]\s*/, "").trim();
+    }).filter(Boolean);
+    if (lines.length < 2) return el("p", "cv-entry__desc", lines[0] || "");
+    var list = el("ul", "cv-entry__bullets");
+    lines.forEach(function (line) {
+      list.appendChild(el("li", "", line));
+    });
+    return list;
   }
 
   var MONTH_OPTIONS = MONTHS.map(function (name, index) {
@@ -546,7 +559,14 @@
       var error = el("p", "ed-error");
       error.id = id + "-error";
       error.hidden = true;
-      input.setAttribute("aria-describedby", error.id);
+      var describedBy = [error.id];
+      var hint = null;
+      if (field.hint) {
+        hint = el("p", "ed-hint", field.hint);
+        hint.id = id + "-hint";
+        describedBy.unshift(hint.id);
+      }
+      input.setAttribute("aria-describedby", describedBy.join(" "));
 
       input.addEventListener("input", function () {
         item[field.name] = input.value;
@@ -561,6 +581,7 @@
       }
 
       wrap.appendChild(label);
+      if (hint) wrap.appendChild(hint);
       wrap.appendChild(input);
       wrap.appendChild(error);
       return wrap;
@@ -745,7 +766,8 @@
         top.appendChild(el("p", "cv-entry__dates", formatRange(item)));
         entry.appendChild(top);
         if (place) entry.appendChild(el("p", "cv-entry__sub", place));
-        if ((item.description || "").trim()) entry.appendChild(el("p", "cv-entry__desc", item.description.trim()));
+        var description = (item.description || "").trim();
+        if (description) entry.appendChild(cfg.bullets ? bulletList(description) : el("p", "cv-entry__desc", description));
         preview.appendChild(entry);
       });
       previewEmpty.hidden = preview.children.length > 0;
@@ -805,6 +827,46 @@
     ]
   });
 
+  var experience = entrySection({
+    id: "experience",
+    titleField: "role",
+    placeField: "company",
+    newTitle: "New job",
+    currentLabel: "I currently work here",
+    bullets: true,
+    confirmRemove: function (name) {
+      return "Remove " + name + " from your CV? This can't be undone.";
+    },
+    fields: [
+      {
+        name: "role",
+        label: "Job title",
+        required: true,
+        requiredMessage: "Enter your job title, for example Junior designer.",
+        placeholder: "For example: Junior UX designer",
+        wide: true
+      },
+      {
+        name: "company",
+        label: "Company or organisation",
+        required: true,
+        requiredMessage: "Enter the company or organisation.",
+        placeholder: "For example: Studio Kite"
+      },
+      { name: "city", label: "City", placeholder: "For example: Eindhoven", maxLength: 60 },
+      { dates: true },
+      {
+        name: "description",
+        label: "What you did",
+        hint: "One task or result per line. Each line becomes a bullet point.",
+        multiline: true,
+        maxLength: 1000,
+        placeholder: "Designed the new checkout flow\nRan usability tests with 12 customers",
+        wide: true
+      }
+    ]
+  });
+
   /* ------------------------------------------------------------------------
      Live A4 preview: the page keeps its A4 shape and scales to fit.
      ------------------------------------------------------------------------ */
@@ -836,6 +898,8 @@
   renderSkills();
   education.render();
   education.renderPreview();
+  experience.render();
+  experience.renderPreview();
   // Flow: the editor opens at Personal details unless a section is linked.
   showSection(new URLSearchParams(window.location.search).get("section") || SECTIONS[0].id);
   fitPreview();

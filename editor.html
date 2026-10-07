@@ -86,6 +86,19 @@
         </button>
       </section>
 
+      <!-- Experience -->
+      <section class="ed-panel" data-panel="experience" hidden>
+        <h1 class="ed-title" tabindex="-1">Experience</h1>
+        <p class="ed-sub">Add jobs, internships, side jobs or volunteer work, newest first. Only the job title and the company are needed.</p>
+
+        <ol class="entry-list" data-entry-list></ol>
+        <p class="ed-empty" data-entry-empty>No experience yet. Internships and side jobs count too.</p>
+
+        <button class="ed-btn ed-btn--secondary ed-add-entry" type="button" data-entry-add>
+          <span aria-hidden="true">+</span> Add experience
+        </button>
+      </section>
+
       <!-- Sections that are not built yet -->
       <section class="ed-panel" data-panel="placeholder" hidden>
         <h1 class="ed-title" tabindex="-1" data-placeholder-title></h1>
@@ -114,6 +127,12 @@
             <h2 class="cv-page__heading">Education</h2>
             <div class="cv-page__entries" data-preview-entries="education"></div>
             <p class="cv-page__empty" data-preview-empty="education">Your education will appear here.</p>
+          </section>
+
+          <section class="cv-page__section">
+            <h2 class="cv-page__heading">Experience</h2>
+            <div class="cv-page__entries" data-preview-entries="experience"></div>
+            <p class="cv-page__empty" data-preview-empty="experience">Your experience will appear here.</p>
           </section>
 
           <section class="cv-page__section" data-preview-skills>

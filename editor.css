@@ -601,6 +601,12 @@ a {
   grid-column: 1 / -1;
 }
 
+.ed-hint {
+  margin-top: -2px;
+  font-size: 12px;
+  color: var(--text-secondary);
+}
+
 .ed-textarea {
   height: auto;
   min-height: 104px;
@@ -820,6 +826,16 @@ a {
   margin-top: 6px;
   color: var(--text-primary);
   white-space: pre-line;
+}
+
+.cv-entry__bullets {
+  margin: 6px 0 0;
+  padding-left: 18px;
+  color: var(--text-primary);
+}
+
+.cv-entry__bullets li + li {
+  margin-top: 2px;
 }
 
 .cv-page__empty {
