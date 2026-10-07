@@ -242,6 +242,7 @@ a {
 
 .ed-input,
 .ed-select {
+  flex-shrink: 0; /* an error message under a field must not squash it */
   height: 44px;
   padding: 0 12px;
   border: 1px solid var(--border-control);
@@ -525,6 +526,14 @@ a {
   color: var(--text-secondary);
 }
 
+/* Personal details: two columns, wide fields span both */
+.ed-grid {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr);
+  gap: 16px;
+  margin-top: 24px;
+}
+
 /* Entry lists (Education, Experience) */
 .entry-list {
   display: grid;
@@ -754,6 +763,17 @@ a {
   color: var(--border-subtle);
 }
 
+.cv-page__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin-top: 14px;
+  padding: 0;
+  list-style: none;
+  color: var(--text-secondary);
+  font-size: 14px;
+}
+
 .cv-page__section {
   margin-top: 32px;
 }
@@ -945,6 +965,7 @@ a {
     font-size: 16px; /* stops iOS zooming on focus */
   }
 
+  .ed-grid,
   .entry__body {
     grid-template-columns: minmax(0, 1fr);
     padding: 16px 12px;

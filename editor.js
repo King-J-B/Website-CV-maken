@@ -16,7 +16,7 @@
 
   // Order matches the flow diagram. `built: false` shows a placeholder panel.
   var SECTIONS = [
-    { id: "personal", label: "Personal details", built: false },
+    { id: "personal", label: "Personal details", built: true },
     { id: "about", label: "About me", built: false },
     { id: "education", label: "Education", built: true },
     { id: "experience", label: "Experience", built: true },
@@ -41,6 +41,7 @@
     LIST_SECTIONS.forEach(function (id) {
       draft.sections[id] = { items: [] };
     });
+    draft.sections.personal = {};
     return draft;
   }
 
@@ -61,6 +62,8 @@
       var section = draft.sections[id];
       if (!section || !Array.isArray(section.items)) draft.sections[id] = { items: [] };
     });
+    var details = draft.sections.personal;
+    if (!details || typeof details !== "object" || Array.isArray(details)) draft.sections.personal = {};
     return draft;
   }
 
@@ -159,6 +162,8 @@
       var count = countFor(section);
       if (!section.built) {
         link.appendChild(tag("Soon", "ed-tag ed-tag--muted"));
+      } else if (section.id === "personal" && (draft.sections.personal.name || "").trim()) {
+        link.appendChild(tag("✓", "ed-tag", "Filled in"));
       } else if (count) {
         link.appendChild(tag(String(count), "ed-tag", count + " added"));
       } else if (section.optional) {
@@ -426,6 +431,118 @@
 
   skillName.addEventListener("input", function () {
     if (skillName.getAttribute("aria-invalid") === "true") setSkillError("");
+  });
+
+  /* ------------------------------------------------------------------------
+     Personal details: plain fields that fill the top of the CV. Messages
+     appear when leaving a field, never while typing, and never block saving.
+     ------------------------------------------------------------------------ */
+
+  var EMAIL_PATTERN = /^[^\s@]+@[^\s@]+\.[^\s@]{2,}$/;
+  var URL_PATTERN = /^(https?:\/\/)?[^\s\/.]+(\.[^\s\/.]+)*\.[a-z]{2,}(\/\S*)?$/i;
+
+  // "https://www.example.com/" → "example.com" for display on the CV.
+  function displayUrl(value) {
+    return value.replace(/^https?:\/\//i, "").replace(/^www\./i, "").replace(/\/+$/, "");
+  }
+
+  var PERSONAL_CHECKS = {
+    name: function (value) {
+      return value ? "" : "Enter your full name. It goes at the top of your CV.";
+    },
+    email: function (value) {
+      return !value || EMAIL_PATTERN.test(value) ? "" : "Enter an email address like name@example.com.";
+    },
+    phone: function (value) {
+      var digits = value.replace(/\D/g, "").length;
+      var ok = !value || (/^[+()\-.\s\d]+$/.test(value) && digits >= 6 && digits <= 15);
+      return ok ? "" : "Enter a phone number with digits only, for example +31 6 12345678.";
+    },
+    linkedin: function (value) {
+      if (!value) return "";
+      var ok = URL_PATTERN.test(value) && /(^|\.|\/\/)linkedin\.com\//i.test(value);
+      return ok ? "" : "Enter your LinkedIn link, for example linkedin.com/in/your-name.";
+    },
+    website: function (value) {
+      return !value || URL_PATTERN.test(value) ? "" : "Enter a web address, for example yourname.com.";
+    }
+  };
+
+  var personalInputs = document.querySelectorAll("[data-personal]");
+  var previewName = document.querySelector("[data-preview-name]");
+  var previewTitle = document.querySelector("[data-preview-title]");
+  var previewContact = document.querySelector("[data-preview-contact]");
+
+  function personal() {
+    return draft.sections.personal;
+  }
+
+  function personalValue(key) {
+    return (personal()[key] || "").trim();
+  }
+
+  function setPersonalError(input, message) {
+    var error = document.getElementById(input.id + "-error");
+    error.textContent = message || "";
+    error.hidden = !message;
+    if (message) input.setAttribute("aria-invalid", "true");
+    else input.removeAttribute("aria-invalid");
+  }
+
+  function checkPersonal(input) {
+    var check = PERSONAL_CHECKS[input.dataset.personal];
+    setPersonalError(input, check ? check(input.value.trim()) : "");
+  }
+
+  function setPreviewLine(node, value, placeholder) {
+    node.textContent = value || placeholder;
+    node.classList.toggle("is-placeholder", !value);
+  }
+
+  function renderPersonalPreview() {
+    setPreviewLine(previewName, personalValue("name"), "Your name");
+    setPreviewLine(previewTitle, personalValue("title"), "Job title");
+
+    previewContact.innerHTML = "";
+    [
+      personalValue("email"),
+      personalValue("phone"),
+      personalValue("city"),
+      displayUrl(personalValue("linkedin")),
+      displayUrl(personalValue("website"))
+    ].filter(Boolean).forEach(function (text) {
+      var item = document.createElement("li");
+      item.textContent = text;
+      previewContact.appendChild(item);
+    });
+    previewContact.hidden = !previewContact.children.length;
+  }
+
+  personalInputs.forEach(function (input) {
+    var key = input.dataset.personal;
+    input.value = personal()[key] || "";
+
+    input.addEventListener("input", function () {
+      var hadName = !!personalValue("name");
+      input.dataset.touched = "true";
+      personal()[key] = input.value;
+      // Clear a message as soon as the value is fixed; new ones wait for blur.
+      if (input.getAttribute("aria-invalid") === "true") checkPersonal(input);
+      renderPersonalPreview();
+      if (key === "name" && hadName !== !!personalValue("name")) renderNav();
+      scheduleSave();
+    });
+
+    input.addEventListener("blur", function () {
+      // An untouched, empty name is fine until the user has typed something.
+      if (key === "name" && !input.value && !input.dataset.touched) return;
+      checkPersonal(input);
+    });
+  });
+
+  // Show messages for saved values that are not valid (for example after a reload).
+  personalInputs.forEach(function (input) {
+    if (input.value) checkPersonal(input);
   });
 
   /* ------------------------------------------------------------------------
@@ -894,6 +1011,7 @@
      Start
      ------------------------------------------------------------------------ */
 
+  renderPersonalPreview();
   fillLevelOptions(skillLevel, "");
   renderSkills();
   education.render();
