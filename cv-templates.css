@@ -1,0 +1,219 @@
+/* ==========================================================================
+   Folio — CV templates
+
+   One CV, many looks. Every template shows the same draft data on one A4
+   page; a template only changes the layout and the look.
+
+   How to add a template:
+   1. Add it to TEMPLATES in editor.js (id, name, caption).
+   2. Add a block below: `:where(.cv-page[data-template="<id>"])`.
+      Set the --cv-* variables, then style only what differs from the base.
+
+   Template selectors use :where() so they are no stronger than the base
+   rules. The "states" block at the end (placeholders, empty notes) must
+   always win, so it stays last and uses a stronger selector.
+
+   Sections can be placed with CSS grid by name, without changing the HTML:
+   [data-cv-section="about" | "education" | "experience" | "skills"].
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   Base: every template
+   -------------------------------------------------------------------------- */
+
+.cv-page {
+  /* Template variables (each template sets its own) */
+  --cv-accent: var(--action-primary);
+  --cv-ink: var(--text-strong);
+  --cv-text: var(--text-primary);
+  --cv-muted: var(--text-secondary);
+  --cv-line: var(--border-decorative);
+  --cv-chip: var(--bg-selected);
+  --cv-placeholder: var(--border-subtle);
+  --cv-band: var(--brand-gradient);
+  --cv-font: inherit;
+
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 794px; /* A4: 210 mm at 96 dpi */
+  height: 1123px; /* A4: 297 mm at 96 dpi */
+  padding: 64px 72px;
+  overflow: hidden;
+  overflow-wrap: anywhere; /* very long words wrap instead of running off the page */
+  background: var(--bg-surface);
+  box-shadow: 0 0 0 1px var(--border-decorative), 0 20px 48px -24px var(--shadow-tint);
+  color: var(--cv-text);
+  font-family: var(--cv-font);
+  font-size: 15px;
+  transform-origin: top left;
+}
+
+.cv-page__name {
+  color: var(--cv-ink);
+}
+
+.cv-page__about {
+  color: var(--cv-text);
+  white-space: pre-line;
+}
+
+.cv-page__contact {
+  padding: 0;
+  list-style: none;
+}
+
+.cv-page__skills {
+  padding: 0;
+  list-style: none;
+}
+
+.cv-page__entries {
+  display: grid;
+}
+
+.cv-entry__top {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.cv-entry__title {
+  color: var(--cv-ink);
+}
+
+.cv-entry__dates {
+  flex: none;
+}
+
+.cv-entry__desc {
+  color: var(--cv-text);
+  white-space: pre-line;
+}
+
+.cv-entry__bullets {
+  color: var(--cv-text);
+}
+
+/* --------------------------------------------------------------------------
+   Template: Modern
+   Gradient band on top, blue accents, skills as chips.
+   -------------------------------------------------------------------------- */
+
+:where(.cv-page[data-template="modern"])::before {
+  content: "";
+  position: absolute;
+  inset: 0 0 auto;
+  height: 10px;
+  background: var(--cv-band);
+}
+
+:where(.cv-page[data-template="modern"]) .cv-page__head {
+  padding-bottom: 24px;
+  border-bottom: 2px solid var(--cv-line);
+}
+
+:where(.cv-page[data-template="modern"]) .cv-page__name {
+  font-size: 40px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+:where(.cv-page[data-template="modern"]) .cv-page__role {
+  margin-top: 6px;
+  font-size: 18px;
+  color: var(--cv-accent);
+}
+
+:where(.cv-page[data-template="modern"]) .cv-page__about {
+  line-height: 1.6;
+}
+
+:where(.cv-page[data-template="modern"]) .cv-page__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 20px;
+  margin-top: 14px;
+  color: var(--cv-muted);
+  font-size: 14px;
+}
+
+:where(.cv-page[data-template="modern"]) .cv-page__section {
+  margin-top: 32px;
+}
+
+:where(.cv-page[data-template="modern"]) .cv-page__heading {
+  margin-bottom: 14px;
+  font-size: 13px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--cv-accent);
+}
+
+:where(.cv-page[data-template="modern"]) .cv-page__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+:where(.cv-page[data-template="modern"]) .cv-page__skill {
+  display: inline-flex;
+  align-items: baseline;
+  gap: 6px;
+  padding: 6px 14px;
+  border-radius: 999px;
+  background: var(--cv-chip);
+  color: var(--cv-ink);
+  font-weight: 500;
+}
+
+:where(.cv-page[data-template="modern"]) .cv-page__level {
+  color: var(--cv-muted);
+  font-size: 13px;
+  font-weight: 400;
+}
+
+:where(.cv-page[data-template="modern"]) .cv-page__entries {
+  gap: 18px;
+}
+
+:where(.cv-page[data-template="modern"]) .cv-entry__title {
+  font-size: 17px;
+  font-weight: 600;
+}
+
+:where(.cv-page[data-template="modern"]) .cv-entry__dates {
+  font-size: 13px;
+  color: var(--cv-muted);
+}
+
+:where(.cv-page[data-template="modern"]) .cv-entry__sub {
+  margin-top: 2px;
+  color: var(--cv-accent);
+  font-weight: 500;
+}
+
+:where(.cv-page[data-template="modern"]) .cv-entry__desc {
+  margin-top: 6px;
+}
+
+:where(.cv-page[data-template="modern"]) .cv-entry__bullets {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+:where(.cv-page[data-template="modern"]) .cv-entry__bullets li + li {
+  margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   States: every template. Keep last; these must win over template rules.
+   -------------------------------------------------------------------------- */
+
+.cv-page .is-placeholder,
+.cv-page .cv-page__empty {
+  color: var(--cv-placeholder);
+}

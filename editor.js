@@ -32,6 +32,12 @@
   // Sections whose draft data is a set of fields: { name: "...", ... }
   var FIELD_SECTIONS = ["personal", "about"];
 
+  // CV templates. The look of each one lives in cv-templates.css under
+  // .cv-page[data-template="<id>"]. The first one is the default.
+  var TEMPLATES = [
+    { id: "modern", name: "Modern" }
+  ];
+
   var LEVELS = ["Beginner", "Intermediate", "Advanced", "Expert"];
   var MAX_SKILLS = 30;
 
@@ -39,8 +45,13 @@
      Draft storage
      ------------------------------------------------------------------------ */
 
+  function templateById(id) {
+    for (var i = 0; i < TEMPLATES.length; i++) if (TEMPLATES[i].id === id) return TEMPLATES[i];
+    return null;
+  }
+
   function emptyDraft() {
-    var draft = { version: 1, updatedAt: null, sections: {} };
+    var draft = { version: 1, updatedAt: null, template: TEMPLATES[0].id, sections: {} };
     LIST_SECTIONS.forEach(function (id) {
       draft.sections[id] = { items: [] };
     });
@@ -56,6 +67,7 @@
       var stored = JSON.parse(window.localStorage.getItem(DRAFT_KEY));
       if (stored && stored.sections) {
         draft.updatedAt = stored.updatedAt || null;
+        if (templateById(stored.template)) draft.template = stored.template;
         Object.keys(stored.sections).forEach(function (id) {
           draft.sections[id] = stored.sections[id];
         });
@@ -1109,6 +1121,16 @@
   overflowArea.innerHTML = '<span class="cv-page__overflow-label">Doesn\u2019t fit on one page</span>';
   page.appendChild(overflowArea);
 
+  var templateCaption = document.querySelector("[data-template-caption]");
+
+  // Show the draft in its template. Switching templates (next step) only
+  // changes draft.template and calls this again; the CV data stays the same.
+  function applyTemplate() {
+    var template = templateById(draft.template) || TEMPLATES[0];
+    page.dataset.template = template.id;
+    templateCaption.textContent = "A4 \u00b7 " + template.name + " template";
+  }
+
   var fitWarnings = document.querySelectorAll("[data-fit-warning]");
   var overflowPx = 0;
 
@@ -1175,6 +1197,7 @@
   experience.renderPreview();
   // Flow: the editor opens at Personal details unless a section is linked.
   showSection(new URLSearchParams(window.location.search).get("section") || SECTIONS[0].id);
+  applyTemplate();
   updateFit();
   fitPreview();
 })();
