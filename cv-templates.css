@@ -9,9 +9,12 @@
    2. Add a block below: `:where(.cv-page[data-template="<id>"])`.
       Set the --cv-* variables, then style only what differs from the base.
 
-   Template selectors use :where() so they are no stronger than the base
-   rules. The "states" block at the end (placeholders, empty notes) must
-   always win, so it stays last and uses a stronger selector.
+   Template selectors for elements inside the page use :where() so they are
+   no stronger than the base rules. The template's own page-level block
+   (variables, padding, font size) uses a plain .cv-page[data-template="..."]
+   selector, because :where() would make it weaker than the base .cv-page.
+   The "states" block at the end (placeholders, empty notes) must always
+   win, so it stays last and uses a stronger selector.
 
    Sections can be placed with CSS grid by name, without changing the HTML:
    [data-cv-section="about" | "education" | "experience" | "skills"].
@@ -207,6 +210,264 @@
 
 :where(.cv-page[data-template="modern"]) .cv-entry__bullets li + li {
   margin-top: 2px;
+}
+
+/* --------------------------------------------------------------------------
+   Template: Classic
+   Traditional and calm: serif type, centred header, thin rules, no colour.
+   Suits law, finance, government and other formal fields.
+   -------------------------------------------------------------------------- */
+
+/* Page-level settings need real specificity to beat the base .cv-page rule */
+.cv-page[data-template="classic"] {
+  --cv-accent: #1f2933;
+  --cv-ink: #111827;
+  --cv-text: #1f2933;
+  --cv-muted: #4b5563;
+  --cv-line: #9aa3ae;
+  --cv-placeholder: #c7ccd3;
+  --cv-font: Georgia, "Times New Roman", Times, serif;
+
+  padding: 60px 76px;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__head {
+  padding-bottom: 18px;
+  border-bottom: 1.5px solid var(--cv-ink);
+  text-align: center;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__name {
+  font-size: 30px;
+  font-weight: 400;
+  line-height: 1.2;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__role {
+  margin-top: 6px;
+  color: var(--cv-muted);
+  font-size: 16px;
+  font-style: italic;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__contact {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  margin-top: 10px;
+  color: var(--cv-muted);
+  font-size: 13.5px;
+}
+
+/* Contact details separated by a middle dot */
+:where(.cv-page[data-template="classic"]) .cv-page__contact li + li::before {
+  content: "\00b7";
+  margin: 0 10px;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__section {
+  margin-top: 26px;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__heading {
+  margin-bottom: 12px;
+  padding-bottom: 4px;
+  border-bottom: 1px solid var(--cv-line);
+  color: var(--cv-ink);
+  font-size: 13px;
+  font-weight: 400;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__about {
+  line-height: 1.6;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__entries {
+  gap: 16px;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-entry__title {
+  font-size: 15.5px;
+  font-weight: 700;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-entry__dates {
+  color: var(--cv-muted);
+  font-size: 13.5px;
+  font-style: italic;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-entry__sub {
+  margin-top: 1px;
+  color: var(--cv-muted);
+  font-style: italic;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-entry__desc {
+  margin-top: 4px;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-entry__bullets {
+  margin: 4px 0 0;
+  padding-left: 20px;
+}
+
+/* Skills as one comma-separated line: "Figma (Advanced), HTML & CSS, ..." */
+:where(.cv-page[data-template="classic"]) .cv-page__skills {
+  display: block;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__skill {
+  display: inline;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__skill + .cv-page__skill::before {
+  content: ", ";
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__level {
+  margin-left: 4px;
+  color: var(--cv-muted);
+  font-style: italic;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__level::before {
+  content: "(";
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__level::after {
+  content: ")";
+}
+
+/* --------------------------------------------------------------------------
+   Template: Minimal
+   Lots of white space, section names in a narrow left column, plain text
+   with one short accent line under the name.
+   -------------------------------------------------------------------------- */
+
+/* Page-level settings need real specificity to beat the base .cv-page rule */
+.cv-page[data-template="minimal"] {
+  --cv-accent: var(--action-primary);
+  --cv-ink: #111827;
+  --cv-text: #374151;
+  --cv-muted: #6b7280;
+  --cv-line: #e5e7eb;
+  --cv-placeholder: #d1d5db;
+
+  padding: 76px 80px;
+  font-size: 14px;
+  line-height: 1.55;
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-page__head {
+  position: relative;
+  padding-bottom: 28px;
+}
+
+/* The one accent: a short line under the name block */
+:where(.cv-page[data-template="minimal"]) .cv-page__head::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  width: 48px;
+  height: 3px;
+  background: var(--cv-accent);
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-page__name {
+  font-size: 34px;
+  font-weight: 600;
+  line-height: 1.15;
+  letter-spacing: -0.025em;
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-page__role {
+  margin-top: 4px;
+  color: var(--cv-muted);
+  font-size: 16px;
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-page__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 2px 18px;
+  margin-top: 14px;
+  color: var(--cv-muted);
+  font-size: 13px;
+}
+
+/* Two columns per section: name on the left, content on the right */
+:where(.cv-page[data-template="minimal"]) .cv-page__section {
+  display: grid;
+  grid-template-columns: 132px minmax(0, 1fr);
+  column-gap: 28px;
+  margin-top: 30px;
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-page__section > * {
+  grid-column: 2;
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-page__section > .cv-page__heading {
+  grid-column: 1;
+  grid-row: 1 / span 3;
+  padding-top: 2px;
+  color: var(--cv-muted);
+  font-size: 11px;
+  font-weight: 600;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-page__entries {
+  gap: 18px;
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-entry__title {
+  font-size: 15px;
+  font-weight: 600;
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-entry__dates {
+  color: var(--cv-muted);
+  font-size: 12.5px;
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-entry__sub {
+  margin-top: 1px;
+  color: var(--cv-muted);
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-entry__desc {
+  margin-top: 6px;
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-entry__bullets {
+  margin: 6px 0 0;
+  padding-left: 16px;
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-page__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 22px;
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-page__skill {
+  color: var(--cv-ink);
+}
+
+:where(.cv-page[data-template="minimal"]) .cv-page__level {
+  margin-left: 6px;
+  color: var(--cv-muted);
+  font-size: 12.5px;
 }
 
 /* --------------------------------------------------------------------------
