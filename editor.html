@@ -73,6 +73,19 @@
         <p class="ed-empty" data-skill-empty>No skills yet. Your first skill appears here and in the preview.</p>
       </section>
 
+      <!-- Education -->
+      <section class="ed-panel" data-panel="education" hidden>
+        <h1 class="ed-title" tabindex="-1">Education</h1>
+        <p class="ed-sub">Add your studies, newest first. Only the study and the school are needed; everything else is optional.</p>
+
+        <ol class="entry-list" data-entry-list></ol>
+        <p class="ed-empty" data-entry-empty>No education yet. Add your current or most recent study first.</p>
+
+        <button class="ed-btn ed-btn--secondary ed-add-entry" type="button" data-entry-add>
+          <span aria-hidden="true">+</span> Add education
+        </button>
+      </section>
+
       <!-- Sections that are not built yet -->
       <section class="ed-panel" data-panel="placeholder" hidden>
         <h1 class="ed-title" tabindex="-1" data-placeholder-title></h1>
@@ -96,6 +109,12 @@
             <p class="cv-page__name is-placeholder">Your name</p>
             <p class="cv-page__role is-placeholder">Job title</p>
           </header>
+
+          <section class="cv-page__section">
+            <h2 class="cv-page__heading">Education</h2>
+            <div class="cv-page__entries" data-preview-entries="education"></div>
+            <p class="cv-page__empty" data-preview-empty="education">Your education will appear here.</p>
+          </section>
 
           <section class="cv-page__section" data-preview-skills>
             <h2 class="cv-page__heading">Skills</h2>
