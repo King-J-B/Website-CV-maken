@@ -1,28 +1,19 @@
 :root {
-  --color-page: #edf4ff;
-  --color-surface: #ffffff;
-  --color-surface-soft: #eaf2ff;
-  --color-ink: #07142f;
-  --color-muted: #46587a;
-  --color-primary: #1f6bff;
-  --color-primary-hover: #1557d8;
-  --color-accent: #4cc9ff;
-  --color-line: #d7e5fb;
-  --color-control: #9bb5e5;
-  --color-button-line: #bfd1f2;
-  --color-shadow: rgba(31, 107, 255, 0.12);
+  /* Light theme: same palette as the sign-in pages and the editor (see colors.css) */
+  --color-page: var(--bg-canvas);
+  --color-surface: var(--bg-surface);
+  --color-surface-soft: var(--bg-selected);
+  --color-ink: var(--text-primary);
+  --color-muted: var(--text-secondary);
+  --color-primary: var(--action-primary);
+  --color-primary-hover: var(--action-primary-hover);
+  --color-accent: var(--brand-cyan);
+  --color-line: var(--border-decorative);
+  --color-control: var(--border-control);
+  --color-button-line: var(--border-subtle);
+  --color-shadow: var(--shadow-tint);
 
-  --text-on-action: #ffffff;
-  --action-gradient: linear-gradient(135deg, #1f6bff, #32b6ff);
-  --brand-gradient: linear-gradient(135deg, #1f6bff, #32b6ff);
-  --shadow-action: 0 12px 24px rgba(31, 107, 255, 0.28);
-  --focus-ring: 0 0 0 4px rgba(31, 107, 255, 0.14);
-
-  --danger: #b42318;
-  --danger-bg: #fff5f5;
-  --danger-bg-hover: #ffe3e3;
-  --danger-border: #ffd1d1;
-
+  /* Same font as the sign-in pages (auth.css --font-sans) */
   --font-main: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
 
   --radius-sm: 6px;
@@ -236,7 +227,7 @@ body {
 
 .empty-illustration span:nth-child(3) {
   inset: 52px 14px 24px 92px;
-  background: #d8f5ff;
+  background: var(--brand-cyan-soft);
 }
 
 .page-card.is-empty .toolbar {

@@ -240,10 +240,10 @@ function toggleTheme() {
 
   if (isDark) {
     document.body.dataset.theme = "light";
-    logo.src = "../images/folio-logo-light.png";
+    logo.src = "images/folio-logo-light.png";
   } else {
     document.body.dataset.theme = "dark";
-    logo.src = "../images/folio-logo-dark.png";
+    logo.src = "images/folio-logo-dark.png";
   }
 }
 
