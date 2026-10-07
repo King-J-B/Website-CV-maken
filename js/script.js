@@ -1,26 +1,57 @@
-const resumes = [
+// Real CVs are saved in this browser, so adding and deleting survive a reload.
+const RESUMES_KEY = "folio:resumes";
+
+const EXAMPLE_RESUME = {
+  id: 1,
+  title: "Stage UX Designer",
+  template: "Modern template",
+  updated: "Vandaag bewerkt",
+  updatedAt: 0,
+  type: "existing",
+};
+
+// The "+" cards are actions, not CVs: they are never saved, searched or sorted,
+// and always stay at the end of the list.
+const actionCards = [
   {
-    id: 1,
-    title: "Stage UX Designer",
-    template: "Modern template",
-    updated: "Vandaag bewerkt",
-    type: "existing",
-  },
-  {
-    id: 2,
+    id: "new",
     title: "Nieuwe cv starten",
     template: "Kies een template",
     updated: "Begin vanaf nul",
     type: "new",
   },
   {
-    id: 3,
+    id: "template",
     title: "Template bekijken",
     template: "Ontdek ontwerpen",
     updated: "Start met voorbeeld",
     type: "template",
   },
 ];
+
+function loadResumes() {
+  try {
+    const stored = JSON.parse(localStorage.getItem(RESUMES_KEY));
+    if (Array.isArray(stored)) {
+      return stored.filter((resume) => resume && resume.type === "existing");
+    }
+  } catch (error) {
+    // No storage or unreadable data: start with the example CV.
+  }
+  return [{ ...EXAMPLE_RESUME }];
+}
+
+function saveResumes() {
+  try {
+    localStorage.setItem(RESUMES_KEY, JSON.stringify(resumes));
+    return true;
+  } catch (error) {
+    showToast(getText("Opslaan is niet gelukt", "Could not save"));
+    return false;
+  }
+}
+
+const resumes = loadResumes();
 
 const resumeView = document.querySelector("#resumeView");
 const emptyView = document.querySelector("#emptyView");
@@ -44,6 +75,12 @@ function pageIsEnglish() {
 
 function getText(dutchText, englishText) {
   return pageIsEnglish() ? englishText : dutchText;
+}
+
+const HTML_ESCAPES = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+
+function escapeHtml(text) {
+  return String(text).replace(/[&<>"']/g, (char) => HTML_ESCAPES[char]);
 }
 
 function showToast(message) {
@@ -123,7 +160,7 @@ function translateResumeText(text) {
 }
 
 function getExistingResumes() {
-  return resumes.filter((resume) => resume.type === "existing");
+  return resumes;
 }
 
 function showResumes() {
@@ -154,23 +191,44 @@ function showEmpty() {
   showEmptyButton.textContent = getText("Terug naar mijn cv's", "Back to my resumes");
 }
 
+function noResultsMessage(searchTerm) {
+  return `
+    <div class="no-results">
+      <p>${getText("Geen cv's gevonden voor", "No resumes found for")} "${escapeHtml(searchTerm)}".</p>
+      <button class="secondary-button" type="button" data-clear-search="true">
+        ${getText("Zoekopdracht wissen", "Clear search")}
+      </button>
+    </div>
+  `;
+}
+
 function renderResumes() {
-  const searchTerm = searchInput.value.trim().toLowerCase();
+  // No CVs at all: that is the real empty state.
+  if (getExistingResumes().length === 0) {
+    resumeView.innerHTML = "";
+    showEmpty();
+    return;
+  }
+
+  const searchTerm = searchInput.value.trim();
   const sortedResumes = [...resumes];
 
   if (sortSelect.value === "name") {
     sortedResumes.sort((a, b) => a.title.localeCompare(b.title));
+  } else {
+    sortedResumes.sort((a, b) => (b.updatedAt || 0) - (a.updatedAt || 0));
   }
 
   const filteredResumes = sortedResumes.filter((resume) => {
-    return `${resume.title} ${resume.template}`.toLowerCase().includes(searchTerm);
+    return `${resume.title} ${resume.template}`.toLowerCase().includes(searchTerm.toLowerCase());
   });
 
-  resumeView.innerHTML = filteredResumes.map(createResumeCard).join("");
-
-  if (filteredResumes.length === 0 || getExistingResumes().length === 0) {
-    showEmpty();
-    return;
+  // While searching, show only matching CVs (or a message); otherwise add the "+" cards.
+  if (searchTerm && filteredResumes.length === 0) {
+    resumeView.innerHTML = noResultsMessage(searchTerm);
+  } else {
+    const cards = searchTerm ? filteredResumes : [...filteredResumes, ...actionCards];
+    resumeView.innerHTML = cards.map(createResumeCard).join("");
   }
 
   showResumes();
@@ -182,8 +240,10 @@ function addResume() {
     title: "Nieuw cv",
     template: "Nog geen template gekozen",
     updated: "Net aangemaakt",
+    updatedAt: Date.now(),
     type: "existing",
   });
+  saveResumes();
 
   searchInput.value = "";
   renderResumes();
@@ -206,6 +266,7 @@ function deleteResume(id) {
 
   if (resumeIndex !== -1) {
     resumes.splice(resumeIndex, 1);
+    saveResumes();
     showToast(getText("Cv verwijderd", "Resume deleted"));
   }
 
@@ -224,15 +285,23 @@ function clearAllResumes() {
     return;
   }
 
-  for (let i = resumes.length - 1; i >= 0; i -= 1) {
-    if (resumes[i].type === "existing") {
-      resumes.splice(i, 1);
-    }
+  resumes.splice(0, resumes.length);
+  saveResumes();
+
+  searchInput.value = "";
+  renderResumes();
+  showToast(getText("Alle cv's verwijderd", "All resumes deleted"));
+}
+
+// "Bekijk voorbeelddata": bring the example CV back.
+function restoreExample() {
+  if (!resumes.some((resume) => resume.id === EXAMPLE_RESUME.id)) {
+    resumes.push({ ...EXAMPLE_RESUME });
+    saveResumes();
   }
 
   searchInput.value = "";
-  showEmpty();
-  showToast(getText("Alle cv's verwijderd", "All resumes deleted"));
+  renderResumes();
 }
 
 function toggleTheme() {
@@ -260,6 +329,14 @@ showEmptyButton.addEventListener("click", () => {
 resumeView.addEventListener("click", (event) => {
   const deleteButton = event.target.closest("[data-delete-id]");
   const startButton = event.target.closest("[data-start-card]");
+  const clearSearchButton = event.target.closest("[data-clear-search]");
+
+  if (clearSearchButton) {
+    searchInput.value = "";
+    renderResumes();
+    searchInput.focus();
+    return;
+  }
 
   if (deleteButton) {
     const id = Number(deleteButton.dataset.deleteId);
@@ -291,7 +368,7 @@ document.addEventListener("click", (event) => {
 
 document.querySelector("#addResumeButton").addEventListener("click", addResume);
 document.querySelector("#emptyCreateButton").addEventListener("click", addResume);
-document.querySelector("#backToResumesButton").addEventListener("click", renderResumes);
+document.querySelector("#backToResumesButton").addEventListener("click", restoreExample);
 document.querySelector("#clearDemoButton").addEventListener("click", clearAllResumes);
 themeButton.addEventListener("click", toggleTheme);
 
