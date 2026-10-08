@@ -28,5 +28,26 @@ window.FOLIO_TEMPLATES = [
     description: "Lots of white space, with section names in a left column.",
     bestFor: "Anyone who wants it simple",
     tags: ["Simple", "Two columns"]
+  },
+  {
+    id: "split",
+    name: "Split",
+    description: "A coloured header, with your skills in a tinted column on the left.",
+    bestFor: "Marketing, media and creative fields",
+    tags: ["Colour", "Two columns"]
+  },
+  {
+    id: "timeline",
+    name: "Timeline",
+    description: "Your studies and jobs on a line with a dot for each step.",
+    bestFor: "Students with internships and side jobs",
+    tags: ["Colour", "Clean"]
+  },
+  {
+    id: "concise",
+    name: "Concise",
+    description: "Smaller text and tight spacing, so a lot fits on one page.",
+    bestFor: "Lots of experience on one page",
+    tags: ["Simple", "Dense"]
   }
 ];
