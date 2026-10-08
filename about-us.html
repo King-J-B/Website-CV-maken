@@ -5,24 +5,26 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CV Builder - About us</title>
 
-    <link rel="stylesheet" href="../colors.css" />
-    <link rel="stylesheet" href="../base.css" />
-    <link rel="stylesheet" href="../layout.css" />
-    <link rel="stylesheet" href="../components.css" />
-    <link rel="stylesheet" href="../pages.css" />
-    <link rel="stylesheet" href="../responsive.css" />
+    <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
+
+    <link rel="stylesheet" href="colors.css?v=20" />
+    <link rel="stylesheet" href="base.css?v=20" />
+    <link rel="stylesheet" href="layout.css?v=20" />
+    <link rel="stylesheet" href="components.css?v=20" />
+    <link rel="stylesheet" href="pages.css?v=20" />
+    <link rel="stylesheet" href="responsive.css?v=20" />
   </head>
 
   <body>
     <div class="app-shell">
       <header class="topbar">
         <a class="brand" href="home.html" aria-label="Folio home">
-          <img class="brand-logo" src="../images/folio-logo-light.png" alt="Folio" />
+          <img class="brand-logo" src="images/folio-logo-light.png" alt="Folio" />
         </a>
 
         <nav class="topnav" aria-label="Hoofdnavigatie">
           <a href="index.html">Mijn cv's</a>
-          <a href="#">Templates</a>
+          <a href="templates.html">Templates</a>
           <a class="active" href="about-us.html">About us</a>
         </nav>
 
@@ -118,10 +120,10 @@
 
         if (isDark) {
           document.body.dataset.theme = "light";
-          logo.src = "../images/folio-logo-light.png";
+          logo.src = "images/folio-logo-light.png";
         } else {
           document.body.dataset.theme = "dark";
-          logo.src = "../images/folio-logo-dark.png";
+          logo.src = "images/folio-logo-dark.png";
         }
       }
 
@@ -145,6 +147,6 @@
       });
     </script>
 
-    <script src="../js/translate.js"></script>
+    <script src="js/translate.js?v=20"></script>
   </body>
 </html>

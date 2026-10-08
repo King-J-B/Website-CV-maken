@@ -48,8 +48,8 @@ const accountButton = document.querySelector("#accountButton");
 const accountDropdown = document.querySelector("#accountDropdown");
 
 function pageIsEnglish() {
-  const languageButton = document.querySelector("#languageButton");
-  return languageButton && languageButton.textContent.trim() === "NL";
+  const englishButton = document.querySelector("#englishButton");
+  return Boolean(englishButton && englishButton.classList.contains("active"));
 }
 
 function getText(dutchText, englishText) {

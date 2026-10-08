@@ -158,6 +158,21 @@ function translatePage(language) {
   const elements = document.querySelectorAll("h1, h2, h3, p, a, button, span, label, option, li");
 
   elements.forEach((element) => {
+    // An element that also holds other elements (like a label wrapping an
+    // input) must keep them: translate only its own pieces of text. Replacing
+    // the whole textContent would delete the input.
+    if (element.children.length > 0) {
+      element.childNodes.forEach((node) => {
+        const ownText = node.nodeType === Node.TEXT_NODE ? node.nodeValue.trim() : "";
+        const translatedOwnText = ownText && translations[language][ownText];
+
+        if (translatedOwnText) {
+          node.nodeValue = node.nodeValue.replace(ownText, translatedOwnText);
+        }
+      });
+      return;
+    }
+
     const text = element.textContent.trim();
     const translatedText = translations[language][text];
 
