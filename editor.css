@@ -1016,15 +1016,11 @@ a {
    editor around it, the red overflow line, placeholders or empty sections.
    -------------------------------------------------------------------------- */
 
-/* Page 1 starts at the top edge (the page has its own padding); a second
-   page, for a CV that is too long, gets a margin at the top too. */
+/* No page margin: the CV page has its own padding. With a margin, Chrome
+   prints its header and footer (page address, page number) in it. */
 @page {
   size: A4;
-  margin: 48px 0;
-}
-
-@page :first {
-  margin-top: 0;
+  margin: 0;
 }
 
 @media print {
@@ -1071,7 +1067,12 @@ a {
   .cv-page.is-overflowing {
     position: relative; /* the Modern colour band is placed inside the page */
     height: auto;
-    padding-bottom: 0; /* the @page margin takes over, so a CV that just fits stays one page */
+    /* Not more than the 64px the one-page check allows, so a CV that just
+       fits stays one page. "clone" repeats the top and bottom padding on
+       every printed page of a CV that is too long. */
+    padding-bottom: 48px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
     overflow: visible;
     box-shadow: none;
     transform: none !important;
