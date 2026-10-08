@@ -365,19 +365,14 @@
   line-height: 1.55;
 }
 
-:where(.cv-page[data-template="minimal"]) .cv-page__head {
-  position: relative;
-  padding-bottom: 28px;
-}
-
-/* The one accent: a short line under the name block */
+/* The one accent: a short line under the name block. Not positioned, so
+   the name stays first in the PDF's text order (CV scanners read it). */
 :where(.cv-page[data-template="minimal"]) .cv-page__head::after {
   content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
+  display: block;
   width: 48px;
   height: 3px;
+  margin-top: 25px;
   background: var(--cv-accent);
 }
 

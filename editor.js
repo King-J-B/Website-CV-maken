@@ -1209,6 +1209,58 @@
   }
 
   /* ------------------------------------------------------------------------
+     Export: Download PDF / Print. Uses the browser's own print window
+     ("Save as PDF"), so the PDF has real, selectable text that CV scanners
+     (ATS) can read. The print styles at the end of editor.css show only the
+     A4 page and hide empty sections and placeholders.
+     ------------------------------------------------------------------------ */
+
+  var exportButton = document.querySelector("[data-export]");
+
+  function exportPdf() {
+    flushSave();
+
+    var name = personalValue("name");
+    if (!name) {
+      folioConfirm({
+        title: "Add your name first",
+        message: "Your name goes at the top of your CV. Fill it in under Personal details, then download your PDF.",
+        confirmLabel: "Go to Personal details",
+        cancelLabel: "Cancel",
+        tone: "primary"
+      }).then(function (go) {
+        if (!go) return;
+        setMode("edit");
+        showSection("personal", { push: true });
+        document.getElementById("personal-name").focus();
+      });
+      return;
+    }
+
+    var message = "Your browser's print window opens next. Choose “Save as PDF” as the destination and click Save. You can also pick a printer there.";
+    if (overflowPx > 0) {
+      message = "Your CV is longer than one A4 page, so the part below the red line may go onto a second page. " + message;
+    }
+
+    folioConfirm({
+      title: "Download your CV as PDF",
+      message: message,
+      confirmLabel: "Continue",
+      cancelLabel: "Cancel",
+      tone: "primary"
+    }).then(function (go) {
+      if (!go) return;
+      // The PDF's file name comes from the page title.
+      var pageTitle = document.title;
+      document.title = name + " - CV";
+      window.print();
+      document.title = pageTitle;
+    });
+  }
+
+  exportButton.addEventListener("click", exportPdf);
+
+  /* ------------------------------------------------------------------------
      Start
      ------------------------------------------------------------------------ */
 

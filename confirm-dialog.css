@@ -85,6 +85,16 @@
   background: var(--danger-solid-hover);
 }
 
+/* tone: "primary" for a safe action (nothing gets deleted) */
+.folio-confirm__button--primary {
+  background: var(--action-primary);
+  color: var(--text-on-action);
+}
+
+.folio-confirm__button--primary:hover {
+  background: var(--action-primary-hover);
+}
+
 @media (max-width: 480px) {
   .folio-confirm__actions {
     flex-direction: column-reverse;
