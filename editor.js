@@ -43,6 +43,31 @@
   // "Choose a template" page). The first one is the default.
   var TEMPLATES = window.FOLIO_TEMPLATES;
 
+  // Design options (editor > Design). "" means the template's own choice.
+  // The looks live in cv-templates.css ("Design options").
+  var DESIGN = {
+    color: [
+      { id: "", name: "Template colour" },
+      { id: "teal", name: "Teal", swatch: "#0f766e" },
+      { id: "green", name: "Green", swatch: "#15803d" },
+      { id: "purple", name: "Purple", swatch: "#6d28d9" },
+      { id: "berry", name: "Berry", swatch: "#be185d" },
+      { id: "orange", name: "Orange", swatch: "#c2410c" },
+      { id: "charcoal", name: "Charcoal", swatch: "#1f2937" }
+    ],
+    font: [
+      { id: "", name: "Template font" },
+      { id: "inter", name: "Inter (modern)" },
+      { id: "georgia", name: "Georgia (serif)" },
+      { id: "arial", name: "Arial (simple)" }
+    ],
+    spacing: [
+      { id: "compact", name: "Compact" },
+      { id: "", name: "Normal" },
+      { id: "roomy", name: "Roomy" }
+    ]
+  };
+
   var LEVELS = ["Beginner", "Intermediate", "Advanced", "Expert"];
   var MAX_SKILLS = 30;
 
@@ -56,7 +81,13 @@
   }
 
   function emptyDraft() {
-    var draft = { version: 1, updatedAt: null, template: TEMPLATES[0].id, sections: {} };
+    var draft = {
+      version: 1,
+      updatedAt: null,
+      template: TEMPLATES[0].id,
+      design: { color: "", font: "", spacing: "" },
+      sections: {}
+    };
     LIST_SECTIONS.forEach(function (id) {
       draft.sections[id] = { items: [] };
     });
@@ -73,6 +104,11 @@
       if (stored && stored.sections) {
         draft.updatedAt = stored.updatedAt || null;
         if (templateById(stored.template)) draft.template = stored.template;
+        // Keep only design choices that still exist.
+        Object.keys(DESIGN).forEach(function (key) {
+          var value = stored.design && stored.design[key];
+          if (DESIGN[key].some(function (option) { return option.id === value; })) draft.design[key] = value;
+        });
         Object.keys(stored.sections).forEach(function (id) {
           draft.sections[id] = stored.sections[id];
         });
@@ -1154,6 +1190,105 @@
     page.dataset.template = template.id;
     templatePicker.value = template.id;
     templateCaption.textContent = "A4 \u00b7 " + template.name + " template";
+    applyDesign(); // the "Template colour" swatch follows the template
+  }
+
+  /* Design options: colour, font and spacing on top of the template. Like
+     the template, they only change how the same CV data looks. */
+  var designToggle = document.querySelector("[data-design-toggle]");
+  var designPanel = document.querySelector("[data-design-panel]");
+  var colorOptions = document.querySelector("[data-color-options]");
+  var fontPicker = document.querySelector("[data-font-picker]");
+  var spacingOptions = document.querySelector("[data-spacing-options]");
+  var templateColorDot = null;
+
+  designToggle.addEventListener("click", function () {
+    var open = designPanel.hidden;
+    designPanel.hidden = !open;
+    designToggle.setAttribute("aria-expanded", String(open));
+  });
+
+  function setDesign(key, value) {
+    draft.design[key] = value;
+    applyDesign();
+    updateFit(); // a font or spacing can take more or less space
+    scheduleSave();
+  }
+
+  DESIGN.color.forEach(function (option) {
+    var label = document.createElement("label");
+    label.className = "ed-swatch";
+    label.title = option.name;
+    var input = document.createElement("input");
+    input.type = "radio";
+    input.name = "design-color";
+    input.value = option.id;
+    input.setAttribute("aria-label", option.name);
+    input.addEventListener("change", function () {
+      setDesign("color", option.id);
+    });
+    var dot = document.createElement("span");
+    dot.className = "ed-swatch__dot";
+    dot.setAttribute("aria-hidden", "true");
+    if (option.swatch) dot.style.background = option.swatch;
+    else templateColorDot = dot;
+    label.appendChild(input);
+    label.appendChild(dot);
+    colorOptions.appendChild(label);
+  });
+
+  DESIGN.font.forEach(function (option) {
+    var item = document.createElement("option");
+    item.value = option.id;
+    item.textContent = option.name;
+    fontPicker.appendChild(item);
+  });
+
+  fontPicker.addEventListener("change", function () {
+    setDesign("font", fontPicker.value);
+  });
+
+  DESIGN.spacing.forEach(function (option) {
+    var label = document.createElement("label");
+    var input = document.createElement("input");
+    input.type = "radio";
+    input.name = "design-spacing";
+    input.value = option.id;
+    input.addEventListener("change", function () {
+      setDesign("spacing", option.id);
+    });
+    label.appendChild(input);
+    label.appendChild(tag(option.name, ""));
+    spacingOptions.appendChild(label);
+  });
+
+  document.querySelector("[data-design-reset]").addEventListener("click", function () {
+    draft.design = { color: "", font: "", spacing: "" };
+    applyDesign();
+    updateFit();
+    scheduleSave();
+  });
+
+  // Put the design on the page and show it in the controls.
+  function applyDesign() {
+    Object.keys(DESIGN).forEach(function (key) {
+      var value = draft.design[key];
+      if (value) page.dataset[key] = value;
+      else delete page.dataset[key];
+    });
+    colorOptions.querySelectorAll("input").forEach(function (input) {
+      input.checked = input.value === draft.design.color;
+    });
+    spacingOptions.querySelectorAll("input").forEach(function (input) {
+      input.checked = input.value === draft.design.spacing;
+    });
+    fontPicker.value = draft.design.font;
+
+    // The "Template colour" swatch shows the current template's own accent.
+    var chosen = page.dataset.color;
+    delete page.dataset.color;
+    templateColorDot.style.background = getComputedStyle(page).getPropertyValue("--cv-accent").trim();
+    if (chosen) page.dataset.color = chosen;
   }
 
   var fitWarnings = document.querySelectorAll("[data-fit-warning]");

@@ -51,7 +51,7 @@
     <main class="ed-form" id="editor-main" tabindex="-1">
       <div class="ed-fit-warning ed-fit-warning--form" data-fit-warning hidden>
           <p class="ed-fit-warning__title">Your CV doesn’t fit on one A4 page</p>
-          <p>Everything below the red line falls off the page. Shorten a description, remove an older entry or list fewer skills.</p>
+          <p>Everything below the red line falls off the page. Shorten a description, remove an older entry or list fewer skills. Compact spacing under Design also saves room.</p>
         </div>
 
       <!-- Skills -->
@@ -204,12 +204,33 @@
       <div class="ed-template-bar">
         <label class="ed-label" for="template-picker">Template</label>
         <select class="ed-select ed-select--compact" id="template-picker" data-template-picker></select>
+        <button class="ed-design-toggle" type="button" aria-expanded="false" aria-controls="design-panel" data-design-toggle>Design</button>
         <a class="ed-link-button" href="templates.html" data-browse-templates>Browse templates</a>
+      </div>
+
+      <!-- Design options: colour, font and spacing for this CV -->
+      <div class="ed-design" id="design-panel" data-design-panel hidden>
+        <fieldset class="ed-design__group">
+          <legend class="ed-label">Colour</legend>
+          <div class="ed-swatches" data-color-options></div>
+        </fieldset>
+
+        <div class="ed-design__group">
+          <label class="ed-label" for="design-font">Font</label>
+          <select class="ed-select ed-select--compact" id="design-font" data-font-picker></select>
+        </div>
+
+        <fieldset class="ed-design__group">
+          <legend class="ed-label">Spacing</legend>
+          <div class="ed-segment" data-spacing-options></div>
+        </fieldset>
+
+        <button class="ed-link ed-design__reset" type="button" data-design-reset>Reset to the template's design</button>
       </div>
 
       <div class="ed-fit-warning" data-fit-warning role="status" hidden>
         <p class="ed-fit-warning__title">Your CV doesn’t fit on one A4 page</p>
-        <p>Everything below the red line falls off the page. Shorten a description, remove an older entry or list fewer skills.</p>
+        <p>Everything below the red line falls off the page. Shorten a description, remove an older entry or list fewer skills. Compact spacing under Design also saves room.</p>
       </div>
 
       <div class="ed-preview__stage" data-preview-stage>
