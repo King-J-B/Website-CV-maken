@@ -5,9 +5,14 @@
    page; a template only changes the layout and the look.
 
    How to add a template:
-   1. Add it to TEMPLATES in editor.js (id, name, caption).
+   1. Add it to window.FOLIO_TEMPLATES in js/templates-data.js
+      (id, name, description, bestFor, tags).
    2. Add a block below: `:where(.cv-page[data-template="<id>"])`.
       Set the --cv-* variables, then style only what differs from the base.
+      Use --cv-accent, --cv-chip, --cv-font and --cv-space so the Design
+      options (colour, font, spacing) work. Don't use position: relative
+      or absolute on text: positioned text comes last in the PDF.
+   3. Raise the ?v= number in editor.html and templates.html.
 
    Template selectors for elements inside the page use :where() so they are
    no stronger than the base rules. The template's own page-level block
@@ -464,6 +469,370 @@
   margin-left: 6px;
   color: var(--cv-muted);
   font-size: 12.5px;
+}
+
+/* --------------------------------------------------------------------------
+   Template: Split
+   Coloured header across the top, then two columns: skills in a tinted
+   column on the left, the rest on the right. The HTML order stays the same
+   (skills last), so CV scanners read it in the normal order.
+   -------------------------------------------------------------------------- */
+
+.cv-page[data-template="split"] {
+  display: grid;
+  grid-template-columns: 196px minmax(0, 1fr);
+  align-content: start;
+  column-gap: 52px;
+  row-gap: calc(28px * var(--cv-space));
+  /* The header pulls itself up over the top padding; the padding is there
+     so page 2 of a too-long CV (in the PDF) gets space at the top too. */
+  padding: 48px 60px 64px 36px;
+  /* Tinted left column: 36px padding + 196px column + half the gap */
+  background: linear-gradient(90deg, var(--cv-chip) 0 258px, var(--bg-surface) 258px);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+:where(.cv-page[data-template="split"]) .cv-page__head {
+  --cv-placeholder: rgba(255, 255, 255, 0.6); /* "Your name" on the colour */
+  grid-column: 1 / -1;
+  margin: -48px -60px 0 -36px;
+  padding: 52px 60px calc(32px * var(--cv-space)) 36px;
+  background: var(--cv-accent);
+  color: #fff;
+}
+
+:where(.cv-page[data-template="split"]) .cv-page__name {
+  color: #fff;
+  font-size: 38px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+:where(.cv-page[data-template="split"]) .cv-page__role {
+  margin-top: 4px;
+  font-size: 17px;
+}
+
+:where(.cv-page[data-template="split"]) .cv-page__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 14px;
+  font-size: 13.5px;
+}
+
+:where(.cv-page[data-template="split"]) [data-cv-section="about"] { grid-column: 2; grid-row: 2; }
+:where(.cv-page[data-template="split"]) [data-cv-section="education"] { grid-column: 2; grid-row: 3; }
+:where(.cv-page[data-template="split"]) [data-cv-section="experience"] { grid-column: 2; grid-row: 4; }
+:where(.cv-page[data-template="split"]) [data-cv-section="skills"] { grid-column: 1; grid-row: 2 / span 3; }
+
+:where(.cv-page[data-template="split"]) .cv-page__heading {
+  margin-bottom: 12px;
+  color: var(--cv-accent);
+  font-size: 12px;
+  font-weight: 700;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+:where(.cv-page[data-template="split"]) .cv-page__about {
+  line-height: 1.6;
+}
+
+:where(.cv-page[data-template="split"]) .cv-page__entries {
+  gap: calc(18px * var(--cv-space));
+}
+
+:where(.cv-page[data-template="split"]) .cv-entry__title {
+  font-size: 15.5px;
+  font-weight: 600;
+}
+
+:where(.cv-page[data-template="split"]) .cv-entry__dates {
+  color: var(--cv-muted);
+  font-size: 12.5px;
+}
+
+:where(.cv-page[data-template="split"]) .cv-entry__sub {
+  margin-top: 2px;
+  color: var(--cv-accent);
+  font-weight: 500;
+}
+
+:where(.cv-page[data-template="split"]) .cv-entry__desc {
+  margin-top: 6px;
+}
+
+:where(.cv-page[data-template="split"]) .cv-entry__bullets {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+/* Skills: one per line in the left column, level underneath */
+:where(.cv-page[data-template="split"]) .cv-page__skills {
+  display: grid;
+  gap: 10px;
+}
+
+:where(.cv-page[data-template="split"]) .cv-page__skill {
+  color: var(--cv-ink);
+  font-weight: 500;
+}
+
+:where(.cv-page[data-template="split"]) .cv-page__level {
+  display: block;
+  color: var(--cv-muted);
+  font-size: 12.5px;
+  font-weight: 400;
+}
+
+/* --------------------------------------------------------------------------
+   Template: Timeline
+   Education and experience on a vertical line with a dot per entry. The
+   line and dot are backgrounds, not positioned elements, so the PDF text
+   stays in reading order.
+   -------------------------------------------------------------------------- */
+
+.cv-page[data-template="timeline"] {
+  padding: 64px 72px;
+  font-size: 14.5px;
+  line-height: 1.5;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-page__head {
+  padding-bottom: calc(8px * var(--cv-space));
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-page__name {
+  font-size: 36px;
+  font-weight: 700;
+  line-height: 1.15;
+  letter-spacing: -0.02em;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-page__role {
+  margin-top: 4px;
+  color: var(--cv-accent);
+  font-size: 17px;
+  font-weight: 500;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-page__contact {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 4px 18px;
+  margin-top: 12px;
+  color: var(--cv-muted);
+  font-size: 13.5px;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-page__section {
+  margin-top: calc(28px * var(--cv-space));
+}
+
+/* Section title with a short accent bar in front */
+:where(.cv-page[data-template="timeline"]) .cv-page__heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 14px;
+  color: var(--cv-ink);
+  font-size: 15px;
+  font-weight: 700;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-page__heading::before {
+  content: "";
+  flex: none;
+  width: 18px;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--cv-accent);
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-page__about {
+  line-height: 1.6;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-page__entries {
+  gap: 0;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-entry {
+  padding: 0 0 calc(18px * var(--cv-space)) 26px;
+  background-image:
+    radial-gradient(circle at 5px 10px, var(--cv-accent) 0 4.5px, transparent 5px),
+    linear-gradient(var(--cv-line), var(--cv-line));
+  background-position: 0 0, 4px 0;
+  background-size: 100% 100%, 2px 100%;
+  background-repeat: no-repeat;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-entry:last-child {
+  padding-bottom: 0;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-entry__title {
+  font-size: 15.5px;
+  font-weight: 600;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-entry__dates {
+  color: var(--cv-accent);
+  font-size: 12.5px;
+  font-weight: 600;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-entry__sub {
+  margin-top: 1px;
+  color: var(--cv-muted);
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-entry__desc {
+  margin-top: 6px;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-entry__bullets {
+  margin: 6px 0 0;
+  padding-left: 18px;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-page__skills {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 6px 8px;
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-page__skill {
+  padding: 4px 10px;
+  border: 1px solid var(--cv-line);
+  border-radius: 6px;
+  color: var(--cv-ink);
+}
+
+:where(.cv-page[data-template="timeline"]) .cv-page__level {
+  margin-left: 6px;
+  color: var(--cv-muted);
+  font-size: 12.5px;
+}
+
+/* --------------------------------------------------------------------------
+   Template: Concise
+   Smaller type and tight spacing: fits the most on one page. Contact
+   details sit to the right of the name; skills in three columns.
+   -------------------------------------------------------------------------- */
+
+.cv-page[data-template="concise"] {
+  padding: 48px 56px;
+  font-size: 13px;
+  line-height: 1.45;
+}
+
+:where(.cv-page[data-template="concise"]) .cv-page__head {
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) auto;
+  align-items: end;
+  column-gap: 24px;
+  padding-bottom: calc(14px * var(--cv-space));
+  border-bottom: 2px solid var(--cv-ink);
+}
+
+/* Name and job title stay together, however tall the contact column is */
+:where(.cv-page[data-template="concise"]) .cv-page__name {
+  align-self: end;
+  grid-column: 1;
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1.15;
+}
+
+:where(.cv-page[data-template="concise"]) .cv-page__role {
+  align-self: start;
+  grid-column: 1;
+  margin-top: 2px;
+  color: var(--cv-accent);
+  font-size: 15px;
+  font-weight: 500;
+}
+
+:where(.cv-page[data-template="concise"]) .cv-page__contact {
+  display: grid;
+  grid-column: 2;
+  grid-row: 1 / span 2;
+  justify-items: end;
+  gap: 1px;
+  color: var(--cv-muted);
+  font-size: 12px;
+  text-align: right;
+}
+
+:where(.cv-page[data-template="concise"]) .cv-page__section {
+  margin-top: calc(16px * var(--cv-space));
+}
+
+/* Section title followed by a thin line to the right edge */
+:where(.cv-page[data-template="concise"]) .cv-page__heading {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  margin-bottom: 8px;
+  color: var(--cv-accent);
+  font-size: 11.5px;
+  font-weight: 700;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+}
+
+:where(.cv-page[data-template="concise"]) .cv-page__heading::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  background: var(--cv-line);
+}
+
+:where(.cv-page[data-template="concise"]) .cv-page__entries {
+  gap: calc(10px * var(--cv-space));
+}
+
+:where(.cv-page[data-template="concise"]) .cv-entry__title {
+  font-size: 13.5px;
+  font-weight: 600;
+}
+
+:where(.cv-page[data-template="concise"]) .cv-entry__dates {
+  color: var(--cv-muted);
+  font-size: 12px;
+}
+
+:where(.cv-page[data-template="concise"]) .cv-entry__sub {
+  color: var(--cv-muted);
+}
+
+:where(.cv-page[data-template="concise"]) .cv-entry__desc {
+  margin-top: 3px;
+}
+
+:where(.cv-page[data-template="concise"]) .cv-entry__bullets {
+  margin: 3px 0 0;
+  padding-left: 16px;
+}
+
+:where(.cv-page[data-template="concise"]) .cv-page__skills {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 3px 16px;
+}
+
+:where(.cv-page[data-template="concise"]) .cv-page__skill {
+  color: var(--cv-ink);
+}
+
+:where(.cv-page[data-template="concise"]) .cv-page__level {
+  margin-left: 4px;
+  color: var(--cv-muted);
+  font-size: 11.5px;
 }
 
 /* --------------------------------------------------------------------------

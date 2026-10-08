@@ -1226,6 +1226,9 @@ a {
        fits stays one page. "clone" repeats the top and bottom padding on
        every printed page of a CV that is too long. */
     padding-bottom: 48px;
+    /* At least a full page, so backgrounds (Split's tinted column) reach the
+       bottom. 2px short of A4, so it never spills onto an empty page 2. */
+    min-height: calc(297mm - 2px);
     -webkit-box-decoration-break: clone;
     box-decoration-break: clone;
     overflow: visible;
