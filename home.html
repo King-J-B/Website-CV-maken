@@ -4,26 +4,39 @@
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>Folio - Home</title>
+    <meta name="description" content="Folio is een gratis cv-maker voor studenten en starters. Kies een template, vul je gegevens in en download een nette PDF." />
+    <link rel="icon" type="image/png" href="images/folio-mark.png" />
 
+    <!-- Scroll effects only hide content when JavaScript runs -->
+    <script>document.documentElement.classList.add("js");</script>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
-
-    <link rel="stylesheet" href="colors.css?v=20" />
-    <link rel="stylesheet" href="base.css?v=20" />
-    <link rel="stylesheet" href="layout.css?v=20" />
-    <link rel="stylesheet" href="components.css?v=20" />
-    <link rel="stylesheet" href="pages.css?v=20" />
-    <link rel="stylesheet" href="responsive.css?v=20" />
+    <link rel="stylesheet" href="colors.css?v=21" />
+    <link rel="stylesheet" href="base.css?v=21" />
+    <link rel="stylesheet" href="layout.css?v=21" />
+    <link rel="stylesheet" href="components.css?v=21" />
+    <link rel="stylesheet" href="pages.css?v=21" />
+    <link rel="stylesheet" href="responsive.css?v=21" />
+    <link rel="stylesheet" href="cv-templates.css?v=21" />
+    <link rel="stylesheet" href="home.css?v=21" />
   </head>
 
-  <body>
+  <body class="hp">
+    <div class="hp-progress" aria-hidden="true"><span data-progress></span></div>
+
     <div class="app-shell">
-      <header class="topbar">
+      <header class="topbar" data-topbar>
         <a class="brand" href="home.html" aria-label="Folio home">
           <img class="brand-logo" src="images/folio-logo-light.png" alt="Folio" />
         </a>
 
         <nav class="topnav" aria-label="Hoofdnavigatie">
-          <a class="active" href="home.html">Home</a>
+          <a class="active" href="home.html" aria-current="page">Home</a>
+          <a href="index.html">Mijn cv's</a>
+          <a href="templates.html">Templates</a>
           <a href="about-us.html">About us</a>
         </nav>
 
@@ -57,186 +70,246 @@
       </header>
 
       <main>
-        <section class="home-hero home-hero-about">
-          <div class="home-hero-content">
-            <p class="eyebrow">Folio CV Builder</p>
+        <!-- Hero: the promise, plus a real CV you can try right away -->
+        <section class="hp-hero" aria-labelledby="hp-title">
+          <div class="hp-hero__glow" aria-hidden="true"></div>
 
-            <h1>
-              Put Your <span class="highlight-word">Potential</span> on Paper.
+          <div class="hp-hero__text">
+            <p class="hp-pill" data-reveal><span class="hp-pill__dot" aria-hidden="true"></span>Gratis cv-maker voor studenten en starters</p>
+
+            <h1 class="hp-title" id="hp-title" data-reveal>
+              Put Your <span class="hp-title__accent">Potential</span> on Paper.
             </h1>
 
-            <p>
-              Maak eenvoudig een professioneel cv. Vul je gegevens in, kies een
-              template en bekijk direct hoe jouw cv eruit komt te zien.
-            </p>
+            <p class="hp-lead" data-reveal>Kies een template, vul je gegevens in en zie je cv meteen ontstaan. Gratis, zonder account, en als nette PDF met echte tekst.</p>
 
-            <div class="heading-actions">
-              <a class="primary-button link-button" href="index.html">CV maken</a>
-              <a class="secondary-button link-button" href="#templates">Bekijk templates</a>
+            <div class="hp-actions" data-reveal>
+              <a class="hp-btn hp-btn--primary" href="templates.html">Maak je cv<span class="hp-btn__arrow" aria-hidden="true">→</span></a>
+              <a class="hp-btn hp-btn--ghost" href="#templates">Bekijk templates</a>
             </div>
+
+            <ul class="hp-checks" data-reveal>
+              <li>Geen account nodig</li>
+              <li>Gratis PDF-download</li>
+              <li>Leesbaar voor cv-scanners</li>
+            </ul>
           </div>
 
-          <aside class="home-about-side">
-            <p class="eyebrow">Over ons</p>
-            <h2>Gemaakt door Daan & Jesse.</h2>
-            <p>
-              Folio is gemaakt door Daan van den Hombergh en Jesse Breuers, twee
-              vierdejaars Software Development studenten van het Vista college in
-              Maastricht. Tijdens onze stage in Spanje bouwen wij deze cv-builder
-              als opdracht.
-            </p>
-            <a class="secondary-button link-button" href="about-us.html">Lees meer</a>
-          </aside>
+          <div class="hp-hero__demo" data-reveal>
+            <div class="hp-stage" data-tilt>
+              <div class="hp-cv" data-hero-cv>
+                <article class="cv-page" data-template="modern" aria-hidden="true" data-hero-page></article>
+              </div>
+
+              <span class="hp-float hp-float--saved" aria-hidden="true">Automatisch opgeslagen</span>
+              <span class="hp-float hp-float--fit" aria-hidden="true">Past op 1 A4</span>
+              <span class="hp-float hp-float--pdf" aria-hidden="true">PDF klaar</span>
+            </div>
+
+            <form class="hp-try" data-try novalidate>
+              <p class="hp-try__title">Probeer het hier</p>
+
+              <label class="hp-try__label" for="hp-name">Jouw naam</label>
+              <input class="hp-try__input" id="hp-name" type="text" maxlength="40" autocomplete="name" placeholder="Bijvoorbeeld: Sam de Vries" data-try-name />
+
+              <p class="hp-try__label" id="hp-color-label">Kleur</p>
+              <div class="hp-swatches" role="radiogroup" aria-labelledby="hp-color-label" data-try-colors></div>
+
+              <p class="hp-try__label" id="hp-template-label">Template</p>
+              <div class="hp-chips" role="radiogroup" aria-labelledby="hp-template-label" data-try-templates></div>
+
+              <button class="hp-btn hp-btn--primary hp-btn--block" type="submit">Begin met dit ontwerp<span class="hp-btn__arrow" aria-hidden="true">→</span></button>
+              <p class="hp-try__note">Je keuzes gaan mee naar de editor.</p>
+            </form>
+          </div>
         </section>
 
-        <section class="home-template-section" id="templates">
-          <div class="section-title template-section-heading">
+        <!-- Real numbers, no made-up user counts -->
+        <section class="hp-stats" aria-label="Folio in cijfers">
+          <div class="hp-stat" data-reveal><span class="hp-stat__num" data-count="6">6</span><span class="hp-stat__label">templates</span></div>
+          <div class="hp-stat" data-reveal><span class="hp-stat__num" data-count="7">7</span><span class="hp-stat__label">kleuren</span></div>
+          <div class="hp-stat" data-reveal><span class="hp-stat__num" data-count="1">1</span><span class="hp-stat__label">klik naar je PDF</span></div>
+          <div class="hp-stat" data-reveal><span class="hp-stat__num" data-count="0">0</span><span class="hp-stat__label">accounts nodig</span></div>
+        </section>
+
+        <!-- How it works: four steps that light up while you scroll -->
+        <section class="hp-section hp-how" id="how" aria-labelledby="hp-how-title">
+          <div class="hp-section__head" data-reveal>
+            <p class="hp-eyebrow">Zo werkt het</p>
+            <h2 class="hp-h2" id="hp-how-title">Van leeg naar sollicitatieklaar in vier stappen.</h2>
+          </div>
+
+          <ol class="hp-steps" data-steps>
+            <li class="hp-step" data-step data-reveal>
+              <span class="hp-step__num" aria-hidden="true">01</span>
+              <div>
+                <h3 class="hp-step__title">Kies een template</h3>
+                <p>Zes ontwerpen, van rustig en klassiek tot kleurrijk. Wisselen kan altijd.</p>
+              </div>
+            </li>
+            <li class="hp-step" data-step data-reveal>
+              <span class="hp-step__num" aria-hidden="true">02</span>
+              <div>
+                <h3 class="hp-step__title">Vul je gegevens in</h3>
+                <p>Persoonlijke gegevens, over mij, opleiding, ervaring en vaardigheden. Stap voor stap, met tips.</p>
+              </div>
+            </li>
+            <li class="hp-step" data-step data-reveal>
+              <span class="hp-step__num" aria-hidden="true">03</span>
+              <div>
+                <h3 class="hp-step__title">Maak het van jou</h3>
+                <p>Kies een kleur, lettertype en ruimte. Je ziet elke wijziging meteen op je A4.</p>
+              </div>
+            </li>
+            <li class="hp-step" data-step data-reveal>
+              <span class="hp-step__num" aria-hidden="true">04</span>
+              <div>
+                <h3 class="hp-step__title">Download je PDF</h3>
+                <p>Eén klik. Een nette PDF met echte tekst die recruiters en cv-scanners kunnen lezen.</p>
+              </div>
+            </li>
+          </ol>
+        </section>
+
+        <!-- Templates: the real ones, as a sideways carousel -->
+        <section class="hp-section" id="templates" aria-labelledby="hp-templates-title">
+          <div class="hp-section__head hp-section__head--row" data-reveal>
             <div>
-              <p class="eyebrow">Templates</p>
-              <h2>Kies straks uit 20+ cv templates.</h2>
-              <p>
-                Hieronder staan voorbeeldtemplates. Later kunnen jullie hier makkelijk
-                20 tot 25 verschillende ontwerpen van maken.
-              </p>
+              <p class="hp-eyebrow">Templates</p>
+              <h2 class="hp-h2" id="hp-templates-title">Zes ontwerpen. Allemaal gratis.</h2>
+              <p class="hp-sub">Elk template gebruikt dezelfde gegevens, dus je wisselt zonder iets opnieuw te typen.</p>
             </div>
-
-            <a class="primary-button link-button" href="index.html">Start met je cv</a>
+            <div class="hp-carousel-nav">
+              <button class="hp-round" type="button" data-carousel-prev aria-label="Vorige templates">←</button>
+              <button class="hp-round" type="button" data-carousel-next aria-label="Volgende templates">→</button>
+            </div>
           </div>
 
-          <div class="template-gallery">
-            <article class="template-card large-template-card">
-              <div class="template-mockup template-blue"></div>
-              <h3>Modern</h3>
-              <p>Strak en overzichtelijk.</p>
-            </article>
+          <ul class="hp-carousel" data-carousel tabindex="0" aria-label="Templates"></ul>
 
-            <article class="template-card large-template-card">
-              <div class="template-mockup template-cyan"></div>
-              <h3>Professional</h3>
-              <p>Zakelijk en rustig.</p>
-            </article>
+          <p class="hp-center" data-reveal><a class="hp-link" href="templates.html">Alle templates bekijken</a></p>
+        </section>
 
-            <article class="template-card large-template-card">
-              <div class="template-mockup template-dark"></div>
-              <h3>Clean</h3>
-              <p>Minimaal en duidelijk.</p>
-            </article>
+        <!-- Features -->
+        <section class="hp-section" aria-labelledby="hp-features-title">
+          <div class="hp-section__head" data-reveal>
+            <p class="hp-eyebrow">Waarom Folio</p>
+            <h2 class="hp-h2" id="hp-features-title">Alles wat je nodig hebt, niets wat je afleidt.</h2>
+          </div>
 
-            <article class="template-card large-template-card">
-              <div class="template-mockup template-soft"></div>
-              <h3>Student</h3>
-              <p>Perfect voor starters.</p>
+          <div class="hp-bento">
+            <article class="hp-card hp-card--wide" data-reveal>
+              <div class="hp-card__icon" aria-hidden="true">◧</div>
+              <h3 class="hp-card__title">Live voorbeeld</h3>
+              <p>Typ links, zie rechts direct je A4-pagina veranderen.</p>
+              <div class="hp-typing" aria-hidden="true"><span class="hp-typing__line"></span><span class="hp-typing__line"></span><span class="hp-typing__line hp-typing__line--short"></span></div>
             </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-blue"></div>
-              <h3>Classic</h3>
+            <article class="hp-card" data-reveal>
+              <div class="hp-card__icon" aria-hidden="true">◐</div>
+              <h3 class="hp-card__title">Jouw kleur, jouw letter</h3>
+              <p>Zeven kleuren, vier lettertypes en drie soorten ruimte. Op elk template.</p>
+              <div class="hp-dots" aria-hidden="true"><i></i><i></i><i></i><i></i><i></i><i></i><i></i></div>
             </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-cyan"></div>
-              <h3>Creative</h3>
+            <article class="hp-card" data-reveal>
+              <div class="hp-card__icon" aria-hidden="true">▤</div>
+              <h3 class="hp-card__title">Eén-pagina-check</h3>
+              <p>Wordt je cv te lang? Een rode lijn laat zien wat eraf valt, met tips om te schrappen.</p>
             </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-dark"></div>
-              <h3>Minimal</h3>
+            <article class="hp-card" data-reveal>
+              <div class="hp-card__icon" aria-hidden="true">⤓</div>
+              <h3 class="hp-card__title">PDF met echte tekst</h3>
+              <p>Geen plaatje: cv-scanners (ATS) en recruiters kunnen alles lezen en kopiëren.</p>
             </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-soft"></div>
-              <h3>Business</h3>
+            <article class="hp-card" data-reveal>
+              <div class="hp-card__icon" aria-hidden="true">✓</div>
+              <h3 class="hp-card__title">Geen account nodig</h3>
+              <p>Begin meteen. Je cv wordt in deze browser bewaard.</p>
             </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-blue"></div>
-              <h3>Starter</h3>
-            </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-cyan"></div>
-              <h3>Internship</h3>
-            </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-dark"></div>
-              <h3>Compact</h3>
-            </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-soft"></div>
-              <h3>Elegant</h3>
-            </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-blue"></div>
-              <h3>Tech</h3>
-            </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-cyan"></div>
-              <h3>Portfolio</h3>
-            </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-dark"></div>
-              <h3>Simple</h3>
-            </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-soft"></div>
-              <h3>Fresh</h3>
-            </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-blue"></div>
-              <h3>Formal</h3>
-            </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-cyan"></div>
-              <h3>Bold</h3>
-            </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-dark"></div>
-              <h3>Sharp</h3>
-            </article>
-
-            <article class="template-card">
-              <div class="template-mockup template-soft"></div>
-              <h3>Basic</h3>
+            <article class="hp-card hp-card--full" data-reveal>
+              <div class="hp-card__icon" aria-hidden="true">❐</div>
+              <h3 class="hp-card__title">Meerdere cv's</h3>
+              <p>Een cv per vacature? Maak er zoveel als je wilt in Mijn cv's.</p>
             </article>
           </div>
         </section>
 
-        <section class="home-final-cta">
+        <!-- About us (Jesse's text) -->
+        <section class="hp-section hp-about" aria-labelledby="hp-about-title" data-reveal>
           <div>
-            <p class="eyebrow">Klaar om te starten?</p>
-            <h2>Maak vandaag nog je eerste cv met Folio.</h2>
+            <p class="hp-eyebrow">Over ons</p>
+            <h2 class="hp-h2" id="hp-about-title">Gemaakt door twee Software Development studenten.</h2>
+          </div>
+          <div>
+            <p>Folio is gemaakt door Daan van den Hombergh en Jesse Breuers, twee vierdejaars Software Development studenten van het Vista college in Maastricht. Tijdens onze stage in Spanje bouwen wij deze cv-builder als opdracht.</p>
+            <a class="hp-link" href="about-us.html">Lees meer</a>
+          </div>
+        </section>
+
+        <!-- FAQ -->
+        <section class="hp-section hp-faq" aria-labelledby="hp-faq-title">
+          <div class="hp-section__head" data-reveal>
+            <p class="hp-eyebrow">Veelgestelde vragen</p>
+            <h2 class="hp-h2" id="hp-faq-title">Goed om te weten</h2>
           </div>
 
-          <a class="primary-button link-button" href="index.html">Start met je cv</a>
+          <div class="hp-faq__list">
+            <details class="hp-faq__item" data-reveal>
+              <summary><span>Is Folio echt gratis?</span></summary>
+              <p>Ja. Je maakt, bewerkt en downloadt je cv's zonder te betalen.</p>
+            </details>
+            <details class="hp-faq__item" data-reveal>
+              <summary><span>Heb ik een account nodig?</span></summary>
+              <p>Nee. Je kunt meteen beginnen. Een account om online op te slaan komt later.</p>
+            </details>
+            <details class="hp-faq__item" data-reveal>
+              <summary><span>Waar wordt mijn cv bewaard?</span></summary>
+              <p>In je eigen browser, op dit apparaat. Wis je je browsergegevens, dan is je cv ook weg. Download daarom altijd je PDF.</p>
+            </details>
+            <details class="hp-faq__item" data-reveal>
+              <summary><span>Kunnen cv-scanners mijn cv lezen?</span></summary>
+              <p>Ja. De PDF bevat echte tekst in een logische volgorde: eerst je naam, dan de rest.</p>
+            </details>
+            <details class="hp-faq__item" data-reveal>
+              <summary><span>Moet mijn cv op één pagina passen?</span></summary>
+              <p>Voor studenten en starters is één pagina het beste. Folio waarschuwt je als het te lang wordt.</p>
+            </details>
+          </div>
+        </section>
+
+        <!-- Final call to action -->
+        <section class="hp-cta" data-reveal>
+          <p class="hp-eyebrow hp-eyebrow--light">Klaar om te starten?</p>
+          <h2 class="hp-h2">Maak vandaag nog je eerste cv met Folio.</h2>
+          <a class="hp-btn hp-btn--light" href="templates.html">Maak je cv<span class="hp-btn__arrow" aria-hidden="true">→</span></a>
         </section>
       </main>
+
+      <footer class="hp-footer">
+        <img class="hp-footer__logo brand-logo-footer" src="images/folio-logo-light.png" alt="Folio" />
+        <nav class="hp-footer__nav" aria-label="Footer">
+          <a href="index.html">Mijn cv's</a>
+          <a href="templates.html">Templates</a>
+          <a href="about-us.html">About us</a>
+          <a href="sign-in.html">Inloggen</a>
+        </nav>
+        <p class="hp-footer__note">Een schoolproject van Daan &amp; Jesse, Vista college.</p>
+      </footer>
     </div>
 
     <script>
       const themeButton = document.querySelector("#themeButton");
       const logo = document.querySelector(".brand-logo");
+      const footerLogo = document.querySelector(".brand-logo-footer");
       const accountButton = document.querySelector("#accountButton");
       const accountDropdown = document.querySelector("#accountDropdown");
 
       function toggleTheme() {
         const isDark = document.body.dataset.theme === "dark";
+        const src = isDark ? "images/folio-logo-light.png" : "images/folio-logo-dark.png";
 
-        if (isDark) {
-          document.body.dataset.theme = "light";
-          logo.src = "images/folio-logo-light.png";
-        } else {
-          document.body.dataset.theme = "dark";
-          logo.src = "images/folio-logo-dark.png";
-        }
+        document.body.dataset.theme = isDark ? "light" : "dark";
+        logo.src = src;
+        footerLogo.src = src;
       }
 
       themeButton.addEventListener("click", toggleTheme);
@@ -259,6 +332,9 @@
       });
     </script>
 
-    <script src="js/translate.js?v=20"></script>
+    <script src="js/templates-data.js?v=21"></script>
+    <script src="js/cv-store.js?v=21"></script>
+    <script src="js/home.js?v=21"></script>
+    <script src="js/translate.js?v=21"></script>
   </body>
 </html>

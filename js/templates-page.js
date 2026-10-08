@@ -26,46 +26,8 @@
   var grid = document.querySelector("[data-template-grid]");
   var errorBox = document.querySelector("[data-error]");
 
-  /* ------------------------------------------------------------------------
-     Example CV. Uses the same classes as the editor preview (editor.html),
-     so each template looks exactly like it will in the editor.
-     ------------------------------------------------------------------------ */
-
-  var SAMPLE_CV =
-    '<header class="cv-page__head">' +
-    '  <p class="cv-page__name">Alex Morgan</p>' +
-    '  <p class="cv-page__role">UX design student</p>' +
-    '  <ul class="cv-page__contact"><li>alex@example.com</li><li>+31 6 12345678</li><li>Breda</li><li>linkedin.com/in/alex-morgan</li></ul>' +
-    "</header>" +
-    '<section class="cv-page__section" data-cv-section="about">' +
-    '  <h2 class="cv-page__heading">About me</h2>' +
-    '  <p class="cv-page__about">Creative UX design student who loves turning messy problems into simple screens. Looking for a graduation internship in a product team.</p>' +
-    "</section>" +
-    '<section class="cv-page__section" data-cv-section="education">' +
-    '  <h2 class="cv-page__heading">Education</h2>' +
-    '  <div class="cv-page__entries">' +
-    '    <div class="cv-entry"><div class="cv-entry__top"><p class="cv-entry__title">Bachelor Communication and Multimedia Design</p><p class="cv-entry__dates">Sep 2021 – Present</p></div><p class="cv-entry__sub">Avans University, Breda</p></div>' +
-    '    <div class="cv-entry"><div class="cv-entry__top"><p class="cv-entry__title">MBO Software Development</p><p class="cv-entry__dates">Sep 2017 – Jul 2021</p></div><p class="cv-entry__sub">Curio, Breda</p></div>' +
-    "  </div>" +
-    "</section>" +
-    '<section class="cv-page__section" data-cv-section="experience">' +
-    '  <h2 class="cv-page__heading">Experience</h2>' +
-    '  <div class="cv-page__entries">' +
-    '    <div class="cv-entry"><div class="cv-entry__top"><p class="cv-entry__title">Junior UX designer</p><p class="cv-entry__dates">Feb 2024 – Present</p></div><p class="cv-entry__sub">Studio Kite, Eindhoven</p>' +
-    '      <ul class="cv-entry__bullets"><li>Designed the new checkout flow</li><li>Ran usability tests with 12 customers</li><li>Built a component library in Figma</li></ul></div>' +
-    '    <div class="cv-entry"><div class="cv-entry__top"><p class="cv-entry__title">Sales assistant</p><p class="cv-entry__dates">Jun 2019 – Aug 2023</p></div><p class="cv-entry__sub">HEMA, Breda</p>' +
-    '      <p class="cv-entry__desc">Helped customers in a busy city-centre store</p></div>' +
-    "  </div>" +
-    "</section>" +
-    '<section class="cv-page__section" data-cv-section="skills">' +
-    '  <h2 class="cv-page__heading">Skills</h2>' +
-    '  <ul class="cv-page__skills">' +
-    '    <li class="cv-page__skill">Figma<span class="cv-page__level">Advanced</span></li>' +
-    '    <li class="cv-page__skill">User research<span class="cv-page__level">Intermediate</span></li>' +
-    '    <li class="cv-page__skill">HTML &amp; CSS</li>' +
-    '    <li class="cv-page__skill">Teamwork</li>' +
-    "  </ul>" +
-    "</section>";
+  // Example CV (same classes as the editor preview), shared in js/templates-data.js.
+  var SAMPLE_CV = window.FOLIO_SAMPLE_CV;
 
   /* ------------------------------------------------------------------------
      Storage

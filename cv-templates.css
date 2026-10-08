@@ -12,7 +12,7 @@
       Use --cv-accent, --cv-chip, --cv-font and --cv-space so the Design
       options (colour, font, spacing) work. Don't use position: relative
       or absolute on text: positioned text comes last in the PDF.
-   3. Raise the ?v= number in editor.html and templates.html.
+   3. Raise the ?v= number in the .html pages (editor, templates, home...).
 
    Template selectors for elements inside the page use :where() so they are
    no stronger than the base rules. The template's own page-level block
