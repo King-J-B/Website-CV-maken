@@ -23,11 +23,11 @@
           <img class="brand-logo" src="../images/folio-logo-light.png" alt="Folio" />
         </a>
 
-       <nav class="topnav" aria-label="Hoofdnavigatie">
-  <a href="home.html">Home</a>
-  <a class="active" href="index.html">Mijn cv's</a>
-  <a href="#">Templates</a>
-</nav>
+        <nav class="topnav" aria-label="Hoofdnavigatie">
+          <a class="active" href="index.html">Mijn cv's</a>
+          <a href="#">Templates</a>
+          <a href="about-us.html">About us</a>
+        </nav>
 
         <div class="topbar-actions">
           <button class="icon-button" id="themeButton" type="button" aria-label="Donkere modus wisselen">
@@ -69,14 +69,14 @@
           </div>
 
           <div class="heading-actions">
+            <button class="primary-button" id="addResumeButton" type="button">
+              Nieuw cv
+            </button>
             <button class="secondary-button" id="clearDemoButton" type="button">
               Demo: verwijder alle cv's
             </button>
             <button class="secondary-button" id="showEmptyButton" type="button">
               Toon empty state
-            </button>
-            <button class="primary-button" id="addResumeButton" type="button">
-              Nieuw cv
             </button>
           </div>
         </section>
@@ -126,7 +126,8 @@
 
     <div class="toast hidden" id="toastMessage" aria-live="polite"></div>
 
-    <script src="../js/script.js"></script>
-    <script src="../js/translate.js"></script>
+    <script src="js/confirm-dialog.js"></script>
+    <script src="js/script.js"></script>
+    <script src="js/translate.js"></script>
   </body>
 </html>

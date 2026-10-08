@@ -8,9 +8,10 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/folio-mark.png">
-  <link rel="stylesheet" href="colors.css">
-  <link rel="stylesheet" href="cv-templates.css">
-  <link rel="stylesheet" href="templates.css">
+  <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
+  <link rel="stylesheet" href="colors.css?v=19">
+  <link rel="stylesheet" href="cv-templates.css?v=19">
+  <link rel="stylesheet" href="templates.css?v=19">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to templates</a>
@@ -35,7 +36,8 @@
     <ul class="tp-grid" data-template-grid></ul>
   </main>
 
-  <script src="js/templates-data.js"></script>
-  <script src="js/templates-page.js"></script>
+  <script src="js/templates-data.js?v=19"></script>
+  <script src="js/cv-store.js?v=19"></script>
+  <script src="js/templates-page.js?v=19"></script>
 </body>
 </html>

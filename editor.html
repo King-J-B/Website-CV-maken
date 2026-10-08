@@ -8,10 +8,11 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/folio-mark.png">
-  <link rel="stylesheet" href="colors.css">
-  <link rel="stylesheet" href="cv-templates.css">
-  <link rel="stylesheet" href="editor.css">
-  <link rel="stylesheet" href="confirm-dialog.css">
+  <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
+  <link rel="stylesheet" href="colors.css?v=19">
+  <link rel="stylesheet" href="cv-templates.css?v=19">
+  <link rel="stylesheet" href="editor.css?v=19">
+  <link rel="stylesheet" href="confirm-dialog.css?v=19">
 </head>
 <body>
   <a class="skip-link" href="#editor-main">Skip to editor</a>
@@ -28,6 +29,7 @@
     </div>
 
     <a class="ed-btn ed-btn--secondary" href="index.html">My resumes</a>
+    <button class="ed-btn ed-btn--primary ed-export" type="button" data-export>Download PDF</button>
   </header>
 
   <!-- Tablet and mobile: section picker plus Edit / Preview toggle -->
@@ -50,7 +52,7 @@
     <main class="ed-form" id="editor-main" tabindex="-1">
       <div class="ed-fit-warning ed-fit-warning--form" data-fit-warning hidden>
           <p class="ed-fit-warning__title">Your CV doesn’t fit on one A4 page</p>
-          <p>Everything below the red line falls off the page. Shorten a description, remove an older entry or list fewer skills.</p>
+          <p>Everything below the red line falls off the page. Shorten a description, remove an older entry or list fewer skills. Compact spacing under Design also saves room.</p>
         </div>
 
       <!-- Skills -->
@@ -203,12 +205,33 @@
       <div class="ed-template-bar">
         <label class="ed-label" for="template-picker">Template</label>
         <select class="ed-select ed-select--compact" id="template-picker" data-template-picker></select>
-        <a class="ed-link-button" href="templates.html">Browse templates</a>
+        <button class="ed-design-toggle" type="button" aria-expanded="false" aria-controls="design-panel" data-design-toggle>Design</button>
+        <a class="ed-link-button" href="templates.html" data-browse-templates>Browse templates</a>
+      </div>
+
+      <!-- Design options: colour, font and spacing for this CV -->
+      <div class="ed-design" id="design-panel" data-design-panel hidden>
+        <fieldset class="ed-design__group">
+          <legend class="ed-label">Colour</legend>
+          <div class="ed-swatches" data-color-options></div>
+        </fieldset>
+
+        <div class="ed-design__group">
+          <label class="ed-label" for="design-font">Font</label>
+          <select class="ed-select ed-select--compact" id="design-font" data-font-picker></select>
+        </div>
+
+        <fieldset class="ed-design__group">
+          <legend class="ed-label">Spacing</legend>
+          <div class="ed-segment" data-spacing-options></div>
+        </fieldset>
+
+        <button class="ed-link ed-design__reset" type="button" data-design-reset>Reset to the template's design</button>
       </div>
 
       <div class="ed-fit-warning" data-fit-warning role="status" hidden>
         <p class="ed-fit-warning__title">Your CV doesn’t fit on one A4 page</p>
-        <p>Everything below the red line falls off the page. Shorten a description, remove an older entry or list fewer skills.</p>
+        <p>Everything below the red line falls off the page. Shorten a description, remove an older entry or list fewer skills. Compact spacing under Design also saves room.</p>
       </div>
 
       <div class="ed-preview__stage" data-preview-stage>
@@ -248,8 +271,9 @@
     </aside>
   </div>
 
-  <script src="js/templates-data.js"></script>
-  <script src="js/confirm-dialog.js"></script>
-  <script src="editor.js"></script>
+  <script src="js/templates-data.js?v=19"></script>
+  <script src="js/cv-store.js?v=19"></script>
+  <script src="js/confirm-dialog.js?v=19"></script>
+  <script src="editor.js?v=19"></script>
 </body>
 </html>

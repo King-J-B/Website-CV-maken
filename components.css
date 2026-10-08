@@ -15,10 +15,11 @@
   text-decoration: none;
 }
 
+/* Same logo height on every page (auth.css, editor.css, templates.css) */
 .brand-logo {
   display: block;
-  width: 148px;
-  height: auto;
+  width: auto;
+  height: 40px;
 }
 
 .topnav a {
@@ -172,20 +173,6 @@ select:focus {
   color: var(--color-surface);
   box-shadow: var(--shadow-card);
   font-weight: 800;
-}
-
-.brand-logo {
-  width: 148px !important;
-  height: auto !important;
-  max-height: none !important;
-}
-
-.topbar .brand .brand-logo {
-  display: block !important;
-  width: 148px !important;
-  height: auto !important;
-  max-width: 148px !important;
-  max-height: none !important;
 }
 
 .avatar-button {

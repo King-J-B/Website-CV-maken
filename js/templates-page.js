@@ -2,24 +2,27 @@
    Folio — "Choose a template" page
 
    Shows every template from js/templates-data.js as a live mini preview of
-   an example CV. "Use this template" saves the choice in the editor draft
-   and opens the editor at Personal details (flow v4: Choose template →
-   Editor). Existing CV content is never deleted.
+   an example CV. Storage goes through js/cv-store.js.
 
-   ?new=1 means the user came from "Nieuw cv" / "Kies template" on
-   My resumes: a new CV card is added there as well.
+   - templates.html?cv=<id>  (from the editor): "Use" changes that CV's
+     template, keeps its content, and goes back to that CV.
+   - templates.html          (from My resumes): "Use" starts a new, empty CV
+     with that template (flow v4: Choose template → Editor).
    ========================================================================== */
 
 (function () {
   "use strict";
 
-  var DRAFT_KEY = "folio:draft"; // same key as editor.js
-  var RESUMES_KEY = "folio:resumes"; // same key as js/script.js
   var A4_WIDTH = 794;
   var A4_HEIGHT = 1123;
 
+  var store = window.FolioStore;
   var templates = window.FOLIO_TEMPLATES;
-  var isNewCv = new URLSearchParams(window.location.search).get("new") === "1";
+
+  // A known ?cv= means "change this CV"; anything else starts a new CV.
+  var cvParam = new URLSearchParams(window.location.search).get("cv");
+  var cvId = cvParam && store.findResume(cvParam) ? cvParam : null;
+  var isNewCv = !cvId;
   var grid = document.querySelector("[data-template-grid]");
   var errorBox = document.querySelector("[data-error]");
 
@@ -68,55 +71,22 @@
      Storage
      ------------------------------------------------------------------------ */
 
-  function readJson(key) {
-    try {
-      return JSON.parse(window.localStorage.getItem(key));
-    } catch (error) {
-      return null;
-    }
-  }
-
   function currentTemplateId() {
-    var draft = readJson(DRAFT_KEY);
-    return draft && draft.template ? draft.template : null;
+    var content = cvId ? store.loadCv(cvId) : null;
+    return content && content.template ? content.template : null;
   }
 
-  // Saves the template in the editor draft without touching its content.
+  // Returns the id of the CV the editor should open next.
   function saveTemplateChoice(template) {
-    var draft = readJson(DRAFT_KEY);
-    if (!draft || typeof draft !== "object" || !draft.sections) {
-      draft = { version: 1, updatedAt: null, sections: {} };
-    }
-    draft.template = template.id;
-    draft.updatedAt = new Date().toISOString();
-    window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+    if (isNewCv) return store.createResume(template);
 
-    if (isNewCv) addResumeCard(template);
-  }
-
-  // Same shape as the CVs in js/script.js (My resumes).
-  function addResumeCard(template) {
-    var resumes = readJson(RESUMES_KEY);
-    if (!Array.isArray(resumes)) {
-      // Nothing saved yet: My resumes shows its example CV, so keep it.
-      resumes = [{
-        id: 1,
-        title: "Stage UX Designer",
-        template: "Modern template",
-        updated: "Vandaag bewerkt",
-        updatedAt: 0,
-        type: "existing"
-      }];
-    }
-    resumes.unshift({
-      id: Date.now(),
-      title: "Nieuw cv",
-      template: template.name + " template",
-      updated: "Net aangemaakt",
-      updatedAt: Date.now(),
-      type: "existing"
-    });
-    window.localStorage.setItem(RESUMES_KEY, JSON.stringify(resumes));
+    // Change the template only; the CV's content stays as it is.
+    var content = store.loadCv(cvId) || { version: 1, updatedAt: null, sections: {} };
+    content.template = template.id;
+    content.updatedAt = new Date().toISOString();
+    store.saveCv(cvId, content);
+    store.touchResume(cvId, template.name);
+    return cvId;
   }
 
   /* ------------------------------------------------------------------------
@@ -174,15 +144,16 @@
   }
 
   function useTemplate(template) {
+    var id;
     try {
-      saveTemplateChoice(template);
+      id = saveTemplateChoice(template);
     } catch (error) {
       errorBox.textContent = "We couldn't save your choice in this browser. Please try again.";
       errorBox.hidden = false;
       return;
     }
     // Flow v4: the editor opens at Personal details.
-    window.location.href = "editor.html?section=personal";
+    window.location.href = "editor.html?cv=" + encodeURIComponent(id) + "&section=personal";
   }
 
   // Scale an A4 preview to the width of its card.
@@ -206,7 +177,7 @@
     node.hidden = !isNewCv;
   });
 
-  var current = isNewCv ? null : currentTemplateId();
+  var current = currentTemplateId();
   templates.forEach(function (template) {
     grid.appendChild(card(template, template.id === current));
   });

@@ -11,8 +11,15 @@
 (function () {
   "use strict";
 
-  var DRAFT_KEY = "folio:draft";
   var SAVE_DELAY = 400;
+
+  // The editor opens one CV: editor.html?cv=<id> (see js/cv-store.js).
+  // Without a known CV there is nothing to edit, so go to My resumes.
+  var CV_ID = new URLSearchParams(window.location.search).get("cv");
+  if (!CV_ID || !window.FolioStore.findResume(CV_ID)) {
+    window.location.replace("index.html");
+    return;
+  }
 
   // Order matches the flow diagram. `built: false` shows a placeholder panel.
   var SECTIONS = [
@@ -36,6 +43,31 @@
   // "Choose a template" page). The first one is the default.
   var TEMPLATES = window.FOLIO_TEMPLATES;
 
+  // Design options (editor > Design). "" means the template's own choice.
+  // The looks live in cv-templates.css ("Design options").
+  var DESIGN = {
+    color: [
+      { id: "", name: "Template colour" },
+      { id: "teal", name: "Teal", swatch: "#0f766e" },
+      { id: "green", name: "Green", swatch: "#15803d" },
+      { id: "purple", name: "Purple", swatch: "#6d28d9" },
+      { id: "berry", name: "Berry", swatch: "#be185d" },
+      { id: "orange", name: "Orange", swatch: "#c2410c" },
+      { id: "charcoal", name: "Charcoal", swatch: "#1f2937" }
+    ],
+    font: [
+      { id: "", name: "Template font" },
+      { id: "inter", name: "Inter (modern)" },
+      { id: "georgia", name: "Georgia (serif)" },
+      { id: "arial", name: "Arial (simple)" }
+    ],
+    spacing: [
+      { id: "compact", name: "Compact" },
+      { id: "", name: "Normal" },
+      { id: "roomy", name: "Roomy" }
+    ]
+  };
+
   var LEVELS = ["Beginner", "Intermediate", "Advanced", "Expert"];
   var MAX_SKILLS = 30;
 
@@ -49,7 +81,13 @@
   }
 
   function emptyDraft() {
-    var draft = { version: 1, updatedAt: null, template: TEMPLATES[0].id, sections: {} };
+    var draft = {
+      version: 1,
+      updatedAt: null,
+      template: TEMPLATES[0].id,
+      design: { color: "", font: "", spacing: "" },
+      sections: {}
+    };
     LIST_SECTIONS.forEach(function (id) {
       draft.sections[id] = { items: [] };
     });
@@ -62,10 +100,15 @@
   function loadDraft() {
     var draft = emptyDraft();
     try {
-      var stored = JSON.parse(window.localStorage.getItem(DRAFT_KEY));
+      var stored = window.FolioStore.loadCv(CV_ID);
       if (stored && stored.sections) {
         draft.updatedAt = stored.updatedAt || null;
         if (templateById(stored.template)) draft.template = stored.template;
+        // Keep only design choices that still exist.
+        Object.keys(DESIGN).forEach(function (key) {
+          var value = stored.design && stored.design[key];
+          if (DESIGN[key].some(function (option) { return option.id === value; })) draft.design[key] = value;
+        });
         Object.keys(stored.sections).forEach(function (id) {
           draft.sections[id] = stored.sections[id];
         });
@@ -108,7 +151,10 @@
     saveTimer = null;
     try {
       draft.updatedAt = new Date().toISOString();
-      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      window.FolioStore.saveCv(CV_ID, draft);
+      // Keep the card on My resumes up to date (last edited, template).
+      var template = templateById(draft.template);
+      window.FolioStore.touchResume(CV_ID, template && template.name);
       setSaveState("saved");
     } catch (error) {
       setSaveState("error");
@@ -156,7 +202,7 @@
   }
 
   function sectionUrl(id) {
-    return "?section=" + encodeURIComponent(id);
+    return "?cv=" + encodeURIComponent(CV_ID) + "&section=" + encodeURIComponent(id);
   }
 
   // Field sections get a check mark once their main field has text.
@@ -1121,6 +1167,7 @@
 
   var templateCaption = document.querySelector("[data-template-caption]");
   var templatePicker = document.querySelector("[data-template-picker]");
+  document.querySelector("[data-browse-templates]").href = "templates.html?cv=" + encodeURIComponent(CV_ID);
 
   TEMPLATES.forEach(function (template) {
     var option = document.createElement("option");
@@ -1143,6 +1190,105 @@
     page.dataset.template = template.id;
     templatePicker.value = template.id;
     templateCaption.textContent = "A4 \u00b7 " + template.name + " template";
+    applyDesign(); // the "Template colour" swatch follows the template
+  }
+
+  /* Design options: colour, font and spacing on top of the template. Like
+     the template, they only change how the same CV data looks. */
+  var designToggle = document.querySelector("[data-design-toggle]");
+  var designPanel = document.querySelector("[data-design-panel]");
+  var colorOptions = document.querySelector("[data-color-options]");
+  var fontPicker = document.querySelector("[data-font-picker]");
+  var spacingOptions = document.querySelector("[data-spacing-options]");
+  var templateColorDot = null;
+
+  designToggle.addEventListener("click", function () {
+    var open = designPanel.hidden;
+    designPanel.hidden = !open;
+    designToggle.setAttribute("aria-expanded", String(open));
+  });
+
+  function setDesign(key, value) {
+    draft.design[key] = value;
+    applyDesign();
+    updateFit(); // a font or spacing can take more or less space
+    scheduleSave();
+  }
+
+  DESIGN.color.forEach(function (option) {
+    var label = document.createElement("label");
+    label.className = "ed-swatch";
+    label.title = option.name;
+    var input = document.createElement("input");
+    input.type = "radio";
+    input.name = "design-color";
+    input.value = option.id;
+    input.setAttribute("aria-label", option.name);
+    input.addEventListener("change", function () {
+      setDesign("color", option.id);
+    });
+    var dot = document.createElement("span");
+    dot.className = "ed-swatch__dot";
+    dot.setAttribute("aria-hidden", "true");
+    if (option.swatch) dot.style.background = option.swatch;
+    else templateColorDot = dot;
+    label.appendChild(input);
+    label.appendChild(dot);
+    colorOptions.appendChild(label);
+  });
+
+  DESIGN.font.forEach(function (option) {
+    var item = document.createElement("option");
+    item.value = option.id;
+    item.textContent = option.name;
+    fontPicker.appendChild(item);
+  });
+
+  fontPicker.addEventListener("change", function () {
+    setDesign("font", fontPicker.value);
+  });
+
+  DESIGN.spacing.forEach(function (option) {
+    var label = document.createElement("label");
+    var input = document.createElement("input");
+    input.type = "radio";
+    input.name = "design-spacing";
+    input.value = option.id;
+    input.addEventListener("change", function () {
+      setDesign("spacing", option.id);
+    });
+    label.appendChild(input);
+    label.appendChild(tag(option.name, ""));
+    spacingOptions.appendChild(label);
+  });
+
+  document.querySelector("[data-design-reset]").addEventListener("click", function () {
+    draft.design = { color: "", font: "", spacing: "" };
+    applyDesign();
+    updateFit();
+    scheduleSave();
+  });
+
+  // Put the design on the page and show it in the controls.
+  function applyDesign() {
+    Object.keys(DESIGN).forEach(function (key) {
+      var value = draft.design[key];
+      if (value) page.dataset[key] = value;
+      else delete page.dataset[key];
+    });
+    colorOptions.querySelectorAll("input").forEach(function (input) {
+      input.checked = input.value === draft.design.color;
+    });
+    spacingOptions.querySelectorAll("input").forEach(function (input) {
+      input.checked = input.value === draft.design.spacing;
+    });
+    fontPicker.value = draft.design.font;
+
+    // The "Template colour" swatch shows the current template's own accent.
+    var chosen = page.dataset.color;
+    delete page.dataset.color;
+    templateColorDot.style.background = getComputedStyle(page).getPropertyValue("--cv-accent").trim();
+    if (chosen) page.dataset.color = chosen;
   }
 
   var fitWarnings = document.querySelectorAll("[data-fit-warning]");
@@ -1196,6 +1342,58 @@
       if (!onlyOverlay) updateFit();
     }).observe(page, { childList: true, subtree: true, characterData: true, attributes: true, attributeFilter: ["hidden"] });
   }
+
+  /* ------------------------------------------------------------------------
+     Export: Download PDF / Print. Uses the browser's own print window
+     ("Save as PDF"), so the PDF has real, selectable text that CV scanners
+     (ATS) can read. The print styles at the end of editor.css show only the
+     A4 page and hide empty sections and placeholders.
+     ------------------------------------------------------------------------ */
+
+  var exportButton = document.querySelector("[data-export]");
+
+  function exportPdf() {
+    flushSave();
+
+    var name = personalValue("name");
+    if (!name) {
+      folioConfirm({
+        title: "Add your name first",
+        message: "Your name goes at the top of your CV. Fill it in under Personal details, then download your PDF.",
+        confirmLabel: "Go to Personal details",
+        cancelLabel: "Cancel",
+        tone: "primary"
+      }).then(function (go) {
+        if (!go) return;
+        setMode("edit");
+        showSection("personal", { push: true });
+        document.getElementById("personal-name").focus();
+      });
+      return;
+    }
+
+    var message = "Your browser's print window opens next. Choose “Save as PDF” as the destination and click Save. You can also pick a printer there.";
+    if (overflowPx > 0) {
+      message = "Your CV is longer than one A4 page, so the part below the red line may go onto a second page. " + message;
+    }
+
+    folioConfirm({
+      title: "Download your CV as PDF",
+      message: message,
+      confirmLabel: "Continue",
+      cancelLabel: "Cancel",
+      tone: "primary"
+    }).then(function (go) {
+      if (!go) return;
+      // The PDF's file name comes from the page title.
+      var pageTitle = document.title;
+      document.title = name + " - CV";
+      window.print();
+      document.title = pageTitle;
+    });
+  }
+
+  exportButton.addEventListener("click", exportPdf);
 
   /* ------------------------------------------------------------------------
      Start

@@ -35,6 +35,7 @@
   --cv-placeholder: var(--border-subtle);
   --cv-band: var(--brand-gradient);
   --cv-font: inherit;
+  --cv-space: 1; /* spacing between blocks; Design > Spacing changes it */
 
   position: absolute;
   top: 0;
@@ -113,7 +114,7 @@
 }
 
 :where(.cv-page[data-template="modern"]) .cv-page__head {
-  padding-bottom: 24px;
+  padding-bottom: calc(24px * var(--cv-space));
   border-bottom: 2px solid var(--cv-line);
 }
 
@@ -144,7 +145,7 @@
 }
 
 :where(.cv-page[data-template="modern"]) .cv-page__section {
-  margin-top: 32px;
+  margin-top: calc(32px * var(--cv-space));
 }
 
 :where(.cv-page[data-template="modern"]) .cv-page__heading {
@@ -180,7 +181,7 @@
 }
 
 :where(.cv-page[data-template="modern"]) .cv-page__entries {
-  gap: 18px;
+  gap: calc(18px * var(--cv-space));
 }
 
 :where(.cv-page[data-template="modern"]) .cv-entry__title {
@@ -220,7 +221,7 @@
 
 /* Page-level settings need real specificity to beat the base .cv-page rule */
 .cv-page[data-template="classic"] {
-  --cv-accent: #1f2933;
+  --cv-accent: #111827; /* same as the ink: no colour unless one is chosen */
   --cv-ink: #111827;
   --cv-text: #1f2933;
   --cv-muted: #4b5563;
@@ -234,8 +235,8 @@
 }
 
 :where(.cv-page[data-template="classic"]) .cv-page__head {
-  padding-bottom: 18px;
-  border-bottom: 1.5px solid var(--cv-ink);
+  padding-bottom: calc(18px * var(--cv-space));
+  border-bottom: 1.5px solid var(--cv-accent);
   text-align: center;
 }
 
@@ -270,14 +271,14 @@
 }
 
 :where(.cv-page[data-template="classic"]) .cv-page__section {
-  margin-top: 26px;
+  margin-top: calc(26px * var(--cv-space));
 }
 
 :where(.cv-page[data-template="classic"]) .cv-page__heading {
   margin-bottom: 12px;
   padding-bottom: 4px;
   border-bottom: 1px solid var(--cv-line);
-  color: var(--cv-ink);
+  color: var(--cv-accent);
   font-size: 13px;
   font-weight: 400;
   letter-spacing: 0.16em;
@@ -289,7 +290,7 @@
 }
 
 :where(.cv-page[data-template="classic"]) .cv-page__entries {
-  gap: 16px;
+  gap: calc(16px * var(--cv-space));
 }
 
 :where(.cv-page[data-template="classic"]) .cv-entry__title {
@@ -365,19 +366,14 @@
   line-height: 1.55;
 }
 
-:where(.cv-page[data-template="minimal"]) .cv-page__head {
-  position: relative;
-  padding-bottom: 28px;
-}
-
-/* The one accent: a short line under the name block */
+/* The one accent: a short line under the name block. Not positioned, so
+   the name stays first in the PDF's text order (CV scanners read it). */
 :where(.cv-page[data-template="minimal"]) .cv-page__head::after {
   content: "";
-  position: absolute;
-  bottom: 0;
-  left: 0;
+  display: block;
   width: 48px;
   height: 3px;
+  margin-top: calc(25px * var(--cv-space));
   background: var(--cv-accent);
 }
 
@@ -408,7 +404,7 @@
   display: grid;
   grid-template-columns: 132px minmax(0, 1fr);
   column-gap: 28px;
-  margin-top: 30px;
+  margin-top: calc(30px * var(--cv-space));
 }
 
 :where(.cv-page[data-template="minimal"]) .cv-page__section > * {
@@ -427,7 +423,7 @@
 }
 
 :where(.cv-page[data-template="minimal"]) .cv-page__entries {
-  gap: 18px;
+  gap: calc(18px * var(--cv-space));
 }
 
 :where(.cv-page[data-template="minimal"]) .cv-entry__title {
@@ -468,6 +464,69 @@
   margin-left: 6px;
   color: var(--cv-muted);
   font-size: 12.5px;
+}
+
+/* --------------------------------------------------------------------------
+   Design options: every template (editor > Design). Set on the page as
+   data-color, data-font and data-spacing; no attribute = the template's own.
+   These come after the templates so they win over their variables. Every
+   accent colour has at least 4.5:1 contrast on white.
+   -------------------------------------------------------------------------- */
+
+.cv-page[data-color="teal"] {
+  --cv-accent: #0f766e;
+  --cv-chip: #e3f4f1;
+  --cv-band: linear-gradient(90deg, #0f766e, #2dd4bf);
+}
+
+.cv-page[data-color="green"] {
+  --cv-accent: #15803d;
+  --cv-chip: #e6f4ea;
+  --cv-band: linear-gradient(90deg, #15803d, #4ade80);
+}
+
+.cv-page[data-color="purple"] {
+  --cv-accent: #6d28d9;
+  --cv-chip: #efe9fc;
+  --cv-band: linear-gradient(90deg, #6d28d9, #a78bfa);
+}
+
+.cv-page[data-color="berry"] {
+  --cv-accent: #be185d;
+  --cv-chip: #fbe7f0;
+  --cv-band: linear-gradient(90deg, #be185d, #f472b6);
+}
+
+.cv-page[data-color="orange"] {
+  --cv-accent: #c2410c;
+  --cv-chip: #fcece3;
+  --cv-band: linear-gradient(90deg, #c2410c, #fb923c);
+}
+
+.cv-page[data-color="charcoal"] {
+  --cv-accent: #1f2937;
+  --cv-chip: #eceef1;
+  --cv-band: linear-gradient(90deg, #1f2937, #6b7280);
+}
+
+.cv-page[data-font="inter"] {
+  --cv-font: "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.cv-page[data-font="georgia"] {
+  --cv-font: Georgia, "Times New Roman", Times, serif;
+}
+
+.cv-page[data-font="arial"] {
+  --cv-font: Arial, "Helvetica Neue", Helvetica, sans-serif;
+}
+
+.cv-page[data-spacing="compact"] {
+  --cv-space: 0.65;
+}
+
+.cv-page[data-spacing="roomy"] {
+  --cv-space: 1.3;
 }
 
 /* --------------------------------------------------------------------------

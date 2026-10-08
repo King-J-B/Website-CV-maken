@@ -114,7 +114,7 @@ a {
 
 .ed-logo img {
   display: block;
-  height: 32px;
+  height: 40px;
   width: auto;
 }
 
@@ -744,6 +744,7 @@ a {
 /* Template switch above the preview */
 .ed-template-bar {
   display: flex;
+  flex-wrap: wrap;
   align-items: center;
   justify-content: flex-end;
   gap: 10px;
@@ -764,6 +765,159 @@ a {
 
 .ed-link-button:hover {
   text-decoration: underline;
+}
+
+/* Design options (colour, font, spacing) */
+.ed-design-toggle {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  height: 36px;
+  padding: 0 12px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ed-design-toggle::after {
+  content: "";
+  width: 6px;
+  height: 6px;
+  margin-top: -3px;
+  border-right: 2px solid currentColor;
+  border-bottom: 2px solid currentColor;
+  transform: rotate(45deg);
+}
+
+.ed-design-toggle[aria-expanded="true"]::after {
+  margin-top: 3px;
+  transform: rotate(-135deg);
+}
+
+.ed-design-toggle:hover,
+.ed-design-toggle[aria-expanded="true"] {
+  border-color: var(--action-primary);
+  color: var(--action-primary);
+}
+
+.ed-design {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: flex-end;
+  gap: 16px 24px;
+  margin-bottom: 12px;
+  padding: 16px;
+  border: 1px solid var(--border-decorative);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+}
+
+.ed-design[hidden] {
+  display: none;
+}
+
+.ed-design__group {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  min-width: 0;
+  margin: 0;
+  padding: 0;
+  border: 0;
+}
+
+.ed-design__group legend {
+  float: left; /* lets the gap apply below a legend too */
+  margin-bottom: 8px;
+}
+
+.ed-design__reset {
+  margin-left: auto;
+  font-size: 13px;
+}
+
+/* Colour swatches: real radio buttons, drawn as circles */
+.ed-swatches {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  clear: left;
+}
+
+.ed-swatch {
+  position: relative;
+  display: block;
+  cursor: pointer;
+}
+
+.ed-swatch input {
+  position: absolute;
+  inset: 0;
+  margin: 0;
+  opacity: 0;
+  cursor: pointer;
+}
+
+.ed-swatch__dot {
+  display: block;
+  width: 32px;
+  height: 32px;
+  border: 3px solid var(--bg-surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 1px var(--border-control);
+}
+
+.ed-swatch input:checked + .ed-swatch__dot {
+  box-shadow: 0 0 0 2px var(--text-strong);
+}
+
+.ed-swatch input:focus-visible + .ed-swatch__dot {
+  outline: 2px solid var(--action-primary);
+  outline-offset: 3px;
+}
+
+/* Spacing: Compact / Normal / Roomy as one segmented control */
+.ed-segment {
+  display: flex;
+  padding: 3px;
+  border-radius: var(--radius-sm);
+  background: var(--bg-selected);
+  clear: left;
+}
+
+.ed-segment label {
+  position: relative;
+}
+
+.ed-segment input {
+  position: absolute;
+  opacity: 0;
+}
+
+.ed-segment span {
+  display: block;
+  min-height: 30px;
+  padding: 5px 12px;
+  border-radius: 6px;
+  color: var(--text-secondary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ed-segment input:checked + span {
+  background: var(--bg-surface);
+  color: var(--action-primary);
+  box-shadow: 0 1px 3px var(--shadow-tint);
+}
+
+.ed-segment input:focus-visible + span {
+  outline: 2px solid var(--action-primary);
+  outline-offset: 1px;
 }
 
 /* One-page warning */
@@ -996,5 +1150,105 @@ a {
 @media (prefers-reduced-motion: reduce) {
   * {
     transition: none !important;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Phone: "My resumes" is hidden (the logo goes there); Download PDF stays.
+   -------------------------------------------------------------------------- */
+
+@media (max-width: 767px) {
+  .ed-topbar .ed-export {
+    display: inline-flex;
+    flex-shrink: 0;
+    padding: 0 12px;
+  }
+}
+
+/* --------------------------------------------------------------------------
+   Print and "Save as PDF": only the A4 page, at full size, without the
+   editor around it, the red overflow line, placeholders or empty sections.
+   -------------------------------------------------------------------------- */
+
+/* No page margin: the CV page has its own padding. With a margin, Chrome
+   prints its header and footer (page address, page number) in it. */
+@page {
+  size: A4;
+  margin: 0;
+}
+
+@media print {
+  html,
+  body {
+    background: #fff;
+  }
+
+  .skip-link,
+  .ed-topbar,
+  .ed-mobilebar,
+  .ed-nav,
+  .ed-form,
+  .ed-template-bar,
+  .ed-design,
+  .ed-fit-warning,
+  .ed-preview__caption,
+  .folio-confirm,
+  .cv-page__overflow {
+    display: none !important;
+  }
+
+  /* The print area is A4-wide (794px), wider than the 760px tablet cap */
+  .editor {
+    display: block;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+  }
+
+  /* Undo the off-screen preview of Edit mode on tablet and phone */
+  .editor .ed-preview,
+  .editor[data-mode="edit"] .ed-preview {
+    position: static;
+    width: auto;
+    visibility: visible;
+  }
+
+  .ed-preview__stage {
+    height: auto !important;
+    overflow: visible;
+  }
+
+  .cv-page,
+  .cv-page.is-overflowing {
+    position: relative; /* the Modern colour band is placed inside the page */
+    height: auto;
+    /* Not more than the 64px the one-page check allows, so a CV that just
+       fits stays one page. "clone" repeats the top and bottom padding on
+       every printed page of a CV that is too long. */
+    padding-bottom: 48px;
+    -webkit-box-decoration-break: clone;
+    box-decoration-break: clone;
+    overflow: visible;
+    box-shadow: none;
+    transform: none !important;
+    -webkit-print-color-adjust: exact;
+    print-color-adjust: exact;
+  }
+
+  .cv-page .is-placeholder,
+  .cv-page__section:has(> .cv-page__empty:not([hidden])) {
+    display: none;
+  }
+
+  /* A long CV breaks between entries, not through them */
+  .cv-entry {
+    break-inside: avoid;
+  }
+
+  /* Keep a section title with its first line. Not in Minimal: there the
+     title is a side column that spans the whole section, so this would
+     make the whole section unbreakable. */
+  .cv-page:not([data-template="minimal"]) .cv-page__heading {
+    break-after: avoid;
   }
 }
