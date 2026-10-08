@@ -263,3 +263,66 @@ select:focus {
   background: var(--color-surface-soft);
   border-color: var(--color-primary);
 }
+
+.language-switcher {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 4px;
+  border: 1px solid var(--color-button-line);
+  border-radius: var(--radius-md);
+  background: var(--color-surface);
+}
+
+.flag-button {
+  display: grid;
+  width: 38px;
+  height: 34px;
+  place-items: center;
+  border: 0;
+  border-radius: var(--radius-sm);
+  background: transparent;
+  font-size: 1.25rem;
+  cursor: pointer;
+}
+
+.flag-button:hover,
+.flag-button.active {
+  background: var(--color-surface-soft);
+}
+
+.flag {
+  display: block;
+  width: 26px;
+  height: 18px;
+  overflow: hidden;
+  border-radius: 3px;
+  box-shadow: 0 0 0 1px var(--color-line);
+}
+
+/* Nederlandse vlag */
+.flag-nl {
+  background: linear-gradient(
+    to bottom,
+    #ae1c28 0 33.33%,
+    #ffffff 33.33% 66.66%,
+    #21468b 66.66% 100%
+  );
+}
+
+/* Engelse / Britse vlag, simpele CSS-versie */
+.flag-gb {
+  position: relative;
+  background: #012169;
+}
+
+.flag-gb::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  background:
+    linear-gradient(35deg, transparent 42%, #ffffff 42% 48%, #c8102e 48% 52%, #ffffff 52% 58%, transparent 58%),
+    linear-gradient(-35deg, transparent 42%, #ffffff 42% 48%, #c8102e 48% 52%, #ffffff 52% 58%, transparent 58%),
+    linear-gradient(to right, transparent 38%, #ffffff 38% 45%, #c8102e 45% 55%, #ffffff 55% 62%, transparent 62%),
+    linear-gradient(to bottom, transparent 34%, #ffffff 34% 43%, #c8102e 43% 57%, #ffffff 57% 66%, transparent 66%);
+}

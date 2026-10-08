@@ -8,36 +8,40 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="colors.css" />
-    <link rel="stylesheet" href="base.css" />
-    <link rel="stylesheet" href="layout.css" />
-    <link rel="stylesheet" href="components.css" />
-    <link rel="stylesheet" href="pages.css" />
-    <link rel="stylesheet" href="responsive.css" />
-    <link rel="stylesheet" href="confirm-dialog.css" />
+    <link rel="stylesheet" href="../colors.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="stylesheet" href="../layout.css" />
+    <link rel="stylesheet" href="../components.css" />
+    <link rel="stylesheet" href="../pages.css" />
+    <link rel="stylesheet" href="../responsive.css" />
   </head>
 
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <a class="brand" href="index.html" aria-label="Folio home">
-          <img class="brand-logo" src="images/folio-logo-light.png" alt="Folio" />
+        <a class="brand" href="home.html" aria-label="Folio home">
+          <img class="brand-logo" src="../images/folio-logo-light.png" alt="Folio" />
         </a>
 
-        <nav class="topnav" aria-label="Hoofdnavigatie">
-          <a class="active" href="index.html">Mijn cv's</a>
-          <a href="#">Templates</a>
-          <a href="about-us.html">About us</a>
-        </nav>
+       <nav class="topnav" aria-label="Hoofdnavigatie">
+  <a href="home.html">Home</a>
+  <a class="active" href="index.html">Mijn cv's</a>
+  <a href="#">Templates</a>
+</nav>
 
         <div class="topbar-actions">
           <button class="icon-button" id="themeButton" type="button" aria-label="Donkere modus wisselen">
             ◐
           </button>
 
-          <button class="language-button" id="languageButton" type="button">
-            EN
-          </button>
+          <div class="language-switcher" aria-label="Taal kiezen">
+            <button class="flag-button active" id="dutchButton" type="button" aria-label="Nederlands">
+              <span class="flag flag-nl" aria-hidden="true"></span>
+            </button>
+            <button class="flag-button" id="englishButton" type="button" aria-label="English">
+              <span class="flag flag-gb" aria-hidden="true"></span>
+            </button>
+          </div>
 
           <div class="account-menu">
             <button class="avatar-button" id="accountButton" type="button" aria-label="Account menu openen">
@@ -122,8 +126,7 @@
 
     <div class="toast hidden" id="toastMessage" aria-live="polite"></div>
 
-    <script src="js/confirm-dialog.js"></script>
-    <script src="js/script.js"></script>
-    <script src="js/translate.js"></script>
+    <script src="../js/script.js"></script>
+    <script src="../js/translate.js"></script>
   </body>
 </html>

@@ -5,24 +5,23 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CV Builder - About us</title>
 
-    <link rel="stylesheet" href="colors.css" />
-    <link rel="stylesheet" href="base.css" />
-    <link rel="stylesheet" href="layout.css" />
-    <link rel="stylesheet" href="components.css" />
-    <link rel="stylesheet" href="pages.css" />
-    <link rel="stylesheet" href="responsive.css" />
+    <link rel="stylesheet" href="../colors.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="stylesheet" href="../layout.css" />
+    <link rel="stylesheet" href="../components.css" />
+    <link rel="stylesheet" href="../pages.css" />
+    <link rel="stylesheet" href="../responsive.css" />
   </head>
 
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <a class="brand" href="index.html" aria-label="Folio home">
-          <img class="brand-logo" src="images/folio-logo-light.png" alt="Folio" />
+        <a class="brand" href="home.html" aria-label="Folio home">
+          <img class="brand-logo" src="../images/folio-logo-light.png" alt="Folio" />
         </a>
 
         <nav class="topnav" aria-label="Hoofdnavigatie">
-          <a href="index.html">Mijn cv's</a>
-          <a href="#">Templates</a>
+          <a href="home.html">Home</a>
           <a class="active" href="about-us.html">About us</a>
         </nav>
 
@@ -31,9 +30,14 @@
             ◐
           </button>
 
-          <button class="language-button" id="languageButton" type="button">
-            EN
-          </button>
+          <div class="language-switcher" aria-label="Taal kiezen">
+            <button class="flag-button active" id="dutchButton" type="button" aria-label="Nederlands">
+              <span class="flag flag-nl" aria-hidden="true"></span>
+            </button>
+            <button class="flag-button" id="englishButton" type="button" aria-label="English">
+              <span class="flag flag-gb" aria-hidden="true"></span>
+            </button>
+          </div>
 
           <div class="account-menu">
             <button class="avatar-button" id="accountButton" type="button" aria-label="Account menu openen">
@@ -113,10 +117,10 @@
 
         if (isDark) {
           document.body.dataset.theme = "light";
-          logo.src = "images/folio-logo-light.png";
+          logo.src = "../images/folio-logo-light.png";
         } else {
           document.body.dataset.theme = "dark";
-          logo.src = "images/folio-logo-dark.png";
+          logo.src = "../images/folio-logo-dark.png";
         }
       }
 
@@ -140,6 +144,6 @@
       });
     </script>
 
-    <script src="js/translate.js"></script>
+    <script src="../js/translate.js"></script>
   </body>
 </html>

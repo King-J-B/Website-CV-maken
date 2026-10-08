@@ -5,35 +5,39 @@
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
     <title>CV Builder - Personal details</title>
 
-    <link rel="stylesheet" href="colors.css" />
-    <link rel="stylesheet" href="base.css" />
-    <link rel="stylesheet" href="layout.css" />
-    <link rel="stylesheet" href="components.css" />
-    <link rel="stylesheet" href="pages.css" />
-    <link rel="stylesheet" href="responsive.css" />
+    <link rel="stylesheet" href="../colors.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="stylesheet" href="../layout.css" />
+    <link rel="stylesheet" href="../components.css" />
+    <link rel="stylesheet" href="../pages.css" />
+    <link rel="stylesheet" href="../responsive.css" />
   </head>
 
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <a class="brand" href="index.html" aria-label="Folio home">
-          <img class="brand-logo" src="images/folio-logo-light.png" alt="Folio" />
+        <a class="brand" href="home.html" aria-label="Folio home">
+          <img class="brand-logo" src="../images/folio-logo-light.png" alt="Folio" />
         </a>
-
-        <nav class="topnav" aria-label="Hoofdnavigatie">
-          <a href="index.html">Mijn cv's</a>
-          <a href="#">Templates</a>
-          <a href="about-us.html">About us</a>
-        </nav>
+<nav class="topnav" aria-label="Hoofdnavigatie">
+  <a href="home.html">Home</a>
+  <a href="index.html">Mijn cv's</a>
+  <a href="#">Templates</a>
+</nav>
 
         <div class="topbar-actions">
           <button class="icon-button" id="themeButton" type="button" aria-label="Donkere modus wisselen">
             ◐
           </button>
 
-          <button class="language-button" id="languageButton" type="button">
-            EN
-          </button>
+          <div class="language-switcher" aria-label="Taal kiezen">
+            <button class="flag-button active" id="dutchButton" type="button" aria-label="Nederlands">
+              <span class="flag flag-nl" aria-hidden="true"></span>
+            </button>
+            <button class="flag-button" id="englishButton" type="button" aria-label="English">
+              <span class="flag flag-gb" aria-hidden="true"></span>
+            </button>
+          </div>
 
           <div class="account-menu">
             <button class="avatar-button" id="accountButton" type="button" aria-label="Account menu openen">
@@ -80,42 +84,42 @@
               <div class="form-row">
                 <label>
                   Voornaam
-                  <input id="firstName" type="text" placeholder="Voornaam" />
+                  <input id="firstName" type="text" value="Voornaam" />
                 </label>
 
                 <label>
                   Achternaam
-                  <input id="lastName" type="text" placeholder="Achternaam" />
+                  <input id="lastName" type="text" value="Achternaam" />
                 </label>
               </div>
 
               <div class="form-row">
                 <label>
                   Functietitel
-                  <input id="jobTitle" type="text" placeholder="Functietitel" />
+                  <input id="jobTitle" type="text" value="Functietitel" />
                 </label>
 
                 <label>
                   Woonplaats
-                  <input id="city" type="text" placeholder="Woonplaats" />
+                  <input id="city" type="text" value="Woonplaats" />
                 </label>
               </div>
 
               <div class="form-row">
                 <label>
                   E-mail
-                  <input id="email" type="email" placeholder="naam@email.com" />
+                  <input id="email" type="email" value="naam@email.com" />
                 </label>
 
                 <label>
                   Telefoon
-                  <input id="phone" type="text" placeholder="+31 6 12345678" />
+                  <input id="phone" type="text" value="+31 6 12345678" />
                 </label>
               </div>
 
               <label>
                 LinkedIn / portfolio
-                <input id="website" type="text" placeholder="linkedin.com/in/gebruikersnaam" />
+                <input id="website" type="text" value="linkedin.com/in/gebruikersnaam" />
               </label>
             </form>
           </article>
@@ -182,34 +186,6 @@
         previewInitials.textContent = `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
       }
 
-      // Account details are saved in this browser until there is a real account.
-      const ACCOUNT_KEY = "folio:account";
-      const fields = { firstName, lastName, jobTitle, city, email, phone, website };
-
-      function isEnglish() {
-        const languageButton = document.querySelector("#languageButton");
-        return languageButton && languageButton.textContent.trim() === "NL";
-      }
-
-      function loadAccount() {
-        try {
-          const saved = JSON.parse(localStorage.getItem(ACCOUNT_KEY)) || {};
-          Object.keys(fields).forEach((key) => {
-            if (typeof saved[key] === "string") fields[key].value = saved[key];
-          });
-        } catch (error) {
-          // Nothing saved yet, or unreadable: start with empty fields.
-        }
-      }
-
-      function saveAccount() {
-        const data = {};
-        Object.keys(fields).forEach((key) => {
-          data[key] = fields[key].value.trim();
-        });
-        localStorage.setItem(ACCOUNT_KEY, JSON.stringify(data));
-      }
-
       function showToast(message) {
         toast.textContent = message;
         toast.classList.remove("hidden");
@@ -224,10 +200,10 @@
 
         if (isDark) {
           document.body.dataset.theme = "light";
-          logo.src = "images/folio-logo-light.png";
+          logo.src = "../images/folio-logo-light.png";
         } else {
           document.body.dataset.theme = "dark";
-          logo.src = "images/folio-logo-dark.png";
+          logo.src = "../images/folio-logo-dark.png";
         }
       }
 
@@ -250,18 +226,8 @@
         }
       });
 
-      // Only say "saved" (and go back) when saving really worked.
       saveButton.addEventListener("click", () => {
-        try {
-          saveAccount();
-        } catch (error) {
-          showToast(isEnglish()
-            ? "Could not save your details. Please try again."
-            : "Opslaan is niet gelukt. Probeer het opnieuw.");
-          return;
-        }
-
-        showToast(isEnglish() ? "Personal details saved" : "Persoonlijke gegevens opgeslagen");
+        showToast("Persoonlijke gegevens opgeslagen");
 
         setTimeout(() => {
           window.location.href = "index.html";
@@ -276,10 +242,9 @@
       phone.addEventListener("input", updatePreview);
       website.addEventListener("input", updatePreview);
 
-      loadAccount();
       updatePreview();
     </script>
 
-    <script src="js/translate.js"></script>
+    <script src="../js/translate.js"></script>
   </body>
 </html>

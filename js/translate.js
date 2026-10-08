@@ -1,12 +1,35 @@
-const languageButton = document.querySelector("#languageButton");
+const dutchButton = document.querySelector("#dutchButton");
+const englishButton = document.querySelector("#englishButton");
 
 let currentLanguage = "nl";
 
 const translations = {
   en: {
+    "Home": "Home",
     "Mijn cv's": "My resumes",
     "Templates": "Templates",
     "About us": "About us",
+
+    "Folio CV Builder": "Folio CV Builder",
+    "Put Your": "Put Your",
+    "Potential": "Potential",
+    "on Paper.": "on Paper.",
+    "Folio helpt studenten en starters om stap voor stap een duidelijk, modern en overzichtelijk cv te maken.": "Folio helps students and starters create a clear, modern and organized resume step by step.",
+    "Start met je cv": "Start your resume",
+    "Over Folio": "About Folio",
+
+    "Over ons": "About us",
+    "Gemaakt door twee Software Development studenten.": "Created by two Software Development students.",
+    "Folio is gemaakt door Daan van den Hombergh en Jesse Breuers, twee vierdejaars Software Development studenten van het Vista college in Maastricht. Tijdens onze stage in Spanje bouwen wij deze cv-builder als opdracht.": "Folio was created by Daan van den Hombergh and Jesse Breuers, two fourth-year Software Development students from Vista College in Maastricht. During our internship in Spain, we are building this resume builder as an assignment.",
+    "Lees meer": "Read more",
+
+    "Kies een template": "Choose a template",
+    "Begin met een ontwerp dat past bij je stijl en de functie waarop je solliciteert.": "Start with a design that fits your style and the job you are applying for.",
+    "Vul je gegevens in": "Fill in your details",
+    "Voeg persoonlijke gegevens, ervaring, opleiding en vaardigheden overzichtelijk toe.": "Add personal details, experience, education and skills in a clear way.",
+    "Bekijk live je cv": "Preview your resume live",
+    "Zie meteen hoe je cv eruit komt te zien terwijl je aanpassingen maakt.": "Instantly see what your resume looks like while making changes.",
+
     "Resume page": "Resume page",
     "Bewaar, bewerk en exporteer je cv's vanaf een overzichtelijke plek.": "Save, edit and export your resumes from one clear place.",
     "Demo: verwijder alle cv's": "Demo: remove all resumes",
@@ -20,13 +43,11 @@ const translations = {
     "Empty state": "Empty state",
     "Nog geen cv's": "No resumes yet",
     "Begin met een template en bouw stap voor stap je eerste cv. Je kunt later altijd wisselen van ontwerp.": "Start with a template and build your first resume step by step. You can always change the design later.",
-    "Kies template": "Choose template",
     "Bekijk voorbeelddata": "View example data",
     "Stage UX Designer": "UX Designer Internship",
     "Modern template": "Modern template",
     "Vandaag bewerkt": "Edited today",
     "Nieuwe cv starten": "Start new resume",
-    "Kies een template": "Choose a template",
     "Begin vanaf nul": "Start from scratch",
     "Template bekijken": "View template",
     "Ontdek ontwerpen": "Explore designs",
@@ -38,13 +59,11 @@ const translations = {
     "Instellingen": "Settings",
     "Uitloggen": "Log out",
 
-    "Over ons": "About us",
     "Wij zijn Daan en Jesse, de makers van Folio.": "We are Daan and Jesse, the makers of Folio.",
     "Wie zijn wij?": "Who are we?",
     "Daan & Jesse": "Daan & Jesse",
     "Onze namen zijn Daan van den Hombergh en Jesse Breuers. Wij zijn vierdejaars studenten Software Development aan het Vista college in Maastricht.": "Our names are Daan van den Hombergh and Jesse Breuers. We are fourth-year Software Development students at Vista College in Maastricht.",
     "We zijn allebei 20 jaar oud en lopen momenteel stage in Spanje. Voor onze opdracht maken wij deze CV website.": "We are both 20 years old and are currently doing an internship in Spain. For our assignment, we are creating this CV website.",
-    "Over Folio": "About Folio",
     "Een simpele cv-builder": "A simple resume builder",
     "Met Folio willen we het makkelijker maken om snel een professioneel cv te bouwen. Gebruikers kunnen hun gegevens invullen, een template kiezen en direct zien hoe hun cv eruit komt te zien.": "With Folio, we want to make it easier to quickly create a professional resume. Users can fill in their details, choose a template and instantly see what their resume looks like.",
     "Ons doel is om een overzichtelijke en gebruiksvriendelijke website te maken waarmee studenten en starters sneller een nette cv kunnen maken.": "Our goal is to create a clear and user-friendly website that helps students and starters create a neat resume faster.",
@@ -71,6 +90,18 @@ const translations = {
 
   nl: {
     "My resumes": "Mijn cv's",
+    "Folio helps students and starters create a clear, modern and organized resume step by step.": "Folio helpt studenten en starters om stap voor stap een duidelijk, modern en overzichtelijk cv te maken.",
+    "Start your resume": "Start met je cv",
+    "Created by two Software Development students.": "Gemaakt door twee Software Development studenten.",
+    "Folio was created by Daan van den Hombergh and Jesse Breuers, two fourth-year Software Development students from Vista College in Maastricht. During our internship in Spain, we are building this resume builder as an assignment.": "Folio is gemaakt door Daan van den Hombergh en Jesse Breuers, twee vierdejaars Software Development studenten van het Vista college in Maastricht. Tijdens onze stage in Spanje bouwen wij deze cv-builder als opdracht.",
+    "Read more": "Lees meer",
+    "Choose a template": "Kies een template",
+    "Start with a design that fits your style and the job you are applying for.": "Begin met een ontwerp dat past bij je stijl en de functie waarop je solliciteert.",
+    "Fill in your details": "Vul je gegevens in",
+    "Add personal details, experience, education and skills in a clear way.": "Voeg persoonlijke gegevens, ervaring, opleiding en vaardigheden overzichtelijk toe.",
+    "Preview your resume live": "Bekijk live je cv",
+    "Instantly see what your resume looks like while making changes.": "Zie meteen hoe je cv eruit komt te zien terwijl je aanpassingen maakt.",
+
     "Save, edit and export your resumes from one clear place.": "Bewaar, bewerk en exporteer je cv's vanaf een overzichtelijke plek.",
     "Demo: remove all resumes": "Demo: verwijder alle cv's",
     "Show empty state": "Toon empty state",
@@ -82,13 +113,11 @@ const translations = {
     "Name": "Naam",
     "No resumes yet": "Nog geen cv's",
     "Start with a template and build your first resume step by step. You can always change the design later.": "Begin met een template en bouw stap voor stap je eerste cv. Je kunt later altijd wisselen van ontwerp.",
-    "Choose template": "Kies template",
     "View example data": "Bekijk voorbeelddata",
     "UX Designer Internship": "Stage UX Designer",
     "Modern template": "Modern template",
     "Edited today": "Vandaag bewerkt",
     "Start new resume": "Nieuwe cv starten",
-    "Choose a template": "Kies een template",
     "Start from scratch": "Begin vanaf nul",
     "View template": "Template bekijken",
     "Explore designs": "Ontdek ontwerpen",
@@ -100,7 +129,6 @@ const translations = {
     "Settings": "Instellingen",
     "Log out": "Uitloggen",
 
-    "About us": "About us",
     "We are Daan and Jesse, the makers of Folio.": "Wij zijn Daan en Jesse, de makers van Folio.",
     "Who are we?": "Wie zijn wij?",
     "Our names are Daan van den Hombergh and Jesse Breuers. We are fourth-year Software Development students at Vista College in Maastricht.": "Onze namen zijn Daan van den Hombergh en Jesse Breuers. Wij zijn vierdejaars studenten Software Development aan het Vista college in Maastricht.",
@@ -115,7 +143,6 @@ const translations = {
     "Back": "Terug",
     "Save": "Opslaan",
     "User": "Gebruiker",
-    "Personal details": "Personal details",
     "Draft": "Concept",
     "First name": "Voornaam",
     "Last name": "Achternaam",
@@ -131,21 +158,6 @@ function translatePage(language) {
   const elements = document.querySelectorAll("h1, h2, h3, p, a, button, span, label, option, li");
 
   elements.forEach((element) => {
-    // An element that also holds other elements (like a label wrapping an
-    // input) must keep them: translate only its own pieces of text. Replacing
-    // the whole textContent would delete the input.
-    if (element.children.length > 0) {
-      element.childNodes.forEach((node) => {
-        const ownText = node.nodeType === Node.TEXT_NODE ? node.nodeValue.trim() : "";
-        const translatedOwnText = ownText && translations[language][ownText];
-
-        if (translatedOwnText) {
-          node.nodeValue = node.nodeValue.replace(ownText, translatedOwnText);
-        }
-      });
-      return;
-    }
-
     const text = element.textContent.trim();
     const translatedText = translations[language][text];
 
@@ -160,18 +172,22 @@ function translatePage(language) {
     searchInput.placeholder = language === "en" ? "Search by name or template" : "Zoek op naam of template";
   }
 
-  languageButton.textContent = language === "en" ? "NL" : "EN";
+  dutchButton.classList.toggle("active", language === "nl");
+  englishButton.classList.toggle("active", language === "en");
 }
 
-languageButton.addEventListener("click", () => {
-  currentLanguage = currentLanguage === "nl" ? "en" : "nl";
-  translatePage(currentLanguage);
+dutchButton.addEventListener("click", () => {
+  currentLanguage = "nl";
+  translatePage("nl");
+});
+
+englishButton.addEventListener("click", () => {
+  currentLanguage = "en";
+  translatePage("en");
 });
 
 document.addEventListener("click", () => {
   setTimeout(() => {
-    if (currentLanguage === "en") {
-      translatePage("en");
-    }
+    translatePage(currentLanguage);
   }, 50);
 });

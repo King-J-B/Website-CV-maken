@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<html lang="nl">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Folio - Home</title>
+
+    <link rel="stylesheet" href="../colors.css" />
+    <link rel="stylesheet" href="../base.css" />
+    <link rel="stylesheet" href="../layout.css" />
+    <link rel="stylesheet" href="../components.css" />
+    <link rel="stylesheet" href="../pages.css" />
+    <link rel="stylesheet" href="../responsive.css" />
+  </head>
+
+  <body>
+    <div class="app-shell">
+      <header class="topbar">
+        <a class="brand" href="home.html" aria-label="Folio home">
+          <img class="brand-logo" src="../images/folio-logo-light.png" alt="Folio" />
+        </a>
+
+        <nav class="topnav" aria-label="Hoofdnavigatie">
+          <a class="active" href="home.html">Home</a>
+          <a href="about-us.html">About us</a>
+        </nav>
+
+        <div class="topbar-actions">
+          <button class="icon-button" id="themeButton" type="button" aria-label="Donkere modus wisselen">
+            ◐
+          </button>
+
+          <div class="language-switcher" aria-label="Taal kiezen">
+            <button class="flag-button active" id="dutchButton" type="button" aria-label="Nederlands">
+              <span class="flag flag-nl" aria-hidden="true"></span>
+            </button>
+            <button class="flag-button" id="englishButton" type="button" aria-label="English">
+              <span class="flag flag-gb" aria-hidden="true"></span>
+            </button>
+          </div>
+
+          <div class="account-menu">
+            <button class="avatar-button" id="accountButton" type="button" aria-label="Account menu openen">
+              JB
+            </button>
+
+            <div class="account-dropdown hidden" id="accountDropdown">
+              <a href="personal-details.html">Personal details</a>
+              <a href="#">Mijn account</a>
+              <a href="#">Instellingen</a>
+              <a href="sign-in.html">Uitloggen</a>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <main>
+        <section class="home-hero home-hero-about">
+          <div class="home-hero-content">
+            <p class="eyebrow">Folio CV Builder</p>
+
+            <h1>
+              Put Your <span class="highlight-word">Potential</span> on Paper.
+            </h1>
+
+            <p>
+              Maak eenvoudig een professioneel cv. Vul je gegevens in, kies een
+              template en bekijk direct hoe jouw cv eruit komt te zien.
+            </p>
+
+            <div class="heading-actions">
+              <a class="primary-button link-button" href="index.html">CV maken</a>
+              <a class="secondary-button link-button" href="#templates">Bekijk templates</a>
+            </div>
+          </div>
+
+          <aside class="home-about-side">
+            <p class="eyebrow">Over ons</p>
+            <h2>Gemaakt door Daan & Jesse.</h2>
+            <p>
+              Folio is gemaakt door Daan van den Hombergh en Jesse Breuers, twee
+              vierdejaars Software Development studenten van het Vista college in
+              Maastricht. Tijdens onze stage in Spanje bouwen wij deze cv-builder
+              als opdracht.
+            </p>
+            <a class="secondary-button link-button" href="about-us.html">Lees meer</a>
+          </aside>
+        </section>
+
+        <section class="home-template-section" id="templates">
+          <div class="section-title template-section-heading">
+            <div>
+              <p class="eyebrow">Templates</p>
+              <h2>Kies straks uit 20+ cv templates.</h2>
+              <p>
+                Hieronder staan voorbeeldtemplates. Later kunnen jullie hier makkelijk
+                20 tot 25 verschillende ontwerpen van maken.
+              </p>
+            </div>
+
+            <a class="primary-button link-button" href="index.html">Start met je cv</a>
+          </div>
+
+          <div class="template-gallery">
+            <article class="template-card large-template-card">
+              <div class="template-mockup template-blue"></div>
+              <h3>Modern</h3>
+              <p>Strak en overzichtelijk.</p>
+            </article>
+
+            <article class="template-card large-template-card">
+              <div class="template-mockup template-cyan"></div>
+              <h3>Professional</h3>
+              <p>Zakelijk en rustig.</p>
+            </article>
+
+            <article class="template-card large-template-card">
+              <div class="template-mockup template-dark"></div>
+              <h3>Clean</h3>
+              <p>Minimaal en duidelijk.</p>
+            </article>
+
+            <article class="template-card large-template-card">
+              <div class="template-mockup template-soft"></div>
+              <h3>Student</h3>
+              <p>Perfect voor starters.</p>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-blue"></div>
+              <h3>Classic</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-cyan"></div>
+              <h3>Creative</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-dark"></div>
+              <h3>Minimal</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-soft"></div>
+              <h3>Business</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-blue"></div>
+              <h3>Starter</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-cyan"></div>
+              <h3>Internship</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-dark"></div>
+              <h3>Compact</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-soft"></div>
+              <h3>Elegant</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-blue"></div>
+              <h3>Tech</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-cyan"></div>
+              <h3>Portfolio</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-dark"></div>
+              <h3>Simple</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-soft"></div>
+              <h3>Fresh</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-blue"></div>
+              <h3>Formal</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-cyan"></div>
+              <h3>Bold</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-dark"></div>
+              <h3>Sharp</h3>
+            </article>
+
+            <article class="template-card">
+              <div class="template-mockup template-soft"></div>
+              <h3>Basic</h3>
+            </article>
+          </div>
+        </section>
+
+        <section class="home-final-cta">
+          <div>
+            <p class="eyebrow">Klaar om te starten?</p>
+            <h2>Maak vandaag nog je eerste cv met Folio.</h2>
+          </div>
+
+          <a class="primary-button link-button" href="index.html">Start met je cv</a>
+        </section>
+      </main>
+    </div>
+
+    <script>
+      const themeButton = document.querySelector("#themeButton");
+      const logo = document.querySelector(".brand-logo");
+      const accountButton = document.querySelector("#accountButton");
+      const accountDropdown = document.querySelector("#accountDropdown");
+
+      function toggleTheme() {
+        const isDark = document.body.dataset.theme === "dark";
+
+        if (isDark) {
+          document.body.dataset.theme = "light";
+          logo.src = "../images/folio-logo-light.png";
+        } else {
+          document.body.dataset.theme = "dark";
+          logo.src = "../images/folio-logo-dark.png";
+        }
+      }
+
+      themeButton.addEventListener("click", toggleTheme);
+
+      accountButton.addEventListener("click", (event) => {
+        event.stopPropagation();
+        accountDropdown.classList.toggle("hidden");
+      });
+
+      accountDropdown.addEventListener("click", () => {
+        accountDropdown.classList.add("hidden");
+      });
+
+      document.addEventListener("click", (event) => {
+        const clickedInsideMenu = event.target.closest(".account-menu");
+
+        if (!clickedInsideMenu) {
+          accountDropdown.classList.add("hidden");
+        }
+      });
+    </script>
+
+    <script src="../js/translate.js"></script>
+  </body>
+</html>
