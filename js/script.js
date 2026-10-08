@@ -1,14 +1,5 @@
-// Real CVs are saved in this browser, so adding and deleting survive a reload.
-const RESUMES_KEY = "folio:resumes";
-
-const EXAMPLE_RESUME = {
-  id: 1,
-  title: "Stage UX Designer",
-  template: "Modern template",
-  updated: "Vandaag bewerkt",
-  updatedAt: 0,
-  type: "existing",
-};
+// CVs are saved in this browser by js/cv-store.js (shared with the editor and
+// the template page): the list here, and each CV's content on its own.
 
 // The "+" cards are actions, not CVs: they are never saved, searched or sorted,
 // and always stay at the end of the list.
@@ -29,21 +20,9 @@ const actionCards = [
   },
 ];
 
-function loadResumes() {
-  try {
-    const stored = JSON.parse(localStorage.getItem(RESUMES_KEY));
-    if (Array.isArray(stored)) {
-      return stored.filter((resume) => resume && resume.type === "existing");
-    }
-  } catch (error) {
-    // No storage or unreadable data: start with the example CV.
-  }
-  return [{ ...EXAMPLE_RESUME }];
-}
-
 function saveResumes() {
   try {
-    localStorage.setItem(RESUMES_KEY, JSON.stringify(resumes));
+    FolioStore.saveResumes(resumes);
     return true;
   } catch (error) {
     showToast(getText("Opslaan is niet gelukt", "Could not save"));
@@ -51,7 +30,7 @@ function saveResumes() {
   }
 }
 
-const resumes = loadResumes();
+const resumes = FolioStore.loadResumes();
 
 const resumeView = document.querySelector("#resumeView");
 const emptyView = document.querySelector("#emptyView");
@@ -103,11 +82,11 @@ function createResumeCard(resume) {
 
   const title = getText(resume.title, translateResumeText(resume.title));
   const template = getText(resume.template, translateResumeText(resume.template));
-  const updated = getText(resume.updated, translateResumeText(resume.updated));
+  const updated = formatUpdated(resume);
 
   const actionButtons = isExisting
     ? `
-      <a class="primary-button" href="editor.html">${buttonText}</a>
+      <a class="primary-button" href="editor.html?cv=${encodeURIComponent(resume.id)}">${buttonText}</a>
       <button class="delete-button" type="button" data-delete-id="${resume.id}">
         ${getText("Verwijder", "Delete")}
       </button>
@@ -138,6 +117,29 @@ function createResumeCard(resume) {
       </div>
     </article>
   `;
+}
+
+// "Vandaag bewerkt", "Gisteren bewerkt" or "Bewerkt op 6 okt", from the last
+// edit. The example CV has no edit time yet and keeps its fixed text.
+function formatUpdated(resume) {
+  if (!resume.updatedAt) {
+    return getText(resume.updated, translateResumeText(resume.updated));
+  }
+
+  const edited = new Date(resume.updatedAt);
+  const today = new Date();
+  const yesterday = new Date();
+  yesterday.setDate(today.getDate() - 1);
+
+  if (edited.toDateString() === today.toDateString()) {
+    return getText("Vandaag bewerkt", "Edited today");
+  }
+  if (edited.toDateString() === yesterday.toDateString()) {
+    return getText("Gisteren bewerkt", "Edited yesterday");
+  }
+
+  const date = edited.toLocaleDateString(pageIsEnglish() ? "en-GB" : "nl-NL", { day: "numeric", month: "short" });
+  return getText(`Bewerkt op ${date}`, `Edited ${date}`);
 }
 
 function translateResumeText(text) {
@@ -237,9 +239,10 @@ function renderResumes() {
 // A new CV starts by choosing a template (flow v4: Choose template → Editor).
 // templates.html adds the CV card here and then opens the editor.
 function startNewResume() {
-  window.location.href = "templates.html?new=1";
+  window.location.href = "templates.html";
 }
 
+// Looking at templates is the same page: choosing one there starts a new CV.
 function browseTemplates() {
   window.location.href = "templates.html";
 }
@@ -270,6 +273,7 @@ async function deleteResume(id) {
   if (resumeIndex !== -1) {
     resumes.splice(resumeIndex, 1);
     saveResumes();
+    FolioStore.deleteCv(id);
     showToast(getText("Cv verwijderd", "Resume deleted"));
   }
 
@@ -291,7 +295,7 @@ async function clearAllResumes() {
     return;
   }
 
-  resumes.splice(0, resumes.length);
+  resumes.splice(0, resumes.length).forEach((resume) => FolioStore.deleteCv(resume.id));
   saveResumes();
 
   searchInput.value = "";
@@ -301,8 +305,9 @@ async function clearAllResumes() {
 
 // "Bekijk voorbeelddata": bring the example CV back.
 function restoreExample() {
-  if (!resumes.some((resume) => resume.id === EXAMPLE_RESUME.id)) {
-    resumes.push({ ...EXAMPLE_RESUME });
+  const example = FolioStore.exampleResume();
+  if (!resumes.some((resume) => resume.id === example.id)) {
+    resumes.push(example);
     saveResumes();
   }
 
