@@ -10,7 +10,8 @@
        title: "Delete this resume?",
        message: "It will be deleted permanently.",
        confirmLabel: "Delete",
-       cancelLabel: "Cancel"
+       cancelLabel: "Cancel",
+       tone: "primary" // optional: blue instead of red confirm button
      }).then(function (confirmed) { ... });
 
    Resolves true only when the user clicks the confirm button. Escape, the
@@ -109,6 +110,10 @@
     messageEl.hidden = !options.message;
     confirmButton.textContent = options.confirmLabel || "OK";
     cancelButton.textContent = options.cancelLabel || "Cancel";
+    // Red by default (delete); tone: "primary" makes it blue for safe actions.
+    var primary = options.tone === "primary";
+    confirmButton.classList.toggle("folio-confirm__button--danger", !primary);
+    confirmButton.classList.toggle("folio-confirm__button--primary", primary);
 
     return new Promise(function (resolve) {
       resolveCurrent = resolve;
