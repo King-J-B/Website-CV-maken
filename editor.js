@@ -11,8 +11,15 @@
 (function () {
   "use strict";
 
-  var DRAFT_KEY = "folio:draft";
   var SAVE_DELAY = 400;
+
+  // The editor opens one CV: editor.html?cv=<id> (see js/cv-store.js).
+  // Without a known CV there is nothing to edit, so go to My resumes.
+  var CV_ID = new URLSearchParams(window.location.search).get("cv");
+  if (!CV_ID || !window.FolioStore.findResume(CV_ID)) {
+    window.location.replace("index.html");
+    return;
+  }
 
   // Order matches the flow diagram. `built: false` shows a placeholder panel.
   var SECTIONS = [
@@ -62,7 +69,7 @@
   function loadDraft() {
     var draft = emptyDraft();
     try {
-      var stored = JSON.parse(window.localStorage.getItem(DRAFT_KEY));
+      var stored = window.FolioStore.loadCv(CV_ID);
       if (stored && stored.sections) {
         draft.updatedAt = stored.updatedAt || null;
         if (templateById(stored.template)) draft.template = stored.template;
@@ -108,7 +115,10 @@
     saveTimer = null;
     try {
       draft.updatedAt = new Date().toISOString();
-      window.localStorage.setItem(DRAFT_KEY, JSON.stringify(draft));
+      window.FolioStore.saveCv(CV_ID, draft);
+      // Keep the card on My resumes up to date (last edited, template).
+      var template = templateById(draft.template);
+      window.FolioStore.touchResume(CV_ID, template && template.name);
       setSaveState("saved");
     } catch (error) {
       setSaveState("error");
@@ -156,7 +166,7 @@
   }
 
   function sectionUrl(id) {
-    return "?section=" + encodeURIComponent(id);
+    return "?cv=" + encodeURIComponent(CV_ID) + "&section=" + encodeURIComponent(id);
   }
 
   // Field sections get a check mark once their main field has text.
@@ -1121,6 +1131,7 @@
 
   var templateCaption = document.querySelector("[data-template-caption]");
   var templatePicker = document.querySelector("[data-template-picker]");
+  document.querySelector("[data-browse-templates]").href = "templates.html?cv=" + encodeURIComponent(CV_ID);
 
   TEMPLATES.forEach(function (template) {
     var option = document.createElement("option");
