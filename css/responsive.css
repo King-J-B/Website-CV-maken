@@ -52,6 +52,25 @@
     gap: 6px;
   }
 
+  /* Smaller gap, flags and Inloggen button, so they fit next to the logo */
+  .topbar {
+    column-gap: 10px;
+  }
+
+  .language-switcher {
+    gap: 2px;
+    padding: 3px;
+  }
+
+  .flag-button {
+    width: 32px;
+  }
+
+  .login-button {
+    padding: 0 10px;
+    font-size: 0.9rem;
+  }
+
   .page-card,
   .empty-state {
     padding: 22px 16px;
