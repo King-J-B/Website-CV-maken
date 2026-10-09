@@ -1,0 +1,13 @@
+# Folio — server rules for Apache (cPanel). Python's and PHP's test servers ignore this file.
+
+# Always use https (the lock in the address bar), so logging in is never sent
+# unencrypted. The second line stops a redirect loop if a proxy already did https.
+RewriteEngine On
+RewriteCond %{HTTPS} off
+RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
+
+# Database files and team notes are for us, not for visitors.
+<FilesMatch "\.(sql|md)$">
+  Require all denied
+</FilesMatch>

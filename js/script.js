@@ -176,7 +176,7 @@ function showResumes() {
     "Bewaar, bewerk en exporteer je cv's vanaf een overzichtelijke plek.",
     "Save, edit and export your resumes from one clear place."
   );
-  showEmptyButton.textContent = getText("Toon empty state", "Show empty state");
+  if (showEmptyButton) showEmptyButton.textContent = getText("Toon empty state", "Show empty state");
 }
 
 function showEmpty() {
@@ -190,7 +190,7 @@ function showEmpty() {
     "Er zijn nog geen cv's opgeslagen. Kies een template om je eerste cv te maken.",
     "No resumes have been saved yet. Choose a template to create your first resume."
   );
-  showEmptyButton.textContent = getText("Terug naar mijn cv's", "Back to my resumes");
+  if (showEmptyButton) showEmptyButton.textContent = getText("Terug naar mijn cv's", "Back to my resumes");
 }
 
 function noResultsMessage(searchTerm) {
@@ -327,7 +327,8 @@ function toggleTheme() {
   }
 }
 
-showEmptyButton.addEventListener("click", () => {
+// The demo buttons are only on the page while testing.
+showEmptyButton?.addEventListener("click", () => {
   const isEmptyVisible = !emptyView.classList.contains("hidden");
 
   if (isEmptyVisible) {
@@ -384,7 +385,7 @@ document.addEventListener("click", (event) => {
 document.querySelector("#addResumeButton").addEventListener("click", startNewResume);
 document.querySelector("#emptyCreateButton").addEventListener("click", startNewResume);
 document.querySelector("#backToResumesButton").addEventListener("click", restoreExample);
-document.querySelector("#clearDemoButton").addEventListener("click", clearAllResumes);
+document.querySelector("#clearDemoButton")?.addEventListener("click", clearAllResumes);
 themeButton.addEventListener("click", toggleTheme);
 
 searchInput.addEventListener("input", renderResumes);
