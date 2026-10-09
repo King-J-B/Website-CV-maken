@@ -18,6 +18,7 @@
   var RESUMES_KEY = "folio:resumes";
   var CV_PREFIX = "folio:cv:";
   var LEGACY_DRAFT_KEY = "folio:draft";
+  var DEFAULT_TITLE = "Nieuw cv";
 
   // Shown on My resumes until the user deletes it.
   var EXAMPLE_RESUME = {
@@ -120,7 +121,9 @@
     writeJson(CV_PREFIX + id, { version: 1, updatedAt: null, template: template.id, sections: {} });
     resumes.unshift({
       id: id,
-      title: title || "Nieuw cv",
+      title: title || DEFAULT_TITLE,
+      // Without a chosen title, the card takes the name from the CV ("Sam de Vries - cv").
+      titleAuto: !title,
       template: template.name + " template",
       updated: "Net aangemaakt",
       updatedAt: now,
@@ -130,13 +133,35 @@
     return id;
   }
 
-  // After an edit: update "last edited" and the template name on the card.
-  function touchResume(id, templateName) {
+  // A title nobody chose: new CVs ("Nieuw cv"), also from before titleAuto existed.
+  function hasAutoTitle(resume) {
+    return resume.titleAuto === true || (resume.titleAuto === undefined && resume.title === DEFAULT_TITLE);
+  }
+
+  // After an edit: update "last edited", the template name on the card, and
+  // an automatic title once the CV has a name.
+  function touchResume(id, templateName, personName) {
     var resumes = loadResumes();
     resumes.forEach(function (resume) {
       if (String(resume.id) !== String(id)) return;
       resume.updatedAt = Date.now();
       if (templateName) resume.template = templateName + " template";
+      if (hasAutoTitle(resume)) {
+        var name = (personName || "").trim();
+        resume.title = name ? name + " - cv" : DEFAULT_TITLE;
+        resume.titleAuto = true;
+      }
+    });
+    saveResumes(resumes);
+  }
+
+  // "Rename" on My resumes: from now on the title stays as chosen.
+  function renameResume(id, title) {
+    var resumes = loadResumes();
+    resumes.forEach(function (resume) {
+      if (String(resume.id) !== String(id)) return;
+      resume.title = title;
+      resume.titleAuto = false;
     });
     saveResumes(resumes);
   }
@@ -200,6 +225,7 @@
     findResume: findResume,
     createResume: createResume,
     touchResume: touchResume,
+    renameResume: renameResume,
     loadCv: loadCv,
     saveCv: saveCv,
     deleteCv: deleteCv,

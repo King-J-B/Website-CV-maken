@@ -122,21 +122,25 @@ body {
   padding: 18px;
 }
 
-.preview-line {
-  height: 8px;
-  margin-bottom: 10px;
-  margin-left: 38%;
-  border-radius: 999px;
-  background: var(--color-line);
+/* A real mini CV (js/cv-render.js): the top of its A4 page, scaled to the card */
+.resume-preview--cv {
+  position: relative;
+  height: 250px;
+  min-height: 0;
+  padding: 0;
+  overflow: hidden;
+  background: #ffffff;
 }
 
-.preview-line.short {
-  width: 34%;
-  background: var(--color-primary);
+.resume-preview--cv .cv-page {
+  box-shadow: none;
+  pointer-events: none;
 }
 
-.preview-line.medium {
-  width: 56%;
+.resume-preview--cv .cv-page h2,
+.resume-preview--cv .cv-page p,
+.resume-preview--cv .cv-page ul {
+  margin: 0;
 }
 
 .resume-card.is-new-card .resume-preview {
@@ -160,8 +164,33 @@ body {
   font-weight: 900;
 }
 
-.resume-card.is-new-card .preview-line {
-  display: none;
+/* Title with the small "Rename" pencil next to it */
+.resume-title-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 8px;
+}
+
+.rename-button {
+  display: grid;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  place-items: center;
+  padding: 0;
+  border: 1px solid var(--color-button-line);
+  border-radius: var(--radius-sm);
+  background: var(--color-surface);
+  color: var(--color-muted);
+  font-size: 1rem;
+  cursor: pointer;
+}
+
+.rename-button:hover {
+  border-color: var(--color-primary);
+  background: var(--color-surface-soft);
+  color: var(--color-ink);
 }
 
 .resume-card h3 {

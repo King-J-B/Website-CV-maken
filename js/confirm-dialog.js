@@ -17,6 +17,10 @@
    Resolves true only when the user clicks the confirm button. Escape, the
    Cancel button and a click outside the box all resolve false. The answer
    comes straight from those actions, not from the dialog's "close" event.
+
+   With a text field (for example "Rename"):
+     folioConfirm({ title: "...", input: { label: "Name", value: "Old", maxLength: 80 }, tone: "primary" })
+       .then(function (text) { ... });   // the trimmed text, or null on Cancel
    ========================================================================== */
 
 (function () {
@@ -27,7 +31,11 @@
   var messageEl = null;
   var confirmButton = null;
   var cancelButton = null;
+  var field = null;
+  var fieldLabel = null;
+  var fieldInput = null;
   var resolveCurrent = null;
+  var withInput = false;
 
   function build() {
     dialog = document.createElement("dialog");
@@ -38,6 +46,7 @@
       '<form method="dialog" class="folio-confirm__box">' +
       '  <h2 class="folio-confirm__title" id="folio-confirm-title"></h2>' +
       '  <p class="folio-confirm__message" id="folio-confirm-message"></p>' +
+      '  <label class="folio-confirm__field" hidden><span></span><input type="text" autocomplete="off"></label>' +
       '  <div class="folio-confirm__actions">' +
       '    <button class="folio-confirm__button folio-confirm__button--cancel" value="cancel" type="submit"></button>' +
       '    <button class="folio-confirm__button folio-confirm__button--danger" value="confirm" type="submit"></button>' +
@@ -49,6 +58,16 @@
     messageEl = dialog.querySelector(".folio-confirm__message");
     cancelButton = dialog.querySelector('[value="cancel"]');
     confirmButton = dialog.querySelector('[value="confirm"]');
+    field = dialog.querySelector(".folio-confirm__field");
+    fieldLabel = field.querySelector("span");
+    fieldInput = field.querySelector("input");
+
+    // Enter in the text field confirms (an empty field is not accepted).
+    fieldInput.addEventListener("keydown", function (event) {
+      if (event.key !== "Enter") return;
+      event.preventDefault();
+      settle(true);
+    });
 
     // Answer straight from the button, Escape or outside click. Chrome only
     // fires the dialog's "close" event with the next screen update, which a
@@ -81,12 +100,18 @@
     });
   }
 
-  // Give the answer once and close the box.
+  // Give the answer once and close the box. With a text field, the answer
+  // is the text (or null).
   function settle(confirmed) {
+    if (withInput && confirmed && !fieldInput.value.trim()) {
+      fieldInput.focus(); // nothing typed: keep the box open
+      return;
+    }
     var resolve = resolveCurrent;
     resolveCurrent = null;
     if (dialog.open) dialog.close();
-    if (resolve) resolve(confirmed);
+    if (!resolve) return;
+    resolve(withInput ? (confirmed ? fieldInput.value.trim() : null) : confirmed);
   }
 
   function folioConfirm(options) {
@@ -101,8 +126,16 @@
 
     // If a box is still open, treat it as cancelled before opening a new one.
     if (resolveCurrent) {
-      resolveCurrent(false);
+      resolveCurrent(withInput ? null : false);
       resolveCurrent = null;
+    }
+
+    withInput = Boolean(options.input);
+    field.hidden = !withInput;
+    if (withInput) {
+      fieldLabel.textContent = options.input.label || "";
+      fieldInput.value = options.input.value || "";
+      fieldInput.maxLength = options.input.maxLength || 100;
     }
 
     titleEl.textContent = options.title || "";
@@ -118,8 +151,14 @@
     return new Promise(function (resolve) {
       resolveCurrent = resolve;
       if (!dialog.open) dialog.showModal();
-      // Start on Cancel, so a quick Enter never deletes anything.
-      cancelButton.focus();
+      // Start on Cancel, so a quick Enter never deletes anything; with a
+      // text field, start in the field with the text selected.
+      if (withInput) {
+        fieldInput.focus();
+        fieldInput.select();
+      } else {
+        cancelButton.focus();
+      }
     });
   }
 
