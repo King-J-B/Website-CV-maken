@@ -1,5 +1,5 @@
-// CVs are saved in this browser by js/cv-store.js (shared with the editor and
-// the template page): the list here, and each CV's content on its own.
+// CVs are saved by js/cv-store.js (shared with the editor and the template
+// page): in the account when signed in, otherwise in this browser.
 
 // The "+" card is an action, not a CV: it is never saved, searched or sorted,
 // and always stays at the end of the list.
@@ -13,17 +13,8 @@ const actionCards = [
   },
 ];
 
-function saveResumes() {
-  try {
-    FolioStore.saveResumes(resumes);
-    return true;
-  } catch (error) {
-    showToast(getText("Opslaan is niet gelukt", "Could not save"));
-    return false;
-  }
-}
-
-const resumes = FolioStore.loadResumes();
+// Filled by loadResumeList(), from the account or this browser.
+const resumes = [];
 
 const resumeView = document.querySelector("#resumeView");
 const emptyView = document.querySelector("#emptyView");
@@ -239,10 +230,31 @@ const previewObserver = "ResizeObserver" in window
 
 function fillPreviews() {
   resumeView.querySelectorAll("[data-cv-preview]").forEach((box) => {
-    const content = FolioStore.loadCv(box.dataset.cvPreview) || FolioStore.loadCv(Number(box.dataset.cvPreview));
-    box.appendChild(FolioRender.page(content));
-    FolioRender.fit(box);
-    if (previewObserver) previewObserver.observe(box);
+    FolioStore.load(box.dataset.cvPreview).then((content) => {
+      box.appendChild(FolioRender.page(content));
+      FolioRender.fit(box);
+      if (previewObserver) previewObserver.observe(box);
+    }, () => {
+      // No preview is fine: the card itself still works.
+    });
+  });
+}
+
+function loadResumeList() {
+  return FolioStore.list().then((list) => {
+    resumes.splice(0, resumes.length, ...list);
+    renderResumes();
+
+    // CVs made as a guest moved into the account after signing in.
+    const moved = FolioStore.movedCount();
+    if (moved) {
+      showToast(getText(
+        moved === 1 ? "Je cv uit deze browser staat nu in je account" : `${moved} cv's uit deze browser staan nu in je account`,
+        moved === 1 ? "Your resume from this browser is now in your account" : `${moved} resumes from this browser are now in your account`
+      ));
+    }
+  }, () => {
+    showToast(getText("Je cv's konden niet worden geladen. Probeer het opnieuw.", "Your resumes could not be loaded. Please try again."));
   });
 }
 
@@ -271,11 +283,16 @@ async function renameResume(id) {
     return;
   }
 
+  try {
+    await FolioStore.rename(id, title);
+  } catch (error) {
+    showToast(getText("Opslaan is niet gelukt", "Could not save"));
+    return;
+  }
+
   resume.title = title;
   resume.titleAuto = false;
-  if (saveResumes()) {
-    showToast(getText("Naam gewijzigd", "Name changed"));
-  }
+  showToast(getText("Naam gewijzigd", "Name changed"));
   renderResumes();
 }
 
@@ -300,51 +317,25 @@ async function deleteResume(id) {
     return;
   }
 
-  const resumeIndex = resumes.findIndex((item) => item.id === id);
-
-  if (resumeIndex !== -1) {
-    resumes.splice(resumeIndex, 1);
-    saveResumes();
-    FolioStore.deleteCv(id);
-    showToast(getText("Cv verwijderd", "Resume deleted"));
-  }
-
-  renderResumes();
-}
-
-async function clearAllResumes() {
-  const confirmed = await folioConfirm({
-    title: getText("Alle cv's verwijderen?", "Delete all resumes?"),
-    message: getText(
-      "Demo: al je opgeslagen cv's worden definitief verwijderd. Dit kun je niet ongedaan maken.",
-      "Demo: all your saved resumes will be deleted permanently. This can't be undone."
-    ),
-    confirmLabel: getText("Alles verwijderen", "Delete all"),
-    cancelLabel: getText("Annuleren", "Cancel"),
-  });
-
-  if (!confirmed) {
+  try {
+    await FolioStore.remove(id);
+  } catch (error) {
+    showToast(getText("Verwijderen is niet gelukt. Probeer het opnieuw.", "Could not delete. Please try again."));
     return;
   }
 
-  resumes.splice(0, resumes.length).forEach((resume) => FolioStore.deleteCv(resume.id));
-  saveResumes();
-
-  searchInput.value = "";
+  const resumeIndex = resumes.findIndex((item) => item.id === id);
+  if (resumeIndex !== -1) {
+    resumes.splice(resumeIndex, 1);
+  }
+  showToast(getText("Cv verwijderd", "Resume deleted"));
   renderResumes();
-  showToast(getText("Alle cv's verwijderd", "All resumes deleted"));
 }
 
-// "Bekijk voorbeelddata": bring the example CV back.
+// "Bekijk voorbeelddata" (guests): bring the example CV back.
 function restoreExample() {
-  const example = FolioStore.exampleResume();
-  if (!resumes.some((resume) => resume.id === example.id)) {
-    resumes.push(example);
-    saveResumes();
-  }
-
   searchInput.value = "";
-  renderResumes();
+  FolioStore.restoreExample().then(loadResumeList);
 }
 
 // The demo buttons are only on the page while testing.
@@ -390,11 +381,15 @@ resumeView.addEventListener("click", (event) => {
 document.querySelector("#addResumeButton").addEventListener("click", startNewResume);
 document.querySelector("#emptyCreateButton").addEventListener("click", startNewResume);
 document.querySelector("#backToResumesButton").addEventListener("click", restoreExample);
-document.querySelector("#clearDemoButton")?.addEventListener("click", clearAllResumes);
 // Cards, dates and messages are built in the chosen language: rebuild them on a switch.
 document.addEventListener("folio:languagechange", renderResumes);
 
 searchInput.addEventListener("input", renderResumes);
 sortSelect.addEventListener("change", renderResumes);
 
-renderResumes();
+// The example CV is only for guests; an account starts empty.
+FolioStore.mode().then((where) => {
+  document.querySelector("#backToResumesButton").hidden = where === "account";
+});
+
+loadResumeList();

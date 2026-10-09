@@ -13,7 +13,7 @@ Folio is a website where anyone can make a CV, pick a template, and download or 
 
 ## Getting started
 
-Plain HTML, CSS and JavaScript: no build step, no install. CVs are saved in the browser (`localStorage`).
+Plain HTML, CSS and JavaScript: no build step, no install. Guests' CVs are saved in the browser (`localStorage`); signed-in users' CVs in the database (see below).
 
 ```bash
 git clone https://github.com/King-J-B/Website-CV-maken.git
@@ -50,7 +50,7 @@ Accounts and online CVs use PHP and MySQL. The pages above still work without th
 | `js/` | All scripts. `cv-store.js` is the only code that saves CVs; `templates-data.js` lists the templates; `translate.js` holds every Dutch/English text (add new texts there); `theme.js` does light/dark mode |
 | `images/` | Logos and the favicon |
 | `database.sql` | Creates the `users` and `cvs` tables |
-| `database-update-1.sql` | Only for a database made before 9 Oct 2026: gives `users` its separate columns |
+| `database-update-1.sql`, `database-update-2.sql` | Only for a database made with an older `database.sql` (the live one): import them once, in order |
 | `api/` | PHP backend, see below |
 
 ### The API (`api/`)
@@ -63,6 +63,8 @@ The pages talk to these PHP files with JSON. They need PHP, so test with `php -S
 | `sign-in.php` | POST `{ email, password, remember }` → signs in (remember = 30 days) |
 | `sign-out.php` | POST → signs out |
 | `me.php` | GET → `{ user }` when signed in, `{ user: null }` for guests |
+| `cvs.php` | The signed-in user's CVs: GET (list or `?id=`), POST (new), PATCH `?id=` (save, rename), DELETE `?id=` |
+| `profile.php` | GET / POST the Personal details (new CVs start with them) |
 | `check.php` | GET → is the database connected? |
 | `session.php`, `db.php`, `config.php` | Shared code and the database login. These can't be opened in a browser |
 

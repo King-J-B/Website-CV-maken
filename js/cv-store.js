@@ -1,5 +1,15 @@
 /* ==========================================================================
-   Folio — CV storage, shared by My resumes, the template page and the editor.
+   Folio — CV storage, shared by My resumes, the template page, the home page
+   and the editor. Every function returns a Promise:
+
+     FolioStore.list()                         → [ {id, title, template, updatedAt, ...} ]
+     FolioStore.load(id)                       → the CV's content, or null
+     FolioStore.create(template, title?, content?) → the new id
+     FolioStore.save(id, content, { templateName, personName })
+     FolioStore.rename(id, title) / FolioStore.remove(id)
+
+   Signed in (js/account.js says who): the CVs are in the account, through
+   api/cvs.php. Guest CVs move into the account after signing in.
 
    Guests keep their CVs in this browser (localStorage):
    - folio:resumes      the list of CVs shown on My resumes (title, template
@@ -219,20 +229,213 @@
     }
   }
 
-  window.FolioStore = {
-    loadResumes: loadResumes,
-    saveResumes: saveResumes,
-    findResume: findResume,
-    createResume: createResume,
-    touchResume: touchResume,
-    renameResume: renameResume,
-    loadCv: loadCv,
-    saveCv: saveCv,
-    deleteCv: deleteCv,
-    exampleResume: function () {
-      return copy(EXAMPLE_RESUME);
+  /* ------------------------------------------------------------------------
+     Online: signed-in users keep their CVs in their account (api/cvs.php),
+     guests in this browser (the functions above). The functions below pick
+     the right place themselves and always return a Promise, so the pages
+     work the same for both.
+     ------------------------------------------------------------------------ */
+
+  var API = "api/cvs.php";
+  var modePromise = null;
+  var movedCount = 0;
+
+  // "account" or "local". Needs js/account.js (window.FolioAccount) on the page.
+  function mode() {
+    if (!modePromise) {
+      var ready = window.FolioAccount ? window.FolioAccount.ready : Promise.reject(new Error("No account script"));
+      modePromise = ready
+        .then(function (user) {
+          return user ? "account" : "local";
+        }, function () {
+          return "local"; // no server (python http.server): this browser only
+        })
+        .then(function (where) {
+          if (where !== "account") return where;
+          return moveLocalToAccount().then(function () {
+            return where;
+          });
+        });
+    }
+    return modePromise;
+  }
+
+  // One request to api/cvs.php. Rejects with the server's message; error.status
+  // is the HTTP status (401 = signed out, 404 = no such CV).
+  function request(method, query, body, keepalive) {
+    var options = {
+      method: method,
+      credentials: "same-origin",
+      headers: { Accept: "application/json" },
+      keepalive: Boolean(keepalive)
+    };
+    if (body) {
+      options.headers["Content-Type"] = "application/json";
+      options.body = JSON.stringify(body);
+    }
+    return fetch(API + (query || ""), options).then(function (response) {
+      return response
+        .json()
+        .catch(function () {
+          return {};
+        })
+        .then(function (data) {
+          if (response.ok) return data;
+          var error = new Error(data.message || "Saving online did not work.");
+          error.status = response.status;
+          throw error;
+        });
+    });
+  }
+
+  function templateName(id) {
+    var template = (window.FOLIO_TEMPLATES || []).filter(function (item) {
+      return item.id === id;
+    })[0];
+    return (template ? template.name : "Modern") + " template";
+  }
+
+  // A CV from the server, in the same shape as the list in this browser.
+  function fromServer(cv) {
+    return {
+      id: cv.id,
+      title: cv.title,
+      titleAuto: cv.titleAuto,
+      template: templateName(cv.template),
+      updatedAt: cv.updatedAt,
+      type: "existing"
+    };
+  }
+
+  // After signing in, CVs made as a guest move into the account, so nothing
+  // is lost. Only CVs with saved content move (not the untouched example).
+  function moveLocalToAccount() {
+    var local = readJson(RESUMES_KEY);
+    if (!Array.isArray(local)) return Promise.resolve();
+
+    var left = [];
+    return local
+      .reduce(function (previous, resume) {
+        return previous.then(function () {
+          var content = resume && resume.type === "existing" ? readJson(CV_PREFIX + resume.id) : null;
+          if (!content) return;
+          return request("POST", "", {
+            template: content.template,
+            title: hasAutoTitle(resume) ? "" : resume.title,
+            content: content
+          }).then(function () {
+            movedCount += 1;
+            window.localStorage.removeItem(CV_PREFIX + resume.id);
+          }, function () {
+            left.push(resume); // try again next time
+          });
+        });
+      }, Promise.resolve())
+      .then(function () {
+        if (left.length) writeJson(RESUMES_KEY, left);
+        else if (movedCount) window.localStorage.removeItem(RESUMES_KEY);
+      });
+  }
+
+  // Old saves could hold an empty list where an object belongs.
+  function cleanContent(content) {
+    if (content && (!content.sections || Array.isArray(content.sections))) content.sections = {};
+    return content;
+  }
+
+  var online = {
+    mode: mode,
+
+    // How many guest CVs just moved into the account (for a message on My resumes).
+    movedCount: function () {
+      return movedCount;
+    },
+
+    list: function () {
+      return mode().then(function (where) {
+        if (where === "local") return loadResumes();
+        return request("GET").then(function (data) {
+          return data.cvs.map(fromServer);
+        });
+      });
+    },
+
+    // The content of one CV, or null when it doesn't exist.
+    load: function (id) {
+      return mode().then(function (where) {
+        if (where === "local") return findResume(id) ? cleanContent(loadCv(id)) : null;
+        return request("GET", "?id=" + encodeURIComponent(id)).then(function (data) {
+          return cleanContent(data.cv.content);
+        }, function (error) {
+          if (error.status === 404) return null;
+          throw error;
+        });
+      });
+    },
+
+    // A new CV; resolves with its id. Title and content are optional.
+    create: function (template, title, content) {
+      return mode().then(function (where) {
+        if (where === "local") {
+          var id = createResume(template, title);
+          if (content) {
+            content.template = template.id;
+            saveCv(id, content);
+            var personal = (content.sections && content.sections.personal) || {};
+            touchResume(id, null, personal.name);
+          }
+          return id;
+        }
+        return request("POST", "", { template: template.id, title: title || "", content: content || null }).then(function (data) {
+          return data.cv.id;
+        });
+      });
+    },
+
+    // info: { templateName, personName }. keepalive: still send it while the page closes.
+    save: function (id, content, info, keepalive) {
+      info = info || {};
+      return mode().then(function (where) {
+        if (where === "local") {
+          saveCv(id, content);
+          touchResume(id, info.templateName, info.personName);
+          return;
+        }
+        return request("PATCH", "?id=" + encodeURIComponent(id), { content: content, personName: info.personName || "" }, keepalive);
+      });
+    },
+
+    rename: function (id, title) {
+      return mode().then(function (where) {
+        if (where === "local") return renameResume(id, title);
+        return request("PATCH", "?id=" + encodeURIComponent(id), { title: title });
+      });
+    },
+
+    remove: function (id) {
+      return mode().then(function (where) {
+        if (where === "account") return request("DELETE", "?id=" + encodeURIComponent(id));
+        saveResumes(loadResumes().filter(function (resume) {
+          return String(resume.id) !== String(id);
+        }));
+        deleteCv(id);
+      });
     }
   };
+
+  // Guests: put the example CV back on My resumes.
+  online.restoreExample = function () {
+    return mode().then(function (where) {
+      if (where !== "local") return;
+      var resumes = loadResumes();
+      if (!resumes.some(function (resume) { return String(resume.id) === String(EXAMPLE_RESUME.id); })) {
+        resumes.push(copy(EXAMPLE_RESUME));
+        saveResumes(resumes);
+      }
+    });
+  };
+
+  window.FolioStore = online;
 
   migrateLegacyDraft();
 })();

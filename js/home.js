@@ -156,18 +156,21 @@
     event.preventDefault();
     var template = TEMPLATES.filter(function (item) { return item.id === choice.template; })[0] || TEMPLATES[0];
     var name = nameInput.value.trim();
-    try {
-      var id = store.createResume(template, name ? name + " - cv" : undefined);
-      var content = store.loadCv(id) || { version: 1, updatedAt: null, template: template.id, sections: {} };
-      content.design = { color: choice.color, font: "", spacing: "" };
-      if (name) content.sections.personal = { name: name };
-      store.saveCv(id, content);
+    var content = {
+      version: 1,
+      updatedAt: null,
+      template: template.id,
+      design: { color: choice.color, font: "", spacing: "" },
+      sections: name ? { personal: { name: name } } : {}
+    };
+    // No title: the CV is named after the person ("Sam de Vries - cv").
+    store.create(template, "", content).then(function (id) {
       window.location.href = "editor.html?cv=" + encodeURIComponent(id) + "&section=personal";
-    } catch (error) {
+    }, function () {
       window.alert(isEnglish()
-        ? "We couldn't start your CV in this browser. Please try again."
-        : "Je cv kon niet worden gestart in deze browser. Probeer het opnieuw.");
-    }
+        ? "We couldn't start your CV. Please try again."
+        : "Je cv kon niet worden gestart. Probeer het opnieuw.");
+    });
   });
 
   // English placeholder when the page is switched to English.
@@ -238,12 +241,11 @@
     use.type = "button";
     use.setAttribute("aria-label", "Kies " + template.name);
     use.addEventListener("click", function () {
-      try {
-        var id = store.createResume(template);
+      store.create(template).then(function (id) {
         window.location.href = "editor.html?cv=" + encodeURIComponent(id) + "&section=personal";
-      } catch (error) {
+      }, function () {
         window.location.href = "templates.html";
-      }
+      });
     });
     body.appendChild(use);
     item.appendChild(body);

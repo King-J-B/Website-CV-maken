@@ -20,9 +20,10 @@
   var templates = window.FOLIO_TEMPLATES;
 
   // A known ?cv= means "change this CV"; anything else starts a new CV.
+  // (cvId and cvContent are filled in at the start, see the bottom.)
   var cvParam = new URLSearchParams(window.location.search).get("cv");
-  var cvId = cvParam && store.findResume(cvParam) ? cvParam : null;
-  var isNewCv = !cvId;
+  var cvId = null;
+  var cvContent = null;
   var grid = document.querySelector("[data-template-grid]");
   var errorBox = document.querySelector("[data-error]");
 
@@ -33,22 +34,17 @@
      Storage
      ------------------------------------------------------------------------ */
 
-  function currentTemplateId() {
-    var content = cvId ? store.loadCv(cvId) : null;
-    return content && content.template ? content.template : null;
-  }
-
-  // Returns the id of the CV the editor should open next.
+  // Resolves with the id of the CV the editor should open next.
   function saveTemplateChoice(template) {
-    if (isNewCv) return store.createResume(template);
+    if (!cvId) return store.create(template);
 
     // Change the template only; the CV's content stays as it is.
-    var content = store.loadCv(cvId) || { version: 1, updatedAt: null, sections: {} };
-    content.template = template.id;
-    content.updatedAt = new Date().toISOString();
-    store.saveCv(cvId, content);
-    store.touchResume(cvId, template.name);
-    return cvId;
+    cvContent.template = template.id;
+    cvContent.updatedAt = new Date().toISOString();
+    var personal = (cvContent.sections && cvContent.sections.personal) || {};
+    return store.save(cvId, cvContent, { templateName: template.name, personName: personal.name }).then(function () {
+      return cvId;
+    });
   }
 
   /* ------------------------------------------------------------------------
@@ -106,16 +102,13 @@
   }
 
   function useTemplate(template) {
-    var id;
-    try {
-      id = saveTemplateChoice(template);
-    } catch (error) {
-      errorBox.textContent = "We couldn't save your choice in this browser. Please try again.";
+    saveTemplateChoice(template).then(function (id) {
+      // Flow v4: the editor opens at Personal details.
+      window.location.href = "editor.html?cv=" + encodeURIComponent(id) + "&section=personal";
+    }, function () {
+      errorBox.textContent = "We couldn't save your choice. Please try again.";
       errorBox.hidden = false;
-      return;
-    }
-    // Flow v4: the editor opens at Personal details.
-    window.location.href = "editor.html?cv=" + encodeURIComponent(id) + "&section=personal";
+    });
   }
 
   // Scale an A4 preview to the width of its card.
@@ -135,14 +128,16 @@
      Start
      ------------------------------------------------------------------------ */
 
-  document.querySelectorAll("[data-new-only]").forEach(function (node) {
-    node.hidden = !isNewCv;
-  });
+  function showCards() {
+    document.querySelectorAll("[data-new-only]").forEach(function (node) {
+      node.hidden = Boolean(cvId);
+    });
 
-  var current = currentTemplateId();
-  templates.forEach(function (template) {
-    grid.appendChild(card(template, template.id === current));
-  });
+    var current = cvContent && cvContent.template;
+    templates.forEach(function (template) {
+      grid.appendChild(card(template, template.id === current));
+    });
+  }
 
   // Watch every preview on its own: one card can change width (for example
   // when a scrollbar appears) without the grid itself changing size.
@@ -152,11 +147,20 @@
         fitPreview(entry.target);
       });
     });
-    document.querySelectorAll(".tp-preview__stage").forEach(function (stage) {
-      observer.observe(stage);
-    });
   } else {
     window.addEventListener("resize", fitPreviews);
   }
-  fitPreviews();
+
+  // From the editor (?cv=): load that CV first, to change only its template.
+  (cvParam ? store.load(cvParam).catch(function () { return null; }) : Promise.resolve(null)).then(function (content) {
+    cvId = content ? cvParam : null;
+    cvContent = content;
+    showCards();
+    if (observer) {
+      document.querySelectorAll(".tp-preview__stage").forEach(function (stage) {
+        observer.observe(stage);
+      });
+    }
+    fitPreviews();
+  });
 })();
