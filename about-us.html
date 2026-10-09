@@ -3,22 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CV Builder - About us</title>
+    <title>Over ons · Folio</title>
 
     <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/colors.css?v=27" />
-    <link rel="stylesheet" href="css/base.css?v=27" />
-    <link rel="stylesheet" href="css/layout.css?v=27" />
-    <link rel="stylesheet" href="css/components.css?v=27" />
-    <link rel="stylesheet" href="css/pages.css?v=27" />
-    <link rel="stylesheet" href="css/responsive.css?v=27" />
+    <link rel="stylesheet" href="css/colors.css?v=28" />
+    <link rel="stylesheet" href="css/base.css?v=28" />
+    <link rel="stylesheet" href="css/layout.css?v=28" />
+    <link rel="stylesheet" href="css/components.css?v=28" />
+    <link rel="stylesheet" href="css/pages.css?v=28" />
+    <link rel="stylesheet" href="css/responsive.css?v=28" />
   </head>
 
   <body>
+    <script src="js/theme.js?v=28"></script>
     <div class="app-shell">
       <header class="topbar">
         <a class="brand" href="index.html" aria-label="Folio home">
@@ -100,25 +101,6 @@
       </main>
     </div>
 
-    <script>
-      const themeButton = document.querySelector("#themeButton");
-      const logo = document.querySelector(".brand-logo");
-
-      function toggleTheme() {
-        const isDark = document.body.dataset.theme === "dark";
-
-        if (isDark) {
-          document.body.dataset.theme = "light";
-          logo.src = "images/folio-logo-light.png";
-        } else {
-          document.body.dataset.theme = "dark";
-          logo.src = "images/folio-logo-dark.png";
-        }
-      }
-
-      themeButton.addEventListener("click", toggleTheme);
-    </script>
-
-    <script src="js/translate.js?v=27"></script>
+    <script src="js/translate.js?v=28"></script>
   </body>
 </html>

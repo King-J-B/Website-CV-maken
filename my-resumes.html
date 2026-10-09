@@ -3,22 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CV Builder - My resumes</title>
+    <title>Mijn cv's · Folio</title>
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
     <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
-    <link rel="stylesheet" href="css/colors.css?v=27" />
-    <link rel="stylesheet" href="css/base.css?v=27" />
-    <link rel="stylesheet" href="css/layout.css?v=27" />
-    <link rel="stylesheet" href="css/components.css?v=27" />
-    <link rel="stylesheet" href="css/pages.css?v=27" />
-    <link rel="stylesheet" href="css/responsive.css?v=27" />
-    <link rel="stylesheet" href="css/confirm-dialog.css?v=27" />
+    <link rel="stylesheet" href="css/colors.css?v=28" />
+    <link rel="stylesheet" href="css/base.css?v=28" />
+    <link rel="stylesheet" href="css/layout.css?v=28" />
+    <link rel="stylesheet" href="css/components.css?v=28" />
+    <link rel="stylesheet" href="css/pages.css?v=28" />
+    <link rel="stylesheet" href="css/responsive.css?v=28" />
+    <link rel="stylesheet" href="css/confirm-dialog.css?v=28" />
   </head>
 
   <body>
+    <script src="js/theme.js?v=28"></script>
     <div class="app-shell">
       <header class="topbar">
         <a class="brand" href="index.html" aria-label="Folio home">
@@ -48,9 +49,7 @@
             <button class="avatar-button" id="accountButton" type="button" aria-label="Account menu openen"></button>
 
             <div class="account-dropdown hidden" id="accountDropdown">
-              <a href="personal-details.html">Personal details</a>
-              <a href="#">Mijn account</a>
-              <a href="#">Instellingen</a>
+              <a href="personal-details.html">Persoonlijke gegevens</a>
               <a href="index.html" data-sign-out>Uitloggen</a>
             </div>
           </div>
@@ -60,7 +59,7 @@
       <main class="page-card">
         <section class="page-heading">
           <div>
-            <p class="eyebrow" id="pageLabel">Resume page</p>
+            <p class="eyebrow" id="pageLabel">Overzicht</p>
             <h1>Mijn cv's</h1>
             <p class="intro">
               Bewaar, bewerk en exporteer je cv's vanaf een overzichtelijke plek.
@@ -119,11 +118,11 @@
 
     <div class="toast hidden" id="toastMessage" aria-live="polite"></div>
 
-    <script src="js/templates-data.js?v=27"></script>
-    <script src="js/cv-store.js?v=27"></script>
-    <script src="js/confirm-dialog.js?v=27"></script>
-    <script src="js/script.js?v=27"></script>
-    <script src="js/account.js?v=27"></script>
-    <script src="js/translate.js?v=27"></script>
+    <script src="js/translate.js?v=28"></script>
+    <script src="js/templates-data.js?v=28"></script>
+    <script src="js/cv-store.js?v=28"></script>
+    <script src="js/confirm-dialog.js?v=28"></script>
+    <script src="js/script.js?v=28"></script>
+    <script src="js/account.js?v=28"></script>
   </body>
 </html>

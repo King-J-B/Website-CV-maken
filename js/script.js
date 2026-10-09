@@ -37,19 +37,15 @@ const emptyView = document.querySelector("#emptyView");
 const pageLabel = document.querySelector("#pageLabel");
 const searchInput = document.querySelector("#searchInput");
 const sortSelect = document.querySelector("#sortSelect");
-const themeButton = document.querySelector("#themeButton");
-const logo = document.querySelector(".brand-logo");
 const pageCard = document.querySelector(".page-card");
 const pageTitle = document.querySelector(".page-heading h1");
 const pageIntro = document.querySelector(".intro");
 const showEmptyButton = document.querySelector("#showEmptyButton");
 const toastMessage = document.querySelector("#toastMessage");
-const accountButton = document.querySelector("#accountButton");
-const accountDropdown = document.querySelector("#accountDropdown");
 
+// js/translate.js knows the chosen language (it loads before this file).
 function pageIsEnglish() {
-  const englishButton = document.querySelector("#englishButton");
-  return Boolean(englishButton && englishButton.classList.contains("active"));
+  return window.FolioLang ? FolioLang.current === "en" : false;
 }
 
 function getText(dutchText, englishText) {
@@ -80,7 +76,9 @@ function createResumeCard(resume) {
   const cardClass = isExisting ? "" : "is-new-card";
   const startAttribute = isExisting ? "" : `data-start-card="${resume.type}"`;
 
-  const title = getText(resume.title, translateResumeText(resume.title));
+  // A CV's title is the user's own text: never translated.
+  const title = isExisting ? escapeHtml(resume.title) : getText(resume.title, translateResumeText(resume.title));
+  const titleAttribute = isExisting ? " data-no-translate" : "";
   const template = getText(resume.template, translateResumeText(resume.template));
   const updated = formatUpdated(resume);
 
@@ -107,7 +105,7 @@ function createResumeCard(resume) {
       </div>
 
       <div>
-        <h3>${title}</h3>
+        <h3${titleAttribute}>${title}</h3>
         <p class="resume-meta">${template}</p>
         <p class="resume-updated">${updated}</p>
       </div>
@@ -144,7 +142,6 @@ function formatUpdated(resume) {
 
 function translateResumeText(text) {
   const translations = {
-    "Stage UX Designer": "UX Designer Internship",
     "Modern template": "Modern template",
     "Vandaag bewerkt": "Edited today",
     "Nieuwe cv starten": "Start new resume",
@@ -170,7 +167,7 @@ function showResumes() {
   resumeView.classList.remove("hidden");
   emptyView.classList.add("hidden");
 
-  pageLabel.textContent = getText("Resume page", "Resume page");
+  pageLabel.textContent = getText("Overzicht", "Overview");
   pageTitle.textContent = getText("Mijn cv's", "My resumes");
   pageIntro.textContent = getText(
     "Bewaar, bewerk en exporteer je cv's vanaf een overzichtelijke plek.",
@@ -184,7 +181,7 @@ function showEmpty() {
   resumeView.classList.add("hidden");
   emptyView.classList.remove("hidden");
 
-  pageLabel.textContent = getText("Empty state", "Empty state");
+  pageLabel.textContent = getText("Begin hier", "Start here");
   pageTitle.textContent = getText("Nog geen cv's", "No resumes yet");
   pageIntro.textContent = getText(
     "Er zijn nog geen cv's opgeslagen. Kies een template om je eerste cv te maken.",
@@ -253,7 +250,7 @@ async function deleteResume(id) {
     return;
   }
 
-  const name = getText(resume.title, translateResumeText(resume.title));
+  const name = resume.title;
   const confirmed = await folioConfirm({
     title: getText("Dit cv verwijderen?", "Delete this resume?"),
     message: getText(
@@ -315,18 +312,6 @@ function restoreExample() {
   renderResumes();
 }
 
-function toggleTheme() {
-  const isDark = document.body.dataset.theme === "dark";
-
-  if (isDark) {
-    document.body.dataset.theme = "light";
-    logo.src = "images/folio-logo-light.png";
-  } else {
-    document.body.dataset.theme = "dark";
-    logo.src = "images/folio-logo-dark.png";
-  }
-}
-
 // The demo buttons are only on the page while testing.
 showEmptyButton?.addEventListener("click", () => {
   const isEmptyVisible = !emptyView.classList.contains("hidden");
@@ -365,28 +350,12 @@ resumeView.addEventListener("click", (event) => {
   }
 });
 
-accountButton.addEventListener("click", (event) => {
-  event.stopPropagation();
-  accountDropdown.classList.toggle("hidden");
-});
-
-accountDropdown.addEventListener("click", () => {
-  accountDropdown.classList.add("hidden");
-});
-
-document.addEventListener("click", (event) => {
-  const clickedInsideMenu = event.target.closest(".account-menu");
-
-  if (!clickedInsideMenu) {
-    accountDropdown.classList.add("hidden");
-  }
-});
-
 document.querySelector("#addResumeButton").addEventListener("click", startNewResume);
 document.querySelector("#emptyCreateButton").addEventListener("click", startNewResume);
 document.querySelector("#backToResumesButton").addEventListener("click", restoreExample);
 document.querySelector("#clearDemoButton")?.addEventListener("click", clearAllResumes);
-themeButton.addEventListener("click", toggleTheme);
+// Cards, dates and messages are built in the chosen language: rebuild them on a switch.
+document.addEventListener("folio:languagechange", renderResumes);
 
 searchInput.addEventListener("input", renderResumes);
 sortSelect.addEventListener("change", renderResumes);

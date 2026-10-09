@@ -13,6 +13,12 @@
 
   var SAVE_DELAY = 400;
 
+  // The screen is translated by js/translate.js. Words this script puts on the
+  // CV itself (dates, skill levels) are translated here with L().
+  function L(text) {
+    return window.FolioLang ? window.FolioLang.t(text) : text;
+  }
+
   // The editor opens one CV: editor.html?cv=<id> (see js/cv-store.js).
   // Without a known CV there is nothing to edit, so go to My resumes.
   var CV_ID = new URLSearchParams(window.location.search).get("cv");
@@ -396,6 +402,7 @@
       var name = document.createElement("span");
       name.className = "skill-item__name";
       name.textContent = skill.name;
+      name.setAttribute("data-no-translate", "");
 
       var level = document.createElement("select");
       level.className = "ed-select ed-select--compact";
@@ -444,7 +451,7 @@
       if (skill.level) {
         var level = document.createElement("span");
         level.className = "cv-page__level";
-        level.textContent = skill.level;
+        level.textContent = L(skill.level);
         chip.appendChild(level);
       }
       previewList.appendChild(chip);
@@ -689,14 +696,14 @@
 
   function formatDate(month, year) {
     if (!year) return "";
-    return (month ? MONTHS[month - 1] + " " : "") + year;
+    return (month ? L(MONTHS[month - 1]) + " " : "") + year;
   }
 
   function formatRange(item) {
     var start = formatDate(item.startMonth, item.startYear);
-    var end = item.current ? "Present" : formatDate(item.endMonth, item.endYear);
+    var end = item.current ? L("Present") : formatDate(item.endMonth, item.endYear);
     if (start && end) return start + " – " + end;
-    if (end) return item.current ? "Present" : "Until " + end;
+    if (end) return item.current ? L("Present") : (window.FolioLang && FolioLang.current === "nl" ? "Tot " : "Until ") + end;
     return start;
   }
 
@@ -911,6 +918,9 @@
       if (isOpen) toggle.setAttribute("aria-controls", baseId + "-body");
       var title = el("span", "entry__title", headline(item));
       var meta = el("span", "entry__meta", summary(item));
+      // The user's own title and place stay as typed ("New job" is ours).
+      if ((item[cfg.titleField] || "").trim()) title.setAttribute("data-no-translate", "");
+      meta.setAttribute("data-no-translate", "");
       toggle.appendChild(title);
       toggle.appendChild(meta);
       toggle.addEventListener("click", function () {
@@ -1398,6 +1408,16 @@
   /* ------------------------------------------------------------------------
      Start
      ------------------------------------------------------------------------ */
+
+  // Dates and skill levels on the CV follow the chosen language.
+  document.addEventListener("folio:languagechange", function () {
+    renderSkills();
+    education.render();
+    education.renderPreview();
+    experience.render();
+    experience.renderPreview();
+    updateFit();
+  });
 
   renderPersonalPreview();
   renderAboutPreview();

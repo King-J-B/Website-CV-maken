@@ -102,9 +102,14 @@ a {
   min-height: var(--topbar-height);
   padding: 0 24px;
   border-bottom: 1px solid var(--border-decorative);
-  background: rgba(255, 255, 255, 0.9);
+  background: color-mix(in srgb, var(--bg-surface) 90%, transparent);
   -webkit-backdrop-filter: blur(8px);
   backdrop-filter: blur(8px);
+}
+
+/* Theme button and language flags (css/controls.css) */
+.ed-topbar .site-controls {
+  flex-shrink: 0;
 }
 
 .ed-logo {
@@ -1162,6 +1167,40 @@ a {
     display: inline-flex;
     flex-shrink: 0;
     padding: 0 12px;
+  }
+
+  /* Row 1: logo and Download PDF. Row 2: save status, theme and flags. */
+  .ed-topbar {
+    flex-wrap: wrap;
+    gap: 6px 8px;
+    padding: 8px 16px;
+  }
+
+  .ed-topbar .ed-export {
+    order: 1;
+    margin-left: auto;
+  }
+
+  .ed-save {
+    order: 2;
+    flex: 1 1 160px;
+    justify-content: flex-start;
+    font-size: 12px;
+  }
+
+  .ed-topbar .site-controls {
+    order: 3;
+    gap: 6px;
+  }
+
+  .ed-topbar .theme-button {
+    width: 36px;
+    height: 36px;
+  }
+
+  .ed-topbar .flag-button {
+    width: 30px;
+    height: 30px;
   }
 }
 

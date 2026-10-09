@@ -60,31 +60,9 @@ a {
 }
 
 /* Top bar (same look as the editor) */
-.tp-topbar {
-  position: sticky;
-  top: 0;
-  z-index: 5;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  gap: 16px;
-  min-height: 64px;
-  padding: 0 24px;
-  border-bottom: 1px solid var(--border-decorative);
-  background: rgba(255, 255, 255, 0.9);
-  -webkit-backdrop-filter: blur(8px);
-  backdrop-filter: blur(8px);
-}
-
-.tp-logo {
-  display: inline-flex;
-  border-radius: 8px;
-}
-
-.tp-logo img {
-  display: block;
-  height: 40px;
-  width: auto;
+/* Top bar: the same header as My resumes (pages.css), without the space under it */
+.tp-shell {
+  padding-bottom: 0;
 }
 
 /* Buttons */
@@ -132,7 +110,7 @@ a {
 .tp-main {
   max-width: 1200px;
   margin: 0 auto;
-  padding: 40px 24px 64px;
+  padding: 32px 24px 64px;
 }
 
 .tp-eyebrow {
@@ -271,10 +249,6 @@ a {
 }
 
 @media (max-width: 767px) {
-  .tp-topbar {
-    padding: 0 16px;
-  }
-
   .tp-main {
     padding: 24px 16px 48px;
   }
