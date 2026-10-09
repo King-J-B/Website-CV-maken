@@ -13,16 +13,33 @@ Folio is a website where anyone can make a CV, pick a template, and download or 
 
 ## Getting started
 
-> **TODO (team):** fill this in once the tech stack is chosen. Until then nobody can run the project from this README.
+Plain HTML, CSS and JavaScript: no build step, no install. CVs are saved in the browser (`localStorage`).
 
 ```bash
-git clone <repo-url>
-cd <repo-folder>
-# install dependencies:  ...
-# start the dev server:  ...
+git clone https://github.com/King-J-B/Website-CV-maken.git
+cd Website-CV-maken
+python -m http.server 5173
 ```
 
-Also add here: required versions, environment variables (`.env.example`), and how to run the tests.
+Then open http://localhost:5173/ (the home page).
+
+**Putting it live (cPanel):** upload everything except `.git` and `.claude` into `public_html` (or a subfolder). `index.html` is the start page.
+
+### Where the files are
+
+| Folder / file | What it is |
+|---|---|
+| `index.html` | Home page (start page) |
+| `templates.html` | Choose a template |
+| `editor.html` | The CV editor (`editor.html?cv=<id>`) |
+| `my-resumes.html` | My resumes |
+| `about-us.html`, `personal-details.html` | About us, account details |
+| `sign-in.html`, `sign-up.html`, `forgot-password.html` | Account pages (demo, no server yet) |
+| `css/` | All styles. `colors.css` holds every colour; `cv-templates.css` holds the CV templates |
+| `js/` | All scripts. `cv-store.js` is the only code that saves CVs; `templates-data.js` lists the templates |
+| `images/` | Logos and the favicon |
+
+When you change a CSS or JS file, raise the `?v=` number in the pages, so browsers load the new file.
 
 ---
 
@@ -114,7 +131,7 @@ Most screens exist in Figma. These parts of flow v4 have **no design yet**, so a
 Take values from the Figma file rather than guessing. The basics:
 
 - **Font:** Inter only. Sentence case everywhere.
-- **Main colors:** primary `#3454d1`, text `#17233b`, page background `#f5f7fb`, surface `#ffffff`
+- **Main colors:** primary `#1a5ff0` (the logo blue, see `css/colors.css`), text `#17233b`, page background `#f2f6ff`, surface `#ffffff`
 - **Status colors:** success `#176346`, warning `#805300`, danger `#b42318`
 - **Spacing scale:** 4, 8, 12, 16, 20, 24, 32, 40, 64 px. **Corner radius:** 8, 12, 16 px.
 - **Buttons and touch targets:** at least 44 px high.

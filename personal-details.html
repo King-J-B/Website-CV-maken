@@ -7,23 +7,23 @@
 
     <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
 
-    <link rel="stylesheet" href="colors.css?v=21" />
-    <link rel="stylesheet" href="base.css?v=21" />
-    <link rel="stylesheet" href="layout.css?v=21" />
-    <link rel="stylesheet" href="components.css?v=21" />
-    <link rel="stylesheet" href="pages.css?v=21" />
-    <link rel="stylesheet" href="responsive.css?v=21" />
+    <link rel="stylesheet" href="css/colors.css?v=22" />
+    <link rel="stylesheet" href="css/base.css?v=22" />
+    <link rel="stylesheet" href="css/layout.css?v=22" />
+    <link rel="stylesheet" href="css/components.css?v=22" />
+    <link rel="stylesheet" href="css/pages.css?v=22" />
+    <link rel="stylesheet" href="css/responsive.css?v=22" />
   </head>
 
   <body>
     <div class="app-shell">
       <header class="topbar">
-        <a class="brand" href="home.html" aria-label="Folio home">
+        <a class="brand" href="index.html" aria-label="Folio home">
           <img class="brand-logo" src="images/folio-logo-light.png" alt="Folio" />
         </a>
 
         <nav class="topnav" aria-label="Hoofdnavigatie">
-          <a href="index.html">Mijn cv's</a>
+          <a href="my-resumes.html">Mijn cv's</a>
           <a href="templates.html">Templates</a>
           <a href="about-us.html">About us</a>
         </nav>
@@ -68,7 +68,7 @@
           </div>
 
           <div class="heading-actions">
-            <a class="secondary-button link-button" href="index.html">Terug</a>
+            <a class="secondary-button link-button" href="my-resumes.html">Terug</a>
             <button class="primary-button" id="saveButton" type="button">Opslaan</button>
           </div>
         </section>
@@ -271,7 +271,7 @@
         showToast(isEnglish() ? "Personal details saved" : "Persoonlijke gegevens opgeslagen");
 
         setTimeout(() => {
-          window.location.href = "index.html";
+          window.location.href = "my-resumes.html";
         }, 900);
       });
 
@@ -287,6 +287,6 @@
       updatePreview();
     </script>
 
-    <script src="js/translate.js?v=21"></script>
+    <script src="js/translate.js?v=22"></script>
   </body>
 </html>

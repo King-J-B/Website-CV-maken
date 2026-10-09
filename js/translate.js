@@ -87,7 +87,7 @@ const translations = {
     "Account preview": "Account preview",
     "Voornaam Achternaam": "First name Last name",
 
-    // Home page (home.html)
+    // Home page (index.html)
     "Gratis cv-maker voor studenten en starters": "Free resume builder for students and starters",
     "Kies een template, vul je gegevens in en zie je cv meteen ontstaan. Gratis, zonder account, en als nette PDF met echte tekst.": "Choose a template, fill in your details and watch your resume take shape. Free, without an account, and as a clean PDF with real text.",
     "Maak je cv": "Create your resume",
@@ -213,7 +213,7 @@ const translations = {
     "Phone": "Telefoon",
     "First name Last name": "Voornaam Achternaam",
 
-    // Home page (home.html)
+    // Home page (index.html)
     "Free resume builder for students and starters": "Gratis cv-maker voor studenten en starters",
     "Choose a template, fill in your details and watch your resume take shape. Free, without an account, and as a clean PDF with real text.": "Kies een template, vul je gegevens in en zie je cv meteen ontstaan. Gratis, zonder account, en als nette PDF met echte tekst.",
     "Create your resume": "Maak je cv",
