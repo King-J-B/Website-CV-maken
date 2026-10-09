@@ -11,9 +11,6 @@ const translations = {
     "About us": "About us",
 
     "Folio CV Builder": "Folio CV Builder",
-    "Put Your": "Put Your",
-    "Potential": "Potential",
-    "on Paper.": "on Paper.",
     "Folio helpt studenten en starters om stap voor stap een duidelijk, modern en overzichtelijk cv te maken.": "Folio helps students and starters create a clear, modern and organized resume step by step.",
     "Start met je cv": "Start your resume",
     "Over Folio": "About Folio",
@@ -151,6 +148,7 @@ const translations = {
 
   nl: {
     "My resumes": "Mijn cv's",
+    "About us": "Over ons",
     "Folio helps students and starters create a clear, modern and organized resume step by step.": "Folio helpt studenten en starters om stap voor stap een duidelijk, modern en overzichtelijk cv te maken.",
     "Start your resume": "Start met je cv",
     "Created by two Software Development students.": "Gemaakt door twee Software Development studenten.",
@@ -276,26 +274,35 @@ const translations = {
   },
 };
 
+// Text in the HTML can run over several lines; compare it as one line.
+function normalise(text) {
+  return text.trim().replace(/\s+/g, " ");
+}
+
 function translatePage(language) {
   const elements = document.querySelectorAll("h1, h2, h3, p, a, button, span, label, option, li");
 
   elements.forEach((element) => {
+    // Some texts, like the slogan, stay the same in every language.
+    if (element.closest("[data-no-translate]")) return;
+
     // An element that also holds other elements (like a label wrapping an
     // input) must keep them: translate only its own pieces of text. Replacing
     // the whole textContent would delete the input.
     if (element.children.length > 0) {
       element.childNodes.forEach((node) => {
-        const ownText = node.nodeType === Node.TEXT_NODE ? node.nodeValue.trim() : "";
+        const ownText = node.nodeType === Node.TEXT_NODE ? normalise(node.nodeValue) : "";
         const translatedOwnText = ownText && translations[language][ownText];
 
         if (translatedOwnText) {
-          node.nodeValue = node.nodeValue.replace(ownText, translatedOwnText);
+          // Keep the spaces around the text, replace the words in between.
+          node.nodeValue = node.nodeValue.replace(/\S(?:[\s\S]*\S)?/, translatedOwnText);
         }
       });
       return;
     }
 
-    const text = element.textContent.trim();
+    const text = normalise(element.textContent);
     const translatedText = translations[language][text];
 
     if (translatedText) {
