@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/folio-mark.png">
-  <link rel="stylesheet" href="css/colors.css?v=26">
-  <link rel="stylesheet" href="css/auth.css?v=26">
+  <link rel="stylesheet" href="css/colors.css?v=27">
+  <link rel="stylesheet" href="css/auth.css?v=27">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to sign in</a>
@@ -74,7 +74,8 @@
         <h1 class="auth__title">Welcome back</h1>
         <p class="auth__subtitle">Sign in to your Folio workspace.</p>
 
-        <div class="stack stack--social">
+        <!-- Google / LinkedIn sign-in is not built yet: remove "hidden" (here and on the divider) when it is. -->
+        <div class="stack stack--social" hidden>
           <a class="btn btn--secondary btn--block" href="/auth/google" data-provider="google">
             <svg class="btn__icon" viewBox="0 0 48 48" aria-hidden="true" focusable="false">
               <path fill="#EA4335" d="M24 9.5c3.54 0 6.71 1.22 9.21 3.6l6.85-6.85C35.9 2.38 30.47 0 24 0 14.62 0 6.51 5.38 2.56 13.22l7.98 6.19C12.43 13.72 17.74 9.5 24 9.5z"/>
@@ -92,7 +93,7 @@
           </a>
         </div>
 
-        <div class="divider" role="separator">or</div>
+        <div class="divider" role="separator" hidden>or</div>
 
         <form class="form stack" data-auth-form="sign-in" novalidate>
           <div class="alert alert--danger" role="alert" data-form-alert hidden></div>
@@ -134,6 +135,6 @@
     </main>
   </div>
 
-  <script src="js/auth.js?v=26"></script>
+  <script src="js/auth.js?v=27"></script>
 </body>
 </html>
