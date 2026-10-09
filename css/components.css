@@ -197,6 +197,24 @@ select:focus {
   box-shadow: var(--shadow-card);
 }
 
+/* Name and e-mail of the signed-in user, at the top of the menu */
+.account-dropdown-header {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border-bottom: 1px solid var(--color-line);
+}
+
+.account-dropdown-header strong {
+  color: var(--color-ink);
+}
+
+.account-dropdown-header span {
+  color: var(--color-muted);
+  font-size: 0.85rem;
+  overflow-wrap: anywhere;
+}
+
 .account-dropdown a,
 .account-dropdown button {
   width: 100%;
