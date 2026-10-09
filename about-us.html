@@ -7,12 +7,12 @@
 
     <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
 
-    <link rel="stylesheet" href="css/colors.css?v=23" />
-    <link rel="stylesheet" href="css/base.css?v=23" />
-    <link rel="stylesheet" href="css/layout.css?v=23" />
-    <link rel="stylesheet" href="css/components.css?v=23" />
-    <link rel="stylesheet" href="css/pages.css?v=23" />
-    <link rel="stylesheet" href="css/responsive.css?v=23" />
+    <link rel="stylesheet" href="css/colors.css?v=24" />
+    <link rel="stylesheet" href="css/base.css?v=24" />
+    <link rel="stylesheet" href="css/layout.css?v=24" />
+    <link rel="stylesheet" href="css/components.css?v=24" />
+    <link rel="stylesheet" href="css/pages.css?v=24" />
+    <link rel="stylesheet" href="css/responsive.css?v=24" />
   </head>
 
   <body>
@@ -41,18 +41,7 @@
             </button>
           </div>
 
-          <div class="account-menu">
-            <button class="avatar-button" id="accountButton" type="button" aria-label="Account menu openen">
-              JB
-            </button>
-
-            <div class="account-dropdown hidden" id="accountDropdown">
-              <a href="personal-details.html">Personal details</a>
-              <a href="#">Mijn account</a>
-              <a href="#">Instellingen</a>
-              <a href="sign-in.html">Uitloggen</a>
-            </div>
-          </div>
+          <a class="primary-button link-button login-button" href="sign-in.html">Inloggen</a>
         </div>
       </header>
 
@@ -111,8 +100,6 @@
     <script>
       const themeButton = document.querySelector("#themeButton");
       const logo = document.querySelector(".brand-logo");
-      const accountButton = document.querySelector("#accountButton");
-      const accountDropdown = document.querySelector("#accountDropdown");
 
       function toggleTheme() {
         const isDark = document.body.dataset.theme === "dark";
@@ -127,25 +114,8 @@
       }
 
       themeButton.addEventListener("click", toggleTheme);
-
-      accountButton.addEventListener("click", (event) => {
-        event.stopPropagation();
-        accountDropdown.classList.toggle("hidden");
-      });
-
-      accountDropdown.addEventListener("click", () => {
-        accountDropdown.classList.add("hidden");
-      });
-
-      document.addEventListener("click", (event) => {
-        const clickedInsideMenu = event.target.closest(".account-menu");
-
-        if (!clickedInsideMenu) {
-          accountDropdown.classList.add("hidden");
-        }
-      });
     </script>
 
-    <script src="js/translate.js?v=23"></script>
+    <script src="js/translate.js?v=24"></script>
   </body>
 </html>
