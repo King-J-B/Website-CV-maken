@@ -14,14 +14,14 @@
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet" />
     <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
-    <link rel="stylesheet" href="css/colors.css?v=22" />
-    <link rel="stylesheet" href="css/base.css?v=22" />
-    <link rel="stylesheet" href="css/layout.css?v=22" />
-    <link rel="stylesheet" href="css/components.css?v=22" />
-    <link rel="stylesheet" href="css/pages.css?v=22" />
-    <link rel="stylesheet" href="css/responsive.css?v=22" />
-    <link rel="stylesheet" href="css/cv-templates.css?v=22" />
-    <link rel="stylesheet" href="css/home.css?v=22" />
+    <link rel="stylesheet" href="css/colors.css?v=23" />
+    <link rel="stylesheet" href="css/base.css?v=23" />
+    <link rel="stylesheet" href="css/layout.css?v=23" />
+    <link rel="stylesheet" href="css/components.css?v=23" />
+    <link rel="stylesheet" href="css/pages.css?v=23" />
+    <link rel="stylesheet" href="css/responsive.css?v=23" />
+    <link rel="stylesheet" href="css/cv-templates.css?v=23" />
+    <link rel="stylesheet" href="css/home.css?v=23" />
   </head>
 
   <body class="hp">
@@ -35,9 +35,7 @@
 
         <nav class="topnav" aria-label="Hoofdnavigatie">
           <a class="active" href="index.html" aria-current="page">Home</a>
-          <a href="my-resumes.html">Mijn cv's</a>
-          <a href="templates.html">Templates</a>
-          <a href="about-us.html">About us</a>
+          <a href="about-us.html">Over ons</a>
         </nav>
 
         <div class="topbar-actions">
@@ -77,7 +75,8 @@
           <div class="hp-hero__text">
             <p class="hp-pill" data-reveal><span class="hp-pill__dot" aria-hidden="true"></span>Gratis cv-maker voor studenten en starters</p>
 
-            <h1 class="hp-title" id="hp-title" data-reveal>
+            <!-- The slogan stays English in both languages -->
+            <h1 class="hp-title" id="hp-title" translate="no" data-no-translate data-reveal>
               Put Your <span class="hp-title__accent">Potential</span> on Paper.
             </h1>
 
@@ -287,9 +286,7 @@
       <footer class="hp-footer">
         <img class="hp-footer__logo brand-logo-footer" src="images/folio-logo-light.png" alt="Folio" />
         <nav class="hp-footer__nav" aria-label="Footer">
-          <a href="my-resumes.html">Mijn cv's</a>
-          <a href="templates.html">Templates</a>
-          <a href="about-us.html">About us</a>
+          <a href="about-us.html">Over ons</a>
           <a href="sign-in.html">Inloggen</a>
         </nav>
         <p class="hp-footer__note">Een schoolproject van Daan &amp; Jesse, Vista college.</p>
@@ -332,9 +329,9 @@
       });
     </script>
 
-    <script src="js/templates-data.js?v=22"></script>
-    <script src="js/cv-store.js?v=22"></script>
-    <script src="js/home.js?v=22"></script>
-    <script src="js/translate.js?v=22"></script>
+    <script src="js/templates-data.js?v=23"></script>
+    <script src="js/cv-store.js?v=23"></script>
+    <script src="js/home.js?v=23"></script>
+    <script src="js/translate.js?v=23"></script>
   </body>
 </html>
