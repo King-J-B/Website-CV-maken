@@ -45,12 +45,26 @@ Accounts and online CVs use PHP and MySQL. The pages above still work without th
 | `editor.html` | The CV editor (`editor.html?cv=<id>`) |
 | `my-resumes.html` | My resumes |
 | `about-us.html`, `personal-details.html` | About us, account details |
-| `sign-in.html`, `sign-up.html`, `forgot-password.html` | Account pages (demo, no server yet) |
+| `sign-in.html`, `sign-up.html`, `forgot-password.html` | Account pages. Sign up and Sign in use the PHP backend; Forgot password is still a demo |
 | `css/` | All styles. `colors.css` holds every colour; `cv-templates.css` holds the CV templates |
 | `js/` | All scripts. `cv-store.js` is the only code that saves CVs; `templates-data.js` lists the templates |
 | `images/` | Logos and the favicon |
 | `database.sql` | Creates the `users` and `cvs` tables |
-| `api/` | PHP backend. `db.php` connects to the database, `check.php` tests the connection |
+| `database-update-1.sql` | Only for a database made before 9 Oct 2026: gives `users` its separate columns |
+| `api/` | PHP backend, see below |
+
+### The API (`api/`)
+
+The pages talk to these PHP files with JSON. They need PHP, so test with `php -S localhost:5173` (Python's server can't run PHP).
+
+| File | What it does |
+|---|---|
+| `sign-up.php` | POST `{ firstName, lastName, email, password, terms }` → makes the account and signs in |
+| `sign-in.php` | POST `{ email, password, remember }` → signs in (remember = 30 days) |
+| `sign-out.php` | POST → signs out |
+| `me.php` | GET → `{ user }` when signed in, `{ user: null }` for guests |
+| `check.php` | GET → is the database connected? |
+| `session.php`, `db.php`, `config.php` | Shared code and the database login. These can't be opened in a browser |
 
 When you change a CSS or JS file, raise the `?v=` number in the pages, so browsers load the new file.
 
