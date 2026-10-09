@@ -1,5 +1,5 @@
 /* ==========================================================================
-   Folio — home page interactions (home.html)
+   Folio — home page interactions (index.html)
 
    - Hero: a real CV (the same templates as the editor). Type a name, pick a
      colour and a template; "Begin met dit ontwerp" starts a new CV with

@@ -17,7 +17,7 @@
   // Without a known CV there is nothing to edit, so go to My resumes.
   var CV_ID = new URLSearchParams(window.location.search).get("cv");
   if (!CV_ID || !window.FolioStore.findResume(CV_ID)) {
-    window.location.replace("index.html");
+    window.location.replace("my-resumes.html");
     return;
   }
 
