@@ -2,8 +2,9 @@
 /* ==========================================================================
    Folio — the signed-in user's personal details (Personal details page)
 
-   GET   api/profile.php   → { profile: {firstName, lastName, email, jobTitle, city, phone, website} }
-   POST  api/profile.php   { the same fields } → { profile }
+   GET    api/profile.php   → { profile: {firstName, lastName, email, jobTitle, city, phone, website} }
+   POST   api/profile.php   { the same fields } → { profile }
+   DELETE api/profile.php   { password } → { ok: true }: deletes the account and all its CVs
 
    New CVs start with these details (see api/cvs.php).
    ========================================================================== */
@@ -27,6 +28,21 @@ function profile(array $user): array
 
 if ($_SERVER['REQUEST_METHOD'] === 'GET') {
     send_json(200, ['profile' => profile($user)]);
+}
+
+// Delete the account. The password is asked again, so someone at an
+// unlocked computer can't do it. The CVs go too (ON DELETE CASCADE).
+if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
+    $data = read_json();
+    $password = is_string($data['password'] ?? null) ? $data['password'] : '';
+    if (!password_verify($password, $user['password_hash'])) {
+        send_json(401, ['message' => 'The password is incorrect.', 'fields' => ['password' => 'The password is incorrect.']]);
+    }
+
+    $query = db()->prepare('DELETE FROM users WHERE id = ?');
+    $query->execute([$user['id']]);
+    log_out();
+    send_json(200, ['ok' => true]);
 }
 
 require_method('POST');

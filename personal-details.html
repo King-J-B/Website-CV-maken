@@ -10,16 +10,17 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/colors.css?v=30" />
-    <link rel="stylesheet" href="css/base.css?v=30" />
-    <link rel="stylesheet" href="css/layout.css?v=30" />
-    <link rel="stylesheet" href="css/components.css?v=30" />
-    <link rel="stylesheet" href="css/pages.css?v=30" />
-    <link rel="stylesheet" href="css/responsive.css?v=30" />
+    <link rel="stylesheet" href="css/colors.css?v=31" />
+    <link rel="stylesheet" href="css/base.css?v=31" />
+    <link rel="stylesheet" href="css/layout.css?v=31" />
+    <link rel="stylesheet" href="css/components.css?v=31" />
+    <link rel="stylesheet" href="css/pages.css?v=31" />
+    <link rel="stylesheet" href="css/responsive.css?v=31" />
+    <link rel="stylesheet" href="css/confirm-dialog.css?v=31" />
   </head>
 
   <body>
-    <script src="js/theme.js?v=30"></script>
+    <script src="js/theme.js?v=31"></script>
     <div class="app-shell">
       <header class="topbar">
         <a class="brand" href="index.html" aria-label="Folio home">
@@ -145,13 +146,22 @@
             </div>
           </aside>
         </section>
+
+        <section class="danger-zone" aria-labelledby="deleteTitle">
+          <div>
+            <h2 id="deleteTitle">Account verwijderen</h2>
+            <p>Je account en al je cv's worden meteen en voorgoed gewist.</p>
+          </div>
+          <button class="delete-button" id="deleteAccountButton" type="button">Account verwijderen</button>
+        </section>
       </main>
     </div>
 
     <div class="toast hidden" id="toastMessage" aria-live="polite"></div>
 
-    <script src="js/translate.js?v=30"></script>
-    <script src="js/account.js?v=30"></script>
+    <script src="js/translate.js?v=31"></script>
+    <script src="js/account.js?v=31"></script>
+    <script src="js/confirm-dialog.js?v=31"></script>
     <script>
       const saveButton = document.querySelector("#saveButton");
       const toast = document.querySelector("#toastMessage");
@@ -264,6 +274,37 @@
           showToast(message
             ? FolioLang.t(message)
             : english() ? "Could not save your details. Please try again." : "Opslaan is niet gelukt. Probeer het opnieuw.");
+        });
+      });
+
+      // Delete the account and all its CVs, after the password is typed again.
+      document.querySelector("#deleteAccountButton").addEventListener("click", async () => {
+        const password = await folioConfirm({
+          title: english() ? "Delete your account?" : "Je account verwijderen?",
+          message: english()
+            ? "Your account and all your resumes will be deleted permanently. This can't be undone."
+            : "Je account en al je cv's worden voorgoed verwijderd. Dit kun je niet ongedaan maken.",
+          input: { label: english() ? "Your password" : "Je wachtwoord", type: "password", maxLength: 200 },
+          confirmLabel: english() ? "Delete account" : "Account verwijderen",
+          cancelLabel: english() ? "Cancel" : "Annuleren",
+        });
+        if (!password) return;
+
+        fetch("api/profile.php", {
+          method: "DELETE",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({ password }),
+        }).then((response) => {
+          if (response.ok) {
+            window.location.href = "index.html";
+            return;
+          }
+          showToast(response.status === 401
+            ? english() ? "The password is incorrect." : "Het wachtwoord klopt niet."
+            : english() ? "Deleting did not work. Please try again." : "Verwijderen is niet gelukt. Probeer het opnieuw.");
+        }, () => {
+          showToast(english() ? "Deleting did not work. Please try again." : "Verwijderen is niet gelukt. Probeer het opnieuw.");
         });
       });
 

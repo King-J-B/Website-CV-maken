@@ -44,7 +44,8 @@ Accounts and online CVs use PHP and MySQL. The pages above still work without th
 | `templates.html` | Choose a template |
 | `editor.html` | The CV editor (`editor.html?cv=<id>`) |
 | `my-resumes.html` | My resumes |
-| `about-us.html`, `personal-details.html` | About us, account details |
+| `about-us.html`, `personal-details.html` | About us, account details (and deleting the account) |
+| `privacy.html`, `terms.html` | Privacy policy and terms of service |
 | `sign-in.html`, `sign-up.html`, `forgot-password.html` | Account pages. Sign up and Sign in use the PHP backend; Forgot password is still a demo |
 | `css/` | All styles. `colors.css` holds every colour; `cv-templates.css` holds the CV templates |
 | `js/` | All scripts. `cv-store.js` is the only code that saves CVs; `templates-data.js` lists the templates; `translate.js` holds every Dutch/English text (add new texts there); `theme.js` does light/dark mode |
