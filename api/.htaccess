@@ -1,0 +1,4 @@
+# Folio — the database login and helper files can't be opened in a browser.
+<FilesMatch "^(config|config\.example|db)\.php$">
+  Require all denied
+</FilesMatch>

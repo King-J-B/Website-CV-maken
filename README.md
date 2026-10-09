@@ -25,6 +25,17 @@ Then open http://localhost:5173/ (the home page).
 
 **Putting it live (cPanel):** upload everything except `.git` and `.claude` into `public_html` (or a subfolder). `index.html` is the start page.
 
+### Database (PHP + MySQL)
+
+Accounts and online CVs use PHP and MySQL. The pages above still work without them.
+
+1. Start **Apache** and **MySQL** in the XAMPP Control Panel.
+2. In phpMyAdmin (http://localhost/phpmyadmin): **New** → database `folio` → Create. Then select it → **Import** → `database.sql`.
+3. Copy `api/config.example.php` to `api/config.php`. The example values work for XAMPP.
+4. Run the site with PHP instead of Python: `php -S localhost:5173`, then open http://localhost:5173/api/check.php. It should say `"database":"connected","tables":"ok"`.
+
+**On cPanel:** make a database and user under *MySQL Databases*, import `database.sql` in phpMyAdmin, and put `api/config.php` with those details on the server (it is never in GitHub).
+
 ### Where the files are
 
 | Folder / file | What it is |
@@ -38,6 +49,8 @@ Then open http://localhost:5173/ (the home page).
 | `css/` | All styles. `colors.css` holds every colour; `cv-templates.css` holds the CV templates |
 | `js/` | All scripts. `cv-store.js` is the only code that saves CVs; `templates-data.js` lists the templates |
 | `images/` | Logos and the favicon |
+| `database.sql` | Creates the `users` and `cvs` tables |
+| `api/` | PHP backend. `db.php` connects to the database, `check.php` tests the connection |
 
 When you change a CSS or JS file, raise the `?v=` number in the pages, so browsers load the new file.
 

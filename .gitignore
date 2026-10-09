@@ -1,2 +1,5 @@
 # Local Claude Code helper files (preview server config, PR texts)
 .claude/
+
+# Database login (copy api/config.example.php to api/config.php)
+api/config.php
