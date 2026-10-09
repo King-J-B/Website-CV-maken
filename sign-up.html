@@ -8,8 +8,8 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/folio-mark.png">
-  <link rel="stylesheet" href="css/colors.css?v=24">
-  <link rel="stylesheet" href="css/auth.css?v=24">
+  <link rel="stylesheet" href="css/colors.css?v=25">
+  <link rel="stylesheet" href="css/auth.css?v=25">
 </head>
 <body>
   <a class="skip-link" href="#main">Skip to sign up</a>
@@ -97,12 +97,22 @@
         <form class="form stack" data-auth-form="sign-up" novalidate>
           <div class="alert alert--danger" role="alert" data-form-alert hidden></div>
 
-          <div class="field">
-            <label class="field__label" for="name">Full name</label>
-            <input class="field__input" id="name" name="name" type="text"
-                   autocomplete="name" required aria-describedby="name-error"
-                   data-msg-required="Enter your full name.">
-            <p class="field__error" id="name-error" hidden></p>
+          <div class="field-row">
+            <div class="field">
+              <label class="field__label" for="first-name">First name</label>
+              <input class="field__input" id="first-name" name="firstName" type="text"
+                     autocomplete="given-name" maxlength="100" required aria-describedby="first-name-error"
+                     data-msg-required="Enter your first name.">
+              <p class="field__error" id="first-name-error" hidden></p>
+            </div>
+
+            <div class="field">
+              <label class="field__label" for="last-name">Last name</label>
+              <input class="field__input" id="last-name" name="lastName" type="text"
+                     autocomplete="family-name" maxlength="100" required aria-describedby="last-name-error"
+                     data-msg-required="Enter your last name.">
+              <p class="field__error" id="last-name-error" hidden></p>
+            </div>
           </div>
 
           <div class="field">
@@ -166,6 +176,6 @@
     </main>
   </div>
 
-  <script src="js/auth.js?v=24"></script>
+  <script src="js/auth.js?v=25"></script>
 </body>
 </html>

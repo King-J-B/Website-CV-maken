@@ -9,7 +9,7 @@
 
      <script>
        window.FOLIO_AUTH_CONFIG = {
-         apiBase: "/api/auth",          // omit to run in demo mode (no network)
+         apiBase: "api",                // the PHP files in api/; null = demo mode (no network)
          afterAuthUrl: "my-resumes.html", // My resumes (flow: Sign in / Sign up → My resumes)
          providers: { google: "/auth/google", linkedin: "/auth/linkedin" }
        };
@@ -21,7 +21,7 @@
 
   var config = Object.assign(
     {
-      apiBase: null,
+      apiBase: "api", // api/sign-in.php, api/sign-up.php (relative, so it works in a subfolder)
       afterAuthUrl: "my-resumes.html", // My resumes (flow: Sign in / Sign up → My resumes)
       providers: { google: "/auth/google", linkedin: "/auth/linkedin" }
     },
@@ -36,15 +36,17 @@
      to the user. Optionally set error.fields = { email: "…" } for field errors.
      ------------------------------------------------------------------------ */
 
+  // Demo mode: pretend the server accepted the request.
+  function demo() {
+    return new Promise(function (resolve) {
+      window.setTimeout(function () {
+        resolve({ ok: true });
+      }, 700);
+    });
+  }
+
   function request(path, payload) {
-    if (!config.apiBase) {
-      // Demo mode: pretend the server accepted the request.
-      return new Promise(function (resolve) {
-        window.setTimeout(function () {
-          resolve({ ok: true });
-        }, 700);
-      });
-    }
+    if (!config.apiBase) return demo();
 
     return fetch(config.apiBase + path, {
       method: "POST",
@@ -73,13 +75,14 @@
 
   var api = {
     signIn: function (data) {
-      return request("/sign-in", data);
+      return request("/sign-in.php", data);
     },
     signUp: function (data) {
-      return request("/sign-up", data);
+      return request("/sign-up.php", data);
     },
-    requestPasswordReset: function (data) {
-      return request("/password-reset", data);
+    // No reset e-mails yet: stays in demo mode until api/password-reset.php exists.
+    requestPasswordReset: function () {
+      return demo();
     }
   };
 

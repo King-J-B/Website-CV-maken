@@ -11,15 +11,26 @@
 -- Running it twice is safe: tables that already exist are skipped.
 -- ==========================================================================
 
--- Everyone with an account.
+-- Everyone with an account. Every detail has its own column.
 CREATE TABLE IF NOT EXISTS users (
-  id            INT UNSIGNED NOT NULL AUTO_INCREMENT,
-  name          VARCHAR(100) NOT NULL,
-  email         VARCHAR(255) NOT NULL,
+  id                INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  first_name        VARCHAR(100) NOT NULL,
+  last_name         VARCHAR(100) NOT NULL,
+  email             VARCHAR(255) NOT NULL,
   -- Never the real password: PHP's password_hash() turns it into a
   -- scrambled code that can be checked, but not turned back.
-  password_hash VARCHAR(255) NOT NULL,
-  created_at    DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  password_hash     VARCHAR(255) NOT NULL,
+
+  -- Filled in later on the Personal details page (empty until then).
+  job_title         VARCHAR(150) NULL,
+  city              VARCHAR(100) NULL,
+  phone             VARCHAR(50)  NULL,
+  website           VARCHAR(255) NULL,
+
+  terms_accepted_at DATETIME     NULL,  -- when they ticked "I agree to the Terms"
+  last_login_at     DATETIME     NULL,
+  created_at        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+  updated_at        DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   PRIMARY KEY (id),
   -- One account per e-mail address.
