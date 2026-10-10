@@ -585,6 +585,17 @@ const pairs = [
   ["Opslaan", "Save"],
   ["Donkere modus", "Dark mode"],
 
+  // Choosing a new password (reset-password.html)
+  ["Kies een nieuw wachtwoord", "Choose a new password"],
+  ["Kies een nieuw wachtwoord voor Folio. Daarna ben je meteen ingelogd.", "Pick a new password for Folio. You'll be signed in straight away."],
+  ["Nieuw wachtwoord", "New password"],
+  ["Wachtwoord opslaan", "Save password"],
+  ["Deze link werkt niet meer", "This link no longer works"],
+  ["Een resetlink werkt één keer en 30 minuten lang. Vraag een nieuwe aan.", "A reset link works once, for 30 minutes. Ask for a new one."],
+  ["Nieuwe link aanvragen", "Ask for a new link"],
+  ["Deze link is verlopen of al gebruikt. Vraag een nieuwe aan.", "This link has expired or was already used. Ask for a new one."],
+  ["We konden de e-mail niet versturen. Probeer het later opnieuw.", "We couldn't send the e-mail. Please try again later."],
+
   // Deleting the account (Personal details)
   ["Account verwijderen", "Delete account"],
   ["Je account en al je cv's worden meteen en voorgoed gewist.", "Your account and all your resumes are erased straight away and for good."],
