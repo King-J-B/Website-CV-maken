@@ -20,6 +20,7 @@
 
    With a text field (for example "Rename"):
      folioConfirm({ title: "...", input: { label: "Name", value: "Old", maxLength: 80 }, tone: "primary" })
+   input.type: "password" for a password field (default "text").
        .then(function (text) { ... });   // the trimmed text, or null on Cancel
    ========================================================================== */
 
@@ -136,6 +137,8 @@
       fieldLabel.textContent = options.input.label || "";
       fieldInput.value = options.input.value || "";
       fieldInput.maxLength = options.input.maxLength || 100;
+      fieldInput.type = options.input.type === "password" ? "password" : "text";
+      fieldInput.autocomplete = options.input.type === "password" ? "current-password" : "off";
     }
 
     titleEl.textContent = options.title || "";
