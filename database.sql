@@ -42,6 +42,8 @@ CREATE TABLE IF NOT EXISTS cvs (
   id         INT UNSIGNED NOT NULL AUTO_INCREMENT,
   user_id    INT UNSIGNED NOT NULL,
   title      VARCHAR(150) NOT NULL DEFAULT 'Nieuw cv',
+  -- 1 = nobody chose the title yet: it follows the name on the CV ("Sam de Vries - cv").
+  title_auto TINYINT(1)   NOT NULL DEFAULT 1,
   -- Template id from js/templates-data.js: modern, classic, minimal, ...
   template   VARCHAR(30)  NOT NULL DEFAULT 'modern',
   -- Everything the editor saves (sections, design), stored as JSON text.

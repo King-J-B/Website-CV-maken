@@ -9,7 +9,7 @@
    - send_json()        answer the browser and stop
    - require_method()   only allow GET or POST
    - read_json()        the data the browser sent
-   - log_in() / log_out() / current_user()
+   - log_in() / log_out() / current_user() / require_login()
 
    How "being logged in" works: PHP's session gives each browser a cookie
    with a random code. PHP keeps $_SESSION per code on the server, so after
@@ -140,6 +140,16 @@ function log_out(): void
         'samesite' => $params['samesite'],
     ]);
     session_destroy();
+}
+
+// For pages that need an account: the user's row, or a 401 answer for guests.
+function require_login(): array
+{
+    $user = current_user();
+    if (!$user) {
+        send_json(401, ['message' => 'Log in again to continue.']);
+    }
+    return $user;
 }
 
 // The signed-in user's row from the database, or null for guests.

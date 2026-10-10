@@ -530,6 +530,22 @@ body {
   font-weight: 800;
 }
 
+/* The label is small and bold; the field itself is normal text */
+.details-form input {
+  color: var(--color-ink);
+  font-size: 1rem;
+  font-weight: 400;
+}
+
+.details-form input::placeholder {
+  color: var(--color-muted);
+  opacity: 0.8;
+}
+
+.details-form input[aria-invalid="true"] {
+  border-color: var(--danger);
+}
+
 .profile-preview-card {
   display: grid;
   gap: 18px;

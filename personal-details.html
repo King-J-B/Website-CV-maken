@@ -10,16 +10,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/colors.css?v=29" />
-    <link rel="stylesheet" href="css/base.css?v=29" />
-    <link rel="stylesheet" href="css/layout.css?v=29" />
-    <link rel="stylesheet" href="css/components.css?v=29" />
-    <link rel="stylesheet" href="css/pages.css?v=29" />
-    <link rel="stylesheet" href="css/responsive.css?v=29" />
+    <link rel="stylesheet" href="css/colors.css?v=30" />
+    <link rel="stylesheet" href="css/base.css?v=30" />
+    <link rel="stylesheet" href="css/layout.css?v=30" />
+    <link rel="stylesheet" href="css/components.css?v=30" />
+    <link rel="stylesheet" href="css/pages.css?v=30" />
+    <link rel="stylesheet" href="css/responsive.css?v=30" />
   </head>
 
   <body>
-    <script src="js/theme.js?v=29"></script>
+    <script src="js/theme.js?v=30"></script>
     <div class="app-shell">
       <header class="topbar">
         <a class="brand" href="index.html" aria-label="Folio home">
@@ -62,7 +62,7 @@
             <p class="eyebrow">Account</p>
             <h1>Persoonlijke gegevens</h1>
             <p class="intro">
-              Vul je persoonlijke gegevens in. Deze informatie wordt gebruikt voor je cv en je account.
+              Vul je persoonlijke gegevens in. Ze worden in je account bewaard en een nieuw cv begint ermee.
             </p>
           </div>
 
@@ -79,7 +79,6 @@
                 <p class="eyebrow">Gebruiker</p>
                 <h2>Je gegevens</h2>
               </div>
-              <span class="status-pill">Concept</span>
             </div>
 
             <form class="details-form">
@@ -151,7 +150,8 @@
 
     <div class="toast hidden" id="toastMessage" aria-live="polite"></div>
 
-    <script src="js/translate.js?v=29"></script>
+    <script src="js/translate.js?v=30"></script>
+    <script src="js/account.js?v=30"></script>
     <script>
       const saveButton = document.querySelector("#saveButton");
       const toast = document.querySelector("#toastMessage");
@@ -185,27 +185,56 @@
         previewInitials.textContent = `${first.charAt(0)}${last.charAt(0)}`.toUpperCase();
       }
 
-      // Account details are saved in this browser until there is a real account.
-      const ACCOUNT_KEY = "folio:account";
+      // The details live in the account (api/profile.php). Guests are sent to
+      // sign in first and come back here afterwards.
       const fields = { firstName, lastName, jobTitle, city, email, phone, website };
+      const english = () => FolioLang.current === "en";
+
+      function fillFields(profile) {
+        Object.keys(fields).forEach((key) => {
+          fields[key].value = profile[key] || "";
+        });
+        updatePreview();
+      }
+
+      function request(method, body) {
+        return fetch("api/profile.php", {
+          method,
+          credentials: "same-origin",
+          headers: body ? { "Content-Type": "application/json", Accept: "application/json" } : { Accept: "application/json" },
+          body: body ? JSON.stringify(body) : undefined,
+        }).then((response) =>
+          response.json().catch(() => ({})).then((data) => {
+            if (!response.ok) throw Object.assign(new Error(data.message || ""), { fields: data.fields });
+            return data.profile;
+          })
+        );
+      }
 
       function loadAccount() {
-        try {
-          const saved = JSON.parse(localStorage.getItem(ACCOUNT_KEY)) || {};
-          Object.keys(fields).forEach((key) => {
-            if (typeof saved[key] === "string") fields[key].value = saved[key];
+        saveButton.disabled = true;
+        FolioAccount.ready.then((user) => {
+          if (!user) {
+            window.location.replace("sign-in.html?next=" + encodeURIComponent(window.location.pathname));
+            return;
+          }
+          request("GET").then(fillFields, () => {
+            showToast(english() ? "Your details could not be loaded." : "Je gegevens konden niet worden geladen.");
+          }).finally(() => {
+            saveButton.disabled = false;
           });
-        } catch (error) {
-          // Nothing saved yet, or unreadable: start with empty fields.
-        }
+        }, () => {
+          showToast(english() ? "Saving your details needs the Folio server." : "Voor je gegevens is de Folio-server nodig.");
+        });
       }
 
       function saveAccount() {
         const data = {};
         Object.keys(fields).forEach((key) => {
           data[key] = fields[key].value.trim();
+          fields[key].removeAttribute("aria-invalid");
         });
-        localStorage.setItem(ACCOUNT_KEY, JSON.stringify(data));
+        return request("POST", data);
       }
 
       function showToast(message) {
@@ -219,20 +248,23 @@
 
       // Only say "saved" (and go back) when saving really worked.
       saveButton.addEventListener("click", () => {
-        try {
-          saveAccount();
-        } catch (error) {
-          showToast(FolioLang.current === "en"
-            ? "Could not save your details. Please try again."
-            : "Opslaan is niet gelukt. Probeer het opnieuw.");
-          return;
-        }
-
-        showToast(FolioLang.current === "en" ? "Personal details saved" : "Persoonlijke gegevens opgeslagen");
-
-        setTimeout(() => {
-          window.location.href = "my-resumes.html";
-        }, 900);
+        saveButton.disabled = true;
+        saveAccount().then(() => {
+          showToast(english() ? "Personal details saved" : "Persoonlijke gegevens opgeslagen");
+          setTimeout(() => {
+            window.location.href = "my-resumes.html";
+          }, 900);
+        }, (error) => {
+          saveButton.disabled = false;
+          // Mark the fields the server did not accept, and say why.
+          const wrong = Object.keys(error.fields || {});
+          wrong.forEach((key) => fields[key] && fields[key].setAttribute("aria-invalid", "true"));
+          if (wrong.length && fields[wrong[0]]) fields[wrong[0]].focus();
+          const message = (error.fields && error.fields[wrong[0]]) || error.message;
+          showToast(message
+            ? FolioLang.t(message)
+            : english() ? "Could not save your details. Please try again." : "Opslaan is niet gelukt. Probeer het opnieuw.");
+        });
       });
 
       firstName.addEventListener("input", updatePreview);
@@ -247,6 +279,5 @@
       updatePreview();
     </script>
 
-    <script src="js/account.js?v=29"></script>
   </body>
 </html>
