@@ -53,3 +53,41 @@
   --shadow-action: 0 1px 2px rgba(23, 35, 59, 0.12), 0 8px 20px -8px rgba(31, 107, 255, 0.7);
   --focus-ring: 0 0 0 3px rgba(31, 107, 255, 0.35);
 }
+
+/* Dark mode (js/theme.js puts data-theme="dark" on the page). Same colours as
+   the dark theme in pages.css. Fills keep the strong blue so white text stays
+   readable; text links use a lighter blue. The CV itself stays white paper:
+   cv-templates.css sets the light colours again inside .cv-page. */
+[data-theme="dark"] {
+  --bg-canvas: #071125;
+  --bg-surface: #0b1830;
+  --bg-selected: #10264a;
+  --bg-brand: #0d2140;
+  --bg-disabled: #13233f;
+
+  --text-strong: #ffffff;
+  --text-primary: #e8eefb;
+  --text-secondary: #a8b9d2;
+  --text-disabled: #8193b3;
+
+  --border-control: #4a6799;
+  --border-subtle: #2a4f8a;
+  --border-decorative: #1d3d70;
+
+  --action-primary: #58a6ff;
+  --action-primary-hover: #7cb8ff;
+  --action-primary-active: #a5ceff;
+  --action-gradient: linear-gradient(135deg, #1a5ff0 0%, #1f6bff 100%);
+
+  --success: #5fd49a;
+  --success-bg: #0d2a1e;
+  --warning: #f5c058;
+  --warning-bg: #2e2207;
+  --danger: #ff8a80;
+  --danger-bg: #35171a;
+  --danger-bg-hover: #4a1f23;
+  --danger-border: #743239;
+
+  --shadow-tint: rgba(0, 0, 0, 0.35);
+  --focus-ring: 0 0 0 3px rgba(88, 166, 255, 0.45);
+}

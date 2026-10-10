@@ -30,6 +30,17 @@
    -------------------------------------------------------------------------- */
 
 .cv-page {
+  /* A CV is white paper, also in dark mode: the light colours from colors.css */
+  --bg-surface: #ffffff;
+  --bg-selected: #e8f0ff;
+  --text-strong: #0e1830;
+  --text-primary: #17233b;
+  --text-secondary: #4f6080;
+  --border-decorative: #e2e9f6;
+  --border-subtle: #c3d3f2;
+  --action-primary: #1a5ff0;
+  color-scheme: light;
+
   /* Template variables (each template sets its own) */
   --cv-accent: var(--action-primary);
   --cv-ink: var(--text-strong);

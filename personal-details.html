@@ -3,22 +3,23 @@
   <head>
     <meta charset="UTF-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>CV Builder - Personal details</title>
+    <title>Persoonlijke gegevens · Folio</title>
 
     <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
 
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/colors.css?v=27" />
-    <link rel="stylesheet" href="css/base.css?v=27" />
-    <link rel="stylesheet" href="css/layout.css?v=27" />
-    <link rel="stylesheet" href="css/components.css?v=27" />
-    <link rel="stylesheet" href="css/pages.css?v=27" />
-    <link rel="stylesheet" href="css/responsive.css?v=27" />
+    <link rel="stylesheet" href="css/colors.css?v=28" />
+    <link rel="stylesheet" href="css/base.css?v=28" />
+    <link rel="stylesheet" href="css/layout.css?v=28" />
+    <link rel="stylesheet" href="css/components.css?v=28" />
+    <link rel="stylesheet" href="css/pages.css?v=28" />
+    <link rel="stylesheet" href="css/responsive.css?v=28" />
   </head>
 
   <body>
+    <script src="js/theme.js?v=28"></script>
     <div class="app-shell">
       <header class="topbar">
         <a class="brand" href="index.html" aria-label="Folio home">
@@ -48,9 +49,7 @@
             <button class="avatar-button" id="accountButton" type="button" aria-label="Account menu openen"></button>
 
             <div class="account-dropdown hidden" id="accountDropdown">
-              <a href="personal-details.html">Personal details</a>
-              <a href="#">Mijn account</a>
-              <a href="#">Instellingen</a>
+              <a href="personal-details.html">Persoonlijke gegevens</a>
               <a href="index.html" data-sign-out>Uitloggen</a>
             </div>
           </div>
@@ -61,7 +60,7 @@
         <section class="page-heading">
           <div>
             <p class="eyebrow">Account</p>
-            <h1>Personal details</h1>
+            <h1>Persoonlijke gegevens</h1>
             <p class="intro">
               Vul je persoonlijke gegevens in. Deze informatie wordt gebruikt voor je cv en je account.
             </p>
@@ -78,7 +77,7 @@
             <div class="section-header">
               <div>
                 <p class="eyebrow">Gebruiker</p>
-                <h2>Persoonlijke gegevens</h2>
+                <h2>Je gegevens</h2>
               </div>
               <span class="status-pill">Concept</span>
             </div>
@@ -128,7 +127,7 @@
           </article>
 
           <aside class="details-preview">
-            <p class="eyebrow">Account preview</p>
+            <p class="eyebrow">Voorbeeld</p>
 
             <div class="profile-preview-card">
               <div class="profile-avatar" id="previewInitials">VA</div>
@@ -152,13 +151,10 @@
 
     <div class="toast hidden" id="toastMessage" aria-live="polite"></div>
 
+    <script src="js/translate.js?v=28"></script>
     <script>
-      const themeButton = document.querySelector("#themeButton");
-      const logo = document.querySelector(".brand-logo");
       const saveButton = document.querySelector("#saveButton");
       const toast = document.querySelector("#toastMessage");
-      const accountButton = document.querySelector("#accountButton");
-      const accountDropdown = document.querySelector("#accountDropdown");
 
       const firstName = document.querySelector("#firstName");
       const lastName = document.querySelector("#lastName");
@@ -193,11 +189,6 @@
       const ACCOUNT_KEY = "folio:account";
       const fields = { firstName, lastName, jobTitle, city, email, phone, website };
 
-      function isEnglish() {
-        const englishButton = document.querySelector("#englishButton");
-        return Boolean(englishButton && englishButton.classList.contains("active"));
-      }
-
       function loadAccount() {
         try {
           const saved = JSON.parse(localStorage.getItem(ACCOUNT_KEY)) || {};
@@ -226,49 +217,18 @@
         }, 2200);
       }
 
-      function toggleTheme() {
-        const isDark = document.body.dataset.theme === "dark";
-
-        if (isDark) {
-          document.body.dataset.theme = "light";
-          logo.src = "images/folio-logo-light.png";
-        } else {
-          document.body.dataset.theme = "dark";
-          logo.src = "images/folio-logo-dark.png";
-        }
-      }
-
-      themeButton.addEventListener("click", toggleTheme);
-
-      accountButton.addEventListener("click", (event) => {
-        event.stopPropagation();
-        accountDropdown.classList.toggle("hidden");
-      });
-
-      accountDropdown.addEventListener("click", () => {
-        accountDropdown.classList.add("hidden");
-      });
-
-      document.addEventListener("click", (event) => {
-        const clickedInsideMenu = event.target.closest(".account-menu");
-
-        if (!clickedInsideMenu) {
-          accountDropdown.classList.add("hidden");
-        }
-      });
-
       // Only say "saved" (and go back) when saving really worked.
       saveButton.addEventListener("click", () => {
         try {
           saveAccount();
         } catch (error) {
-          showToast(isEnglish()
+          showToast(FolioLang.current === "en"
             ? "Could not save your details. Please try again."
             : "Opslaan is niet gelukt. Probeer het opnieuw.");
           return;
         }
 
-        showToast(isEnglish() ? "Personal details saved" : "Persoonlijke gegevens opgeslagen");
+        showToast(FolioLang.current === "en" ? "Personal details saved" : "Persoonlijke gegevens opgeslagen");
 
         setTimeout(() => {
           window.location.href = "my-resumes.html";
@@ -287,7 +247,6 @@
       updatePreview();
     </script>
 
-    <script src="js/account.js?v=27"></script>
-    <script src="js/translate.js?v=27"></script>
+    <script src="js/account.js?v=28"></script>
   </body>
 </html>

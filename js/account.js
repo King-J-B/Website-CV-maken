@@ -1,7 +1,7 @@
 /* ==========================================================================
-   Folio — the account menu in the top bar (My resumes, Personal details)
+   Folio — the account menu in the top bar (My resumes, Templates, Personal details)
 
-   Asks api/me.php who is signed in, then:
+   Opens and closes the menu, and asks api/me.php who is signed in, then:
    - signed in: shows their initials, name and e-mail; "Uitloggen" really
      signs out (api/sign-out.php) and goes back to the home page
    - guest: shows an "Inloggen" button instead of the account menu
@@ -19,8 +19,21 @@
   var dropdown = document.querySelector("#accountDropdown");
 
   function isEnglish() {
-    var englishButton = document.querySelector("#englishButton");
-    return Boolean(englishButton && englishButton.classList.contains("active"));
+    return Boolean(window.FolioLang && window.FolioLang.current === "en");
+  }
+
+  // Open and close the menu: the avatar toggles it, a click elsewhere closes it.
+  function wireDropdown() {
+    button.addEventListener("click", function (event) {
+      event.stopPropagation();
+      dropdown.classList.toggle("hidden");
+    });
+    dropdown.addEventListener("click", function () {
+      dropdown.classList.add("hidden");
+    });
+    document.addEventListener("click", function (event) {
+      if (!event.target.closest(".account-menu")) dropdown.classList.add("hidden");
+    });
   }
 
   // "Daan" + "van den Hombergh" → "DH": first letter of the first name and of
@@ -91,6 +104,7 @@
   };
 
   if (!menu || !button || !dropdown) return;
+  wireDropdown();
 
   ready.then(
     function (user) {

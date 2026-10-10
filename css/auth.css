@@ -166,7 +166,16 @@ a:active {
   position: relative;
 }
 
+/* Theme button and language flags in the top corner (css/controls.css) */
+.auth__controls {
+  position: absolute;
+  top: var(--space-5);
+  right: var(--space-5);
+  z-index: 2;
+}
+
 .auth__main {
+  position: relative;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -381,7 +390,7 @@ a:active {
   top: -14px;
   right: var(--space-6);
   padding: 6px var(--space-3);
-  background: var(--text-strong);
+  background: #0e1830; /* navy in both themes: the text on it is white */
   color: var(--text-on-action);
   font-size: 12px;
 }
@@ -804,6 +813,11 @@ a:active {
   margin-top: 0;
 }
 
+/* Without the Google / LinkedIn buttons, keep the same space above the form */
+.divider[hidden] + .form {
+  margin-top: var(--space-8);
+}
+
 .form--spaced {
   margin-top: var(--space-8);
 }
@@ -860,6 +874,13 @@ a:active {
 }
 
 @media (max-width: 767px) {
+  /* On phones the buttons sit above the card instead of on top of it */
+  .auth__controls {
+    position: static;
+    align-self: flex-end;
+    margin-bottom: var(--space-4);
+  }
+
   .auth__main {
     padding: var(--space-8) var(--space-5);
   }
@@ -884,4 +905,13 @@ a:active {
     transition: none !important;
     animation-duration: 1.4s !important;
   }
+}
+
+/* Dark mode: the brand panel gets a deep blue instead of the light sky, so the
+   white headline stays readable. */
+[data-theme="dark"] .auth__brand {
+  background:
+    radial-gradient(circle at 0% 0%, rgba(76, 201, 255, 0.22), transparent 45%),
+    radial-gradient(circle at 100% 100%, rgba(31, 107, 255, 0.35), transparent 55%),
+    linear-gradient(160deg, #0b1a36 0%, var(--bg-brand) 100%);
 }
