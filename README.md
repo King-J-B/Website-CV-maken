@@ -46,12 +46,12 @@ Accounts and online CVs use PHP and MySQL. The pages above still work without th
 | `my-resumes.html` | My resumes |
 | `about-us.html`, `personal-details.html` | About us, account details (and deleting the account) |
 | `privacy.html`, `terms.html` | Privacy policy and terms of service |
-| `sign-in.html`, `sign-up.html`, `forgot-password.html` | Account pages. Sign up and Sign in use the PHP backend; Forgot password is still a demo |
+| `sign-in.html`, `sign-up.html`, `forgot-password.html`, `reset-password.html` | Account pages, all using the PHP backend |
 | `css/` | All styles. `colors.css` holds every colour; `cv-templates.css` holds the CV templates |
 | `js/` | All scripts. `cv-store.js` is the only code that saves CVs; `templates-data.js` lists the templates; `translate.js` holds every Dutch/English text (add new texts there); `theme.js` does light/dark mode |
 | `images/` | Logos and the favicon |
 | `database.sql` | Creates the `users` and `cvs` tables |
-| `database-update-1.sql`, `database-update-2.sql` | Only for a database made with an older `database.sql` (the live one): import them once, in order |
+| `database-update-1.sql` … `database-update-3.sql` | Only for a database made with an older `database.sql` (the live one): import them once, in order |
 | `api/` | PHP backend, see below |
 
 ### The API (`api/`)
@@ -65,7 +65,10 @@ The pages talk to these PHP files with JSON. They need PHP, so test with `php -S
 | `sign-out.php` | POST → signs out |
 | `me.php` | GET → `{ user }` when signed in, `{ user: null }` for guests |
 | `cvs.php` | The signed-in user's CVs: GET (list or `?id=`), POST (new), PATCH `?id=` (save, rename), DELETE `?id=` |
-| `profile.php` | GET / POST the Personal details (new CVs start with them) |
+| `profile.php` | GET / POST the Personal details (new CVs start with them), DELETE the account |
+| `password-reset.php` | POST `{ email, lang }` → e-mails a reset link (same answer for unknown addresses; max 3 per hour) |
+| `reset-password.php` | GET `?token=` → is the link still valid; POST `{ token, password }` → new password, signed in |
+| `mail.php` | Sends e-mail. With `'mail' => 'log'` in `config.php` (XAMPP) it writes the e-mail to `folio-mail.log` in the temp folder instead |
 | `check.php` | GET → is the database connected? |
 | `session.php`, `db.php`, `config.php` | Shared code and the database login. These can't be opened in a browser |
 

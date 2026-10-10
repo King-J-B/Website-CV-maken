@@ -12,6 +12,20 @@
      $query->execute([$email]);
    ========================================================================== */
 
+// The settings from config.php (database login, e-mail settings).
+function config(): array
+{
+    static $config = null;
+    if ($config === null) {
+        $configFile = __DIR__ . '/config.php';
+        if (!file_exists($configFile)) {
+            throw new RuntimeException('api/config.php is missing. Copy config.example.php to config.php.');
+        }
+        $config = require $configFile;
+    }
+    return $config;
+}
+
 function db(): PDO
 {
     // One connection per request: made the first time, reused after that.
@@ -20,11 +34,7 @@ function db(): PDO
         return $pdo;
     }
 
-    $configFile = __DIR__ . '/config.php';
-    if (!file_exists($configFile)) {
-        throw new RuntimeException('api/config.php is missing. Copy config.example.php to config.php.');
-    }
-    $config = require $configFile;
+    $config = config();
 
     $pdo = new PDO(
         'mysql:host=' . $config['host'] . ';dbname=' . $config['database'] . ';charset=utf8mb4',

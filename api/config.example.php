@@ -16,4 +16,9 @@ return [
     'database' => 'folio',
     'username' => 'root',
     'password' => '',
+
+    // E-mail ("Forgot password"). Optional: without these lines Folio sends
+    // from no-reply@<the site's domain>.
+    // 'mail'      => 'log',   // XAMPP can't send e-mail: write it to a file instead (see api/mail.php)
+    // 'mail_from' => 'no-reply@example.com',
 ];

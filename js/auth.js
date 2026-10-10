@@ -80,15 +80,26 @@
     signUp: function (data) {
       return request("/sign-up.php", data);
     },
-    // No reset e-mails yet: stays in demo mode until api/password-reset.php exists.
-    requestPasswordReset: function () {
-      return demo();
+    // The e-mail is written in the language the page is shown in.
+    requestPasswordReset: function (data) {
+      return request("/password-reset.php", {
+        email: data.email,
+        lang: window.FolioLang ? window.FolioLang.current : "nl"
+      });
+    },
+    // The code from the e-mail link (reset-password.html?token=...) goes along.
+    resetPassword: function (data) {
+      return request("/reset-password.php", { token: resetToken(), password: data.password });
     }
   };
 
   /* ------------------------------------------------------------------------
      Helpers
      ------------------------------------------------------------------------ */
+
+  function resetToken() {
+    return new URLSearchParams(window.location.search).get("token") || "";
+  }
 
   // Only same-site relative paths are accepted, so ?next= can't redirect off-site.
   function nextUrl() {
@@ -336,6 +347,40 @@
     }
   }
 
+  // reset-password.html: check the link first; a used or expired link shows
+  // "ask for a new one" instead of the form.
+  function wireNewPasswordForm(form) {
+    var formView = document.querySelector('[data-view="form"]');
+    var invalidView = document.querySelector('[data-view="invalid"]');
+
+    function showInvalid() {
+      formView.hidden = true;
+      invalidView.hidden = false;
+      var heading = invalidView.querySelector("h1");
+      if (heading) heading.focus();
+    }
+
+    if (!config.apiBase) {
+      wireAuthForm(form, "resetPassword");
+      return;
+    }
+
+    fetch(config.apiBase + "/reset-password.php?token=" + encodeURIComponent(resetToken()), {
+      credentials: "same-origin",
+      headers: { Accept: "application/json" }
+    })
+      .then(function (response) {
+        return response.json();
+      })
+      .then(function (body) {
+        if (!body.valid) showInvalid();
+      }, function () {
+        // Can't check now: the form stays, and saving says what went wrong.
+      });
+
+    wireAuthForm(form, "resetPassword");
+  }
+
   function init() {
     wirePasswordToggles(document);
     wireSocial(document);
@@ -346,6 +391,7 @@
       if (kind === "sign-in") wireAuthForm(form, "signIn");
       else if (kind === "sign-up") wireAuthForm(form, "signUp");
       else if (kind === "reset") wireResetForm(form);
+      else if (kind === "new-password") wireNewPasswordForm(form);
     });
   }
 
