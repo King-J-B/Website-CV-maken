@@ -1,22 +1,15 @@
 // CVs are saved in this browser by js/cv-store.js (shared with the editor and
 // the template page): the list here, and each CV's content on its own.
 
-// The "+" cards are actions, not CVs: they are never saved, searched or sorted,
-// and always stay at the end of the list.
+// The "+" card is an action, not a CV: it is never saved, searched or sorted,
+// and always stays at the end of the list.
 const actionCards = [
   {
     id: "new",
-    title: "Nieuwe cv starten",
+    title: "Nieuw cv",
     template: "Kies een template",
     updated: "Begin vanaf nul",
     type: "new",
-  },
-  {
-    id: "template",
-    title: "Template bekijken",
-    template: "Ontdek ontwerpen",
-    updated: "Start met voorbeeld",
-    type: "template",
   },
 ];
 
@@ -95,17 +88,21 @@ function createResumeCard(resume) {
       </button>
     `;
 
+  // A CV shows the top of its real A4 page (filled in by fillPreviews);
+  // the "+" card keeps its plus sign.
+  const preview = isExisting
+    ? `<div class="resume-preview resume-preview--cv" data-cv-preview="${escapeHtml(resume.id)}" aria-hidden="true"></div>`
+    : `<div class="resume-preview"></div>`;
+
   return `
     <article class="resume-card ${cardClass}" ${startAttribute}>
-      <div class="resume-preview">
-        <div class="preview-line short"></div>
-        <div class="preview-line medium"></div>
-        <div class="preview-line"></div>
-        <div class="preview-line medium"></div>
-      </div>
+      ${preview}
 
       <div>
-        <h3${titleAttribute}>${title}</h3>
+        <div class="resume-title-row">
+          <h3${titleAttribute}>${title}</h3>
+          ${isExisting ? `<button class="rename-button" type="button" data-rename-id="${resume.id}" aria-label="${getText("Hernoemen", "Rename")}" title="${getText("Hernoemen", "Rename")}">✎</button>` : ""}
+        </div>
         <p class="resume-meta">${template}</p>
         <p class="resume-updated">${updated}</p>
       </div>
@@ -228,9 +225,25 @@ function renderResumes() {
   } else {
     const cards = searchTerm ? filteredResumes : [...filteredResumes, ...actionCards];
     resumeView.innerHTML = cards.map(createResumeCard).join("");
+    fillPreviews();
   }
 
   showResumes();
+}
+
+// Draw each CV in its card with its own template and design (js/cv-render.js),
+// scaled to the card's width.
+const previewObserver = "ResizeObserver" in window
+  ? new ResizeObserver((entries) => entries.forEach((entry) => FolioRender.fit(entry.target)))
+  : null;
+
+function fillPreviews() {
+  resumeView.querySelectorAll("[data-cv-preview]").forEach((box) => {
+    const content = FolioStore.loadCv(box.dataset.cvPreview) || FolioStore.loadCv(Number(box.dataset.cvPreview));
+    box.appendChild(FolioRender.page(content));
+    FolioRender.fit(box);
+    if (previewObserver) previewObserver.observe(box);
+  });
 }
 
 // A new CV starts by choosing a template (flow v4: Choose template → Editor).
@@ -239,9 +252,31 @@ function startNewResume() {
   window.location.href = "templates.html";
 }
 
-// Looking at templates is the same page: choosing one there starts a new CV.
-function browseTemplates() {
-  window.location.href = "templates.html";
+// The title stays as chosen from now on (no more automatic "Name - cv").
+async function renameResume(id) {
+  const resume = resumes.find((item) => item.id === id);
+  if (!resume) {
+    return;
+  }
+
+  const title = await folioConfirm({
+    title: getText("Cv hernoemen", "Rename resume"),
+    input: { label: getText("Naam van je cv", "Resume name"), value: resume.title, maxLength: 80 },
+    confirmLabel: getText("Opslaan", "Save"),
+    cancelLabel: getText("Annuleren", "Cancel"),
+    tone: "primary",
+  });
+
+  if (!title || title === resume.title) {
+    return;
+  }
+
+  resume.title = title;
+  resume.titleAuto = false;
+  if (saveResumes()) {
+    showToast(getText("Naam gewijzigd", "Name changed"));
+  }
+  renderResumes();
 }
 
 async function deleteResume(id) {
@@ -325,6 +360,7 @@ showEmptyButton?.addEventListener("click", () => {
 
 resumeView.addEventListener("click", (event) => {
   const deleteButton = event.target.closest("[data-delete-id]");
+  const renameButton = event.target.closest("[data-rename-id]");
   const startButton = event.target.closest("[data-start-card]");
   const clearSearchButton = event.target.closest("[data-clear-search]");
 
@@ -335,6 +371,11 @@ resumeView.addEventListener("click", (event) => {
     return;
   }
 
+  if (renameButton) {
+    renameResume(Number(renameButton.dataset.renameId));
+    return;
+  }
+
   if (deleteButton) {
     const id = Number(deleteButton.dataset.deleteId);
     deleteResume(id);
@@ -342,11 +383,7 @@ resumeView.addEventListener("click", (event) => {
   }
 
   if (startButton) {
-    if (startButton.dataset.startCard === "template") {
-      browseTemplates();
-    } else {
-      startNewResume();
-    }
+    startNewResume();
   }
 });
 

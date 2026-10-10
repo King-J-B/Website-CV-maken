@@ -158,9 +158,9 @@
     try {
       draft.updatedAt = new Date().toISOString();
       window.FolioStore.saveCv(CV_ID, draft);
-      // Keep the card on My resumes up to date (last edited, template).
+      // Keep the card on My resumes up to date (last edited, template, title).
       var template = templateById(draft.template);
-      window.FolioStore.touchResume(CV_ID, template && template.name);
+      window.FolioStore.touchResume(CV_ID, template && template.name, draft.sections.personal.name);
       setSaveState("saved");
     } catch (error) {
       setSaveState("error");
@@ -694,17 +694,9 @@
   var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
   var THIS_YEAR = new Date().getFullYear();
 
-  function formatDate(month, year) {
-    if (!year) return "";
-    return (month ? L(MONTHS[month - 1]) + " " : "") + year;
-  }
-
+  // "mei 2021 – heden": shared with My resumes (js/cv-render.js).
   function formatRange(item) {
-    var start = formatDate(item.startMonth, item.startYear);
-    var end = item.current ? L("Present") : formatDate(item.endMonth, item.endYear);
-    if (start && end) return start + " – " + end;
-    if (end) return item.current ? L("Present") : (window.FolioLang && FolioLang.current === "nl" ? "Tot " : "Until ") + end;
-    return start;
+    return window.FolioRender.formatRange(item);
   }
 
   // Compare as months since year 0; a missing start month counts as January,

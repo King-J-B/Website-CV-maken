@@ -1169,8 +1169,10 @@ a {
     padding: 0 12px;
   }
 
-  /* Row 1: logo and Download PDF. Row 2: save status, theme and flags. */
+  /* Row 1: logo and Download PDF. Row 2: save status, theme and flags.
+     The bar scrolls away; the section picker below stays at the top. */
   .ed-topbar {
+    position: static;
     flex-wrap: wrap;
     gap: 6px 8px;
     padding: 8px 16px;
@@ -1201,6 +1203,33 @@ a {
   .ed-topbar .flag-button {
     width: 30px;
     height: 30px;
+  }
+}
+
+@media (max-width: 767px) {
+  .ed-mobilebar {
+    top: 0;
+  }
+}
+
+/* Small phones: the section picker gets the full width, so "1. Persoonlijke
+   gegevens" is never cut off; Edit / Preview goes underneath. */
+@media (max-width: 480px) {
+  .ed-mobilebar {
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+
+  .ed-mobilebar .ed-select {
+    flex-basis: 100%;
+  }
+
+  .ed-toggle {
+    flex: 1;
+  }
+
+  .ed-toggle button {
+    flex: 1;
   }
 }
 

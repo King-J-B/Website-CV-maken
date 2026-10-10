@@ -564,6 +564,11 @@ const pairs = [
   ["Templatekleur", "Template colour"],
   ["Kies", "Choose"],
   ["Lichte modus", "Light mode"],
+  ["Hernoemen", "Rename"],
+  ["Cv hernoemen", "Rename resume"],
+  ["Naam van je cv", "Resume name"],
+  ["Naam gewijzigd", "Name changed"],
+  ["Opslaan", "Save"],
   ["Donkere modus", "Dark mode"],
 
   // Messages from the server (api/*.php)
