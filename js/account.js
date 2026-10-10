@@ -1,10 +1,13 @@
 /* ==========================================================================
    Folio — the account menu in the top bar (My resumes, Templates, Personal details)
+   and, when signed in, on the public pages (Home, About us, Privacy, Terms)
 
    Opens and closes the menu, and asks api/me.php who is signed in, then:
    - signed in: shows their initials, name and e-mail; "Uitloggen" really
      signs out (api/sign-out.php) and goes back to the home page
    - guest: shows an "Inloggen" button instead of the account menu
+   - public pages have an "Inloggen" button; signed in, it becomes the
+     account menu and other "Inloggen" links go to My resumes
    - no server (e.g. python http.server): leaves the menu as it is
 
    Other scripts can wait for the user with:
@@ -81,6 +84,20 @@
     }
   }
 
+  // The account menu for pages that only have an "Inloggen" button.
+  function buildMenu() {
+    var wrapper = document.createElement("div");
+    wrapper.className = "account-menu";
+    wrapper.innerHTML =
+      '<button class="avatar-button" type="button" aria-label="Account menu openen"></button>' +
+      '<div class="account-dropdown hidden">' +
+      '  <a href="my-resumes.html">Mijn cv&#39;s</a>' +
+      '  <a href="personal-details.html">Persoonlijke gegevens</a>' +
+      '  <a href="index.html" data-sign-out>Uitloggen</a>' +
+      "</div>";
+    return wrapper;
+  }
+
   function showGuest() {
     var login = document.createElement("a");
     login.className = "primary-button link-button login-button";
@@ -102,6 +119,28 @@
     // Resolves with the user, or null for guests. Rejects when there is no server.
     ready: ready
   };
+
+  // Public pages: no menu, only an "Inloggen" button.
+  var loginButton = document.querySelector(".login-button");
+  if (!menu && loginButton) {
+    ready.then(function (user) {
+      if (!user) return;
+      menu = buildMenu();
+      button = menu.querySelector(".avatar-button");
+      dropdown = menu.querySelector(".account-dropdown");
+      loginButton.replaceWith(menu);
+      wireDropdown();
+      showUser(user);
+      // "Inloggen" in the footer: you are signed in already.
+      document.querySelectorAll('a[href="sign-in.html"]').forEach(function (link) {
+        link.href = "my-resumes.html";
+        link.textContent = "Mijn cv's";
+      });
+    }, function () {
+      // No server: keep the "Inloggen" button.
+    });
+    return;
+  }
 
   if (!menu || !button || !dropdown) return;
   wireDropdown();
