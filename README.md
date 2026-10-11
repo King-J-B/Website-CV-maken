@@ -78,7 +78,7 @@ The pages talk to these PHP files with JSON. They need PHP, so test with `php -S
 
 ## What Folio can do
 
-- **Without an account:** choose a template, fill in the CV next to a live A4 preview, change colour, font and spacing, and download a PDF. CVs are kept in this browser.
+- **Without an account:** choose a template, fill in the CV next to a live A4 preview, add a photo, change colour, font, spacing and photo shape, and download a PDF. CVs are kept in this browser.
 - **With an account:** CVs are saved online (and CVs made as a guest move into the account after signing in), Personal details fill new CVs, forgot password by e-mail, delete the account.
 - **My resumes:** every CV shows its real preview; a CV is named after the person until you rename it (✎); ⧉ makes a copy, for example for another vacancy.
 - **Six templates:** Modern, Classic, Minimal, Split, Timeline, Concise.
@@ -88,7 +88,6 @@ The pages talk to these PHP files with JSON. They need PHP, so test with `php -S
 
 ## Still to do
 
-- A photo on the CV
 - Reordering sections
 - Change password on Personal details
 - Sign in with Google or LinkedIn (the buttons are in the HTML, hidden)

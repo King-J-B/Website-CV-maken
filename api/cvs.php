@@ -22,7 +22,7 @@ $id = (int) ($_GET['id'] ?? 0);
 
 const DEFAULT_TITLE = 'Nieuw cv';
 const TEMPLATES = ['modern', 'classic', 'minimal', 'split', 'timeline', 'concise'];
-const MAX_CONTENT_BYTES = 200000; // a full CV is a few kB; this stops abuse
+const MAX_CONTENT_BYTES = 400000; // a full CV is a few kB, a photo about 30-60 kB; this stops abuse
 
 // The part of a row the list on My resumes needs.
 function cv_summary(array $row): array
@@ -75,6 +75,11 @@ function content_json($content): string
     $json = json_encode($content, JSON_UNESCAPED_UNICODE);
     if ($json === false || strlen($json) > MAX_CONTENT_BYTES) {
         send_json(422, ['message' => 'This CV is too large to save.']);
+    }
+    // The photo must be the small JPEG the editor makes, nothing else.
+    $photo = $content->sections->personal->photo ?? null;
+    if ($photo !== null && !(is_string($photo) && preg_match('#^data:image/jpeg;base64,[A-Za-z0-9+/=]+$#', $photo))) {
+        send_json(422, ['message' => "This photo can't be saved. Please add it again."]);
     }
     return $json;
 }

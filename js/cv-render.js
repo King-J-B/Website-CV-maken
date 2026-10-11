@@ -105,12 +105,19 @@ window.FolioRender = (function () {
 
     var cv = el("article", "cv-page");
     cv.dataset.template = content.template || "modern";
-    ["color", "font", "spacing"].forEach(function (key) {
+    ["color", "font", "spacing", "photo"].forEach(function (key) {
       if (design[key]) cv.dataset[key] = design[key];
     });
 
     // Head: name, job title and contact details
     var head = el("header", "cv-page__head");
+    // Only a photo made by the editor (a small JPEG); anything else is ignored.
+    if (/^data:image\/jpeg;base64,[A-Za-z0-9+\/=]+$/.test(personal.photo || "")) {
+      var photo = el("img", "cv-page__photo");
+      photo.alt = "";
+      photo.src = personal.photo;
+      head.appendChild(photo);
+    }
     var name = (personal.name || "").trim();
     var nameLine = el("p", "cv-page__name" + (name ? "" : " is-placeholder"), name || L("Your name"));
     head.appendChild(nameLine);
