@@ -91,7 +91,11 @@ function createResumeCard(resume) {
       <div>
         <div class="resume-title-row">
           <h3${titleAttribute}>${title}</h3>
-          ${isExisting ? `<button class="rename-button" type="button" data-rename-id="${resume.id}" aria-label="${getText("Hernoemen", "Rename")}" title="${getText("Hernoemen", "Rename")}">✎</button>` : ""}
+          ${isExisting ? `
+            <div class="card-icons">
+              <button class="card-icon-button" type="button" data-rename-id="${resume.id}" aria-label="${getText("Hernoemen", "Rename")}" title="${getText("Hernoemen", "Rename")}">✎</button>
+              <button class="card-icon-button" type="button" data-duplicate-id="${resume.id}" aria-label="${getText("Dupliceren", "Duplicate")}" title="${getText("Dupliceren", "Duplicate")}">⧉</button>
+            </div>` : ""}
         </div>
         <p class="resume-meta">${template}</p>
         <p class="resume-updated">${updated}</p>
@@ -276,6 +280,31 @@ async function renameResume(id) {
   renderResumes();
 }
 
+// An exact copy (template, design, content) with "(kopie)" after the title,
+// for example to make a version for another vacancy.
+async function duplicateResume(id) {
+  const resume = resumes.find((item) => item.id === id);
+  if (!resume) {
+    return;
+  }
+
+  try {
+    const content = await FolioStore.load(id);
+    if (!content) {
+      throw new Error("No content");
+    }
+    const template = FOLIO_TEMPLATES.find((item) => item.id === content.template) || FOLIO_TEMPLATES[0];
+    content.updatedAt = new Date().toISOString();
+    await FolioStore.create(template, `${resume.title} ${getText("(kopie)", "(copy)")}`, content);
+  } catch (error) {
+    showToast(getText("Dupliceren is niet gelukt. Probeer het opnieuw.", "Could not duplicate. Please try again."));
+    return;
+  }
+
+  showToast(getText("Kopie gemaakt", "Copy made"));
+  loadResumeList();
+}
+
 async function deleteResume(id) {
   const resume = resumes.find((item) => item.id === id);
   if (!resume) {
@@ -321,6 +350,7 @@ function restoreExample() {
 resumeView.addEventListener("click", (event) => {
   const deleteButton = event.target.closest("[data-delete-id]");
   const renameButton = event.target.closest("[data-rename-id]");
+  const duplicateButton = event.target.closest("[data-duplicate-id]");
   const startButton = event.target.closest("[data-start-card]");
   const clearSearchButton = event.target.closest("[data-clear-search]");
 
@@ -328,6 +358,11 @@ resumeView.addEventListener("click", (event) => {
     searchInput.value = "";
     renderResumes();
     searchInput.focus();
+    return;
+  }
+
+  if (duplicateButton) {
+    duplicateResume(Number(duplicateButton.dataset.duplicateId));
     return;
   }
 
