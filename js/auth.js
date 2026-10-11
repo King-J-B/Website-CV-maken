@@ -2,14 +2,15 @@
    Folio — authentication logic (no dependencies)
 
    Handles: client-side validation, password visibility toggles, submit state,
-   server error display, the forgot-password request → sent states, and social
-   sign-in links.
+   server error display, sign in / sign up, the forgot-password request → sent
+   states, choosing a new password, and social sign-in links. The forms talk
+   to the PHP files in api/.
 
    Configure before this script loads (optional):
 
      <script>
        window.FOLIO_AUTH_CONFIG = {
-         apiBase: "api",                // the PHP files in api/; null = demo mode (no network)
+         apiBase: "api",                // the folder with the PHP files
          afterAuthUrl: "my-resumes.html", // My resumes (flow: Sign in / Sign up → My resumes)
          providers: { google: "/auth/google", linkedin: "/auth/linkedin" }
        };
@@ -36,18 +37,7 @@
      to the user. Optionally set error.fields = { email: "…" } for field errors.
      ------------------------------------------------------------------------ */
 
-  // Demo mode: pretend the server accepted the request.
-  function demo() {
-    return new Promise(function (resolve) {
-      window.setTimeout(function () {
-        resolve({ ok: true });
-      }, 700);
-    });
-  }
-
   function request(path, payload) {
-    if (!config.apiBase) return demo();
-
     return fetch(config.apiBase + path, {
       method: "POST",
       headers: { "Content-Type": "application/json", Accept: "application/json" },
@@ -358,11 +348,6 @@
       invalidView.hidden = false;
       var heading = invalidView.querySelector("h1");
       if (heading) heading.focus();
-    }
-
-    if (!config.apiBase) {
-      wireAuthForm(form, "resetPassword");
-      return;
     }
 
     fetch(config.apiBase + "/reset-password.php?token=" + encodeURIComponent(resetToken()), {

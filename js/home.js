@@ -40,8 +40,7 @@
   }
 
   function isEnglish() {
-    var english = document.querySelector("#englishButton");
-    return Boolean(english && english.classList.contains("active"));
+    return Boolean(window.FolioLang && window.FolioLang.current === "en");
   }
 
   // Scale an A4 page to the width of its box.
@@ -171,13 +170,6 @@
         ? "We couldn't start your CV. Please try again."
         : "Je cv kon niet worden gestart. Probeer het opnieuw.");
     });
-  });
-
-  // English placeholder when the page is switched to English.
-  document.addEventListener("click", function () {
-    window.setTimeout(function () {
-      nameInput.placeholder = isEnglish() ? "For example: Sam Jansen" : "Bijvoorbeeld: Sam de Vries";
-    }, 60);
   });
 
   selectColor("");

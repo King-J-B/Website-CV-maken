@@ -496,20 +496,6 @@ a {
   text-align: center;
 }
 
-.ed-soon {
-  margin-top: 24px;
-  padding: 24px;
-  border-radius: var(--radius-md);
-  background: var(--bg-selected);
-  color: var(--text-secondary);
-}
-
-.ed-soon__title {
-  margin-bottom: 4px;
-  color: var(--text-primary);
-  font-weight: 600;
-}
-
 .ed-steps {
   display: flex;
   flex-wrap: wrap;
@@ -523,12 +509,6 @@ a {
 
 .ed-steps [data-step="next"] {
   margin-left: auto;
-}
-
-.ed-steps__note {
-  margin-left: auto;
-  font-size: 13px;
-  color: var(--text-secondary);
 }
 
 /* Personal details: two columns, wide fields span both */

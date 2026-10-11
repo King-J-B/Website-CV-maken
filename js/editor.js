@@ -42,17 +42,14 @@
   });
 
   function start(stored) {
-    // Order matches the flow diagram. `built: false` shows a placeholder panel.
+    // Order matches the flow diagram.
     var SECTIONS = [
-      { id: "personal", label: "Personal details", built: true },
-      { id: "about", label: "About me", built: true },
-      { id: "education", label: "Education", built: true },
-      { id: "experience", label: "Experience", built: true },
-      { id: "skills", label: "Skills", built: true, optional: true }
+      { id: "personal", label: "Personal details" },
+      { id: "about", label: "About me" },
+      { id: "education", label: "Education" },
+      { id: "experience", label: "Experience" },
+      { id: "skills", label: "Skills", optional: true }
     ];
-
-    // Shown after the last section; "Custom" comes after Skills in the flow.
-    var AFTER_LAST = "Next in the flow: custom sections like hobbies (not built yet).";
 
     // Sections whose draft data is a list: { items: [...] }
     var LIST_SECTIONS = ["education", "experience", "skills"];
@@ -239,11 +236,8 @@
     var editor = document.querySelector("[data-editor]");
     var nav = document.querySelector("[data-section-nav]");
     var picker = document.querySelector("[data-section-picker]");
-    var placeholderPanel = document.querySelector('[data-panel="placeholder"]');
-    var placeholderTitle = document.querySelector("[data-placeholder-title]");
     var prevLink = document.querySelector('[data-step="prev"]');
     var nextLink = document.querySelector('[data-step="next"]');
-    var stepNote = document.querySelector("[data-step-note]");
     var current = null;
 
     function sectionById(id) {
@@ -291,9 +285,7 @@
         link.appendChild(label);
 
         var count = countFor(section);
-        if (!section.built) {
-          link.appendChild(tag("Soon", "ed-tag ed-tag--muted"));
-        } else if (isFilledIn(section.id)) {
+        if (isFilledIn(section.id)) {
           link.appendChild(tag("✓", "ed-tag", "Filled in"));
         } else if (count) {
           link.appendChild(tag(String(count), "ed-tag", count + " added"));
@@ -306,7 +298,7 @@
 
         var option = document.createElement("option");
         option.value = section.id;
-        option.textContent = index + 1 + ". " + section.label + (section.built ? "" : " (soon)");
+        option.textContent = index + 1 + ". " + section.label;
         option.selected = section.id === current;
         picker.appendChild(option);
       });
@@ -337,15 +329,12 @@
       document.querySelectorAll("[data-panel]").forEach(function (panel) {
         panel.hidden = true;
       });
-      var panel = section.built ? document.querySelector('[data-panel="' + section.id + '"]') : placeholderPanel;
-      if (!section.built) placeholderTitle.textContent = section.label;
+      var panel = document.querySelector('[data-panel="' + section.id + '"]');
       panel.hidden = false;
 
       var index = SECTIONS.indexOf(section);
       setStep(prevLink, SECTIONS[index - 1], "← ");
       setStep(nextLink, SECTIONS[index + 1], "Next: ");
-      stepNote.hidden = index !== SECTIONS.length - 1;
-      stepNote.textContent = AFTER_LAST;
 
       document.title = section.label + " · Edit CV · Folio";
       renderNav();

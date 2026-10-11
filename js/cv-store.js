@@ -17,9 +17,6 @@
    - folio:cv:<id>      the content of one CV, as edited in the editor
 
    The editor opens one CV at a time: editor.html?cv=<id>.
-
-   Older versions kept a single editor draft under folio:draft. On load, that
-   draft becomes its own CV ("Mijn cv"), so nobody loses work.
    ========================================================================== */
 
 (function () {
@@ -27,7 +24,6 @@
 
   var RESUMES_KEY = "folio:resumes";
   var CV_PREFIX = "folio:cv:";
-  var LEGACY_DRAFT_KEY = "folio:draft";
   var DEFAULT_TITLE = "Nieuw cv";
 
   // Shown on My resumes until the user deletes it.
@@ -197,35 +193,6 @@
       window.localStorage.removeItem(CV_PREFIX + id);
     } catch (error) {
       // Nothing to remove, or storage blocked: the card is gone either way.
-    }
-  }
-
-  /* ------------------------------------------------------------------------
-     One-time move of the old single draft into its own CV
-     ------------------------------------------------------------------------ */
-
-  function migrateLegacyDraft() {
-    var legacy = readJson(LEGACY_DRAFT_KEY);
-    if (!legacy) return;
-    try {
-      var hasContent = legacy.sections && Object.keys(legacy.sections).some(function (key) {
-        var section = legacy.sections[key];
-        if (!section) return false;
-        if (Array.isArray(section.items)) return section.items.length > 0;
-        return Object.keys(section).some(function (field) { return section[field]; });
-      });
-
-      if (hasContent) {
-        var templates = window.FOLIO_TEMPLATES || [];
-        var template = templates.filter(function (item) { return item.id === legacy.template; })[0] ||
-          templates[0] || { id: "modern", name: "Modern" };
-        var id = createResume(template, "Mijn cv");
-        legacy.template = template.id;
-        saveCv(id, legacy);
-      }
-      window.localStorage.removeItem(LEGACY_DRAFT_KEY);
-    } catch (error) {
-      // Leave the old draft in place and try again next time.
     }
   }
 
@@ -436,6 +403,4 @@
   };
 
   window.FolioStore = online;
-
-  migrateLegacyDraft();
 })();
