@@ -164,7 +164,7 @@ body {
   font-weight: 900;
 }
 
-/* Title with the small "Rename" pencil next to it */
+/* Title with the small "Rename" and "Duplicate" buttons next to it */
 .resume-title-row {
   display: flex;
   align-items: flex-start;
@@ -172,7 +172,13 @@ body {
   gap: 8px;
 }
 
-.rename-button {
+.card-icons {
+  display: flex;
+  flex-shrink: 0;
+  gap: 6px;
+}
+
+.card-icon-button {
   display: grid;
   flex-shrink: 0;
   width: 32px;
@@ -187,7 +193,7 @@ body {
   cursor: pointer;
 }
 
-.rename-button:hover {
+.card-icon-button:hover {
   border-color: var(--color-primary);
   background: var(--color-surface-soft);
   color: var(--color-ink);
