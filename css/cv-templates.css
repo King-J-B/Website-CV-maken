@@ -21,8 +21,11 @@
    The "states" block at the end (placeholders, empty notes) must always
    win, so it stays last and uses a stronger selector.
 
-   Sections can be placed with CSS grid by name, without changing the HTML:
-   [data-cv-section="about" | "education" | "experience" | "skills"].
+   The sections sit in two groups: .cv-page__main (about, education,
+   experience, projects, volunteering, certificates) and .cv-page__side
+   (skills, languages, hobbies). Most templates ignore the groups
+   (display: contents); Split puts them in two columns. Each section has
+   data-cv-section="<name>" for styling one section.
    ========================================================================== */
 
 /* --------------------------------------------------------------------------
@@ -71,6 +74,17 @@
 
 .cv-page__name {
   color: var(--cv-ink);
+}
+
+/* The two groups only matter for Split (see there) */
+.cv-page__main,
+.cv-page__side {
+  display: contents;
+}
+
+/* An extra section that isn't added (or a template rule must not show it) */
+.cv-page .cv-page__section[hidden] {
+  display: none;
 }
 
 .cv-page__about {
@@ -534,10 +548,17 @@
   font-size: 13.5px;
 }
 
-:where(.cv-page[data-template="split"]) [data-cv-section="about"] { grid-column: 2; grid-row: 2; }
-:where(.cv-page[data-template="split"]) [data-cv-section="education"] { grid-column: 2; grid-row: 3; }
-:where(.cv-page[data-template="split"]) [data-cv-section="experience"] { grid-column: 2; grid-row: 4; }
-:where(.cv-page[data-template="split"]) [data-cv-section="skills"] { grid-column: 1; grid-row: 2 / span 3; }
+/* Two columns: skills, languages and hobbies on the left, the rest right */
+:where(.cv-page[data-template="split"]) .cv-page__main,
+:where(.cv-page[data-template="split"]) .cv-page__side {
+  display: grid;
+  align-content: start;
+  row-gap: calc(28px * var(--cv-space));
+  grid-row: 2;
+}
+
+:where(.cv-page[data-template="split"]) .cv-page__main { grid-column: 2; }
+:where(.cv-page[data-template="split"]) .cv-page__side { grid-column: 1; }
 
 :where(.cv-page[data-template="split"]) .cv-page__heading {
   margin-bottom: 12px;
