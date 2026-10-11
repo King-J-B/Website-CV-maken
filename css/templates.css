@@ -95,17 +95,6 @@ a {
   background: var(--action-primary-active);
 }
 
-.tp-button--secondary {
-  border-color: var(--border-subtle);
-  background: var(--bg-surface);
-  color: var(--text-primary);
-}
-
-.tp-button--secondary:hover {
-  border-color: var(--action-primary);
-  background: var(--bg-canvas);
-}
-
 /* Page */
 .tp-main {
   max-width: 1200px;

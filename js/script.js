@@ -24,7 +24,6 @@ const sortSelect = document.querySelector("#sortSelect");
 const pageCard = document.querySelector(".page-card");
 const pageTitle = document.querySelector(".page-heading h1");
 const pageIntro = document.querySelector(".intro");
-const showEmptyButton = document.querySelector("#showEmptyButton");
 const toastMessage = document.querySelector("#toastMessage");
 
 // js/translate.js knows the chosen language (it loads before this file).
@@ -128,26 +127,9 @@ function formatUpdated(resume) {
   return getText(`Bewerkt op ${date}`, `Edited ${date}`);
 }
 
+// Our own card texts ("Kies een template", "Net aangemaakt") in English.
 function translateResumeText(text) {
-  const translations = {
-    "Modern template": "Modern template",
-    "Vandaag bewerkt": "Edited today",
-    "Nieuwe cv starten": "Start new resume",
-    "Kies een template": "Choose a template",
-    "Begin vanaf nul": "Start from scratch",
-    "Template bekijken": "View template",
-    "Ontdek ontwerpen": "Explore designs",
-    "Start met voorbeeld": "Start with example",
-    "Nieuw cv": "New resume",
-    "Nog geen template gekozen": "No template selected yet",
-    "Net aangemaakt": "Just created",
-  };
-
-  return translations[text] || text;
-}
-
-function getExistingResumes() {
-  return resumes;
+  return window.FolioLang ? FolioLang.t(text) : text;
 }
 
 function showResumes() {
@@ -161,7 +143,6 @@ function showResumes() {
     "Bewaar, bewerk en exporteer je cv's vanaf een overzichtelijke plek.",
     "Save, edit and export your resumes from one clear place."
   );
-  if (showEmptyButton) showEmptyButton.textContent = getText("Toon empty state", "Show empty state");
 }
 
 function showEmpty() {
@@ -175,7 +156,6 @@ function showEmpty() {
     "Er zijn nog geen cv's opgeslagen. Kies een template om je eerste cv te maken.",
     "No resumes have been saved yet. Choose a template to create your first resume."
   );
-  if (showEmptyButton) showEmptyButton.textContent = getText("Terug naar mijn cv's", "Back to my resumes");
 }
 
 function noResultsMessage(searchTerm) {
@@ -191,7 +171,7 @@ function noResultsMessage(searchTerm) {
 
 function renderResumes() {
   // No CVs at all: that is the real empty state.
-  if (getExistingResumes().length === 0) {
+  if (resumes.length === 0) {
     resumeView.innerHTML = "";
     showEmpty();
     return;
@@ -337,17 +317,6 @@ function restoreExample() {
   searchInput.value = "";
   FolioStore.restoreExample().then(loadResumeList);
 }
-
-// The demo buttons are only on the page while testing.
-showEmptyButton?.addEventListener("click", () => {
-  const isEmptyVisible = !emptyView.classList.contains("hidden");
-
-  if (isEmptyVisible) {
-    renderResumes();
-  } else {
-    showEmpty();
-  }
-});
 
 resumeView.addEventListener("click", (event) => {
   const deleteButton = event.target.closest("[data-delete-id]");
