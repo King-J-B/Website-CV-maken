@@ -9,14 +9,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/folio-mark.png">
   <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
-  <link rel="stylesheet" href="css/colors.css?v=35">
-  <link rel="stylesheet" href="css/cv-templates.css?v=35">
-  <link rel="stylesheet" href="css/controls.css?v=35">
-  <link rel="stylesheet" href="css/editor.css?v=35">
-  <link rel="stylesheet" href="css/confirm-dialog.css?v=35">
+  <link rel="stylesheet" href="css/colors.css?v=36">
+  <link rel="stylesheet" href="css/cv-templates.css?v=36">
+  <link rel="stylesheet" href="css/controls.css?v=36">
+  <link rel="stylesheet" href="css/editor.css?v=36">
+  <link rel="stylesheet" href="css/confirm-dialog.css?v=36">
 </head>
 <body>
-  <script src="js/theme.js?v=35"></script>
+  <script src="js/theme.js?v=36"></script>
   <a class="skip-link" href="#editor-main">Skip to editor</a>
 
   <header class="ed-topbar">
@@ -60,6 +60,7 @@
     <nav class="ed-nav" aria-label="CV sections">
       <p class="ed-nav__title">Sections</p>
       <ol class="ed-nav__list" data-section-nav></ol>
+      <button class="ed-nav__add" type="button" data-add-section><span aria-hidden="true">+</span> Add section</button>
     </nav>
 
     <main class="ed-form" id="editor-main" tabindex="-1">
@@ -74,25 +75,25 @@
         <h1 class="ed-title" tabindex="-1">Skills</h1>
         <p class="ed-sub">Add the tools and strengths you want employers to notice. Five to ten skills is plenty.</p>
 
-        <form class="ed-add" data-skill-form novalidate>
+        <form class="ed-add" data-chip-form novalidate>
           <div class="ed-field ed-field--grow">
             <label class="ed-label" for="skill-name">Skill</label>
-            <input class="ed-input" id="skill-name" name="name" type="text" maxlength="40"
+            <input class="ed-input" id="skill-name" name="name" type="text" maxlength="40" data-chip-name
                    placeholder="For example: Figma" autocomplete="off" aria-describedby="skill-error">
           </div>
 
           <div class="ed-field">
             <label class="ed-label" for="skill-level">Level <span class="ed-optional">(optional)</span></label>
-            <select class="ed-select" id="skill-level" name="level" data-level-select></select>
+            <select class="ed-select" id="skill-level" name="level" data-chip-level></select>
           </div>
 
           <button class="ed-btn ed-btn--primary" type="submit">Add skill</button>
-          <p class="ed-error" id="skill-error" hidden></p>
+          <p class="ed-error" id="skill-error" data-chip-error hidden></p>
         </form>
 
-        <h2 class="ed-list-title" data-skill-count>Your skills</h2>
-        <ul class="skill-list" data-skill-list></ul>
-        <p class="ed-empty" data-skill-empty>No skills yet. Your first skill appears here and in the preview.</p>
+        <h2 class="ed-list-title" data-chip-count>Your skills</h2>
+        <ul class="skill-list" data-chip-list></ul>
+        <p class="ed-empty" data-chip-empty>No skills yet. Your first skill appears here and in the preview.</p>
       </section>
 
       <!-- Personal details -->
@@ -198,6 +199,102 @@
         </button>
       </section>
 
+      <!-- Projects (extra section) -->
+      <section class="ed-panel" data-panel="projects" hidden>
+        <p class="ed-eyebrow">Optional</p>
+        <h1 class="ed-title" tabindex="-1">Projects</h1>
+        <p class="ed-sub">School projects, hobby projects or things you built, newest first. Only the name is needed.</p>
+
+        <ol class="entry-list" data-entry-list></ol>
+        <p class="ed-empty" data-entry-empty>No projects yet. A school project counts too.</p>
+
+        <button class="ed-btn ed-btn--secondary ed-add-entry" type="button" data-entry-add>
+          <span aria-hidden="true">+</span> Add project
+        </button>
+        <button class="ed-link ed-remove-section" type="button" data-remove-section>Remove this section</button>
+      </section>
+
+      <!-- Volunteering (extra section) -->
+      <section class="ed-panel" data-panel="volunteering" hidden>
+        <p class="ed-eyebrow">Optional</p>
+        <h1 class="ed-title" tabindex="-1">Volunteering</h1>
+        <p class="ed-sub">Volunteer work, newest first. Only what you do and the organisation are needed.</p>
+
+        <ol class="entry-list" data-entry-list></ol>
+        <p class="ed-empty" data-entry-empty>No volunteer work yet.</p>
+
+        <button class="ed-btn ed-btn--secondary ed-add-entry" type="button" data-entry-add>
+          <span aria-hidden="true">+</span> Add volunteer work
+        </button>
+        <button class="ed-link ed-remove-section" type="button" data-remove-section>Remove this section</button>
+      </section>
+
+      <!-- Certificates (extra section) -->
+      <section class="ed-panel" data-panel="certificates" hidden>
+        <p class="ed-eyebrow">Optional</p>
+        <h1 class="ed-title" tabindex="-1">Certificates</h1>
+        <p class="ed-sub">Courses, diplomas and certificates. Only the name is needed.</p>
+
+        <ol class="entry-list" data-entry-list></ol>
+        <p class="ed-empty" data-entry-empty>No certificates yet.</p>
+
+        <button class="ed-btn ed-btn--secondary ed-add-entry" type="button" data-entry-add>
+          <span aria-hidden="true">+</span> Add certificate
+        </button>
+        <button class="ed-link ed-remove-section" type="button" data-remove-section>Remove this section</button>
+      </section>
+
+      <!-- Languages (extra section) -->
+      <section class="ed-panel" data-panel="languages" hidden>
+        <p class="ed-eyebrow">Optional</p>
+        <h1 class="ed-title" tabindex="-1">Languages</h1>
+        <p class="ed-sub">The languages you speak. Add your level so employers know what to expect.</p>
+
+        <form class="ed-add" data-chip-form novalidate>
+          <div class="ed-field ed-field--grow">
+            <label class="ed-label" for="language-name">Language</label>
+            <input class="ed-input" id="language-name" name="name" type="text" maxlength="40" data-chip-name
+                   placeholder="For example: English" autocomplete="off" aria-describedby="language-error">
+          </div>
+
+          <div class="ed-field">
+            <label class="ed-label" for="language-level">Level <span class="ed-optional">(optional)</span></label>
+            <select class="ed-select" id="language-level" name="level" data-chip-level></select>
+          </div>
+
+          <button class="ed-btn ed-btn--primary" type="submit">Add language</button>
+          <p class="ed-error" id="language-error" data-chip-error hidden></p>
+        </form>
+
+        <h2 class="ed-list-title" data-chip-count>Your languages</h2>
+        <ul class="skill-list" data-chip-list></ul>
+        <p class="ed-empty" data-chip-empty>No languages yet. Your first language appears here and in the preview.</p>
+        <button class="ed-link ed-remove-section" type="button" data-remove-section>Remove this section</button>
+      </section>
+
+      <!-- Hobbies (extra section) -->
+      <section class="ed-panel" data-panel="hobbies" hidden>
+        <p class="ed-eyebrow">Optional</p>
+        <h1 class="ed-title" tabindex="-1">Hobbies</h1>
+        <p class="ed-sub">A few things you like to do. They tell employers a bit more about you.</p>
+
+        <form class="ed-add" data-chip-form novalidate>
+          <div class="ed-field ed-field--grow">
+            <label class="ed-label" for="hobby-name">Hobby</label>
+            <input class="ed-input" id="hobby-name" name="name" type="text" maxlength="40" data-chip-name
+                   placeholder="For example: Running" autocomplete="off" aria-describedby="hobby-error">
+          </div>
+
+          <button class="ed-btn ed-btn--primary" type="submit">Add hobby</button>
+          <p class="ed-error" id="hobby-error" data-chip-error hidden></p>
+        </form>
+
+        <h2 class="ed-list-title" data-chip-count>Your hobbies</h2>
+        <ul class="skill-list" data-chip-list></ul>
+        <p class="ed-empty" data-chip-empty>No hobbies yet. Your first hobby appears here and in the preview.</p>
+        <button class="ed-link ed-remove-section" type="button" data-remove-section>Remove this section</button>
+      </section>
+
       <nav class="ed-steps" aria-label="Previous and next section">
         <a class="ed-btn ed-btn--ghost" href="#" data-step="prev" hidden></a>
         <a class="ed-btn ed-btn--primary" href="#" data-step="next" hidden></a>
@@ -245,6 +342,8 @@
             <ul class="cv-page__contact" data-preview-contact hidden></ul>
           </header>
 
+          <!-- Main column (in Split: right) and side column (in Split: left) -->
+          <div class="cv-page__main">
           <section class="cv-page__section" data-cv-section="about">
             <h2 class="cv-page__heading">About me</h2>
             <p class="cv-page__about" data-preview-about hidden></p>
@@ -263,23 +362,66 @@
             <p class="cv-page__empty" data-preview-empty="experience">Your experience will appear here.</p>
           </section>
 
-          <section class="cv-page__section" data-cv-section="skills" data-preview-skills>
-            <h2 class="cv-page__heading">Skills</h2>
-            <ul class="cv-page__skills" data-preview-skill-list></ul>
-            <p class="cv-page__empty" data-preview-skill-empty>Your skills will appear here.</p>
+          <section class="cv-page__section" data-cv-section="projects" hidden>
+            <h2 class="cv-page__heading">Projects</h2>
+            <div class="cv-page__entries" data-preview-entries="projects"></div>
+            <p class="cv-page__empty" data-preview-empty="projects">Your projects will appear here.</p>
           </section>
+
+          <section class="cv-page__section" data-cv-section="volunteering" hidden>
+            <h2 class="cv-page__heading">Volunteering</h2>
+            <div class="cv-page__entries" data-preview-entries="volunteering"></div>
+            <p class="cv-page__empty" data-preview-empty="volunteering">Your volunteer work will appear here.</p>
+          </section>
+
+          <section class="cv-page__section" data-cv-section="certificates" hidden>
+            <h2 class="cv-page__heading">Certificates</h2>
+            <div class="cv-page__entries" data-preview-entries="certificates"></div>
+            <p class="cv-page__empty" data-preview-empty="certificates">Your certificates will appear here.</p>
+          </section>
+          </div>
+
+          <div class="cv-page__side">
+          <section class="cv-page__section" data-cv-section="skills">
+            <h2 class="cv-page__heading">Skills</h2>
+            <ul class="cv-page__skills" data-preview-chips="skills"></ul>
+            <p class="cv-page__empty" data-preview-chips-empty="skills">Your skills will appear here.</p>
+          </section>
+
+          <section class="cv-page__section" data-cv-section="languages" hidden>
+            <h2 class="cv-page__heading">Languages</h2>
+            <ul class="cv-page__skills" data-preview-chips="languages"></ul>
+            <p class="cv-page__empty" data-preview-chips-empty="languages">Your languages will appear here.</p>
+          </section>
+
+          <section class="cv-page__section" data-cv-section="hobbies" hidden>
+            <h2 class="cv-page__heading">Hobbies</h2>
+            <ul class="cv-page__skills" data-preview-chips="hobbies"></ul>
+            <p class="cv-page__empty" data-preview-chips-empty="hobbies">Your hobbies will appear here.</p>
+          </section>
+          </div>
         </article>
       </div>
       <p class="ed-preview__caption" data-template-caption>A4 · Modern template</p>
     </aside>
   </div>
 
-  <script src="js/translate.js?v=35"></script>
-  <script src="js/account.js?v=35"></script>
-  <script src="js/templates-data.js?v=35"></script>
-  <script src="js/cv-store.js?v=35"></script>
-  <script src="js/confirm-dialog.js?v=35"></script>
-  <script src="js/cv-render.js?v=35"></script>
-  <script src="js/editor.js?v=35"></script>
+  <!-- "Add section": choose an extra section -->
+  <dialog class="ed-add-dialog" data-add-dialog aria-labelledby="add-section-title">
+    <div class="ed-add-dialog__box">
+      <h2 class="ed-add-dialog__title" id="add-section-title">Add a section</h2>
+      <p class="ed-sub">Choose what you want to add to your CV.</p>
+      <div class="ed-add-dialog__list" data-add-list></div>
+      <button class="ed-btn ed-btn--secondary" type="button" data-add-cancel>Cancel</button>
+    </div>
+  </dialog>
+
+  <script src="js/translate.js?v=36"></script>
+  <script src="js/account.js?v=36"></script>
+  <script src="js/templates-data.js?v=36"></script>
+  <script src="js/cv-store.js?v=36"></script>
+  <script src="js/confirm-dialog.js?v=36"></script>
+  <script src="js/cv-render.js?v=36"></script>
+  <script src="js/editor.js?v=36"></script>
 </body>
 </html>

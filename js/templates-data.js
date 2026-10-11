@@ -61,6 +61,7 @@ window.FOLIO_SAMPLE_CV =
   '  <p class="cv-page__role">UX design student</p>' +
   '  <ul class="cv-page__contact"><li>alex@example.com</li><li>+31 6 12345678</li><li>Breda</li><li>linkedin.com/in/alex-morgan</li></ul>' +
   "</header>" +
+  '<div class="cv-page__main">' +
   '<section class="cv-page__section" data-cv-section="about">' +
   '  <h2 class="cv-page__heading">About me</h2>' +
   '  <p class="cv-page__about">Creative UX design student who loves turning messy problems into simple screens. Looking for a graduation internship in a product team.</p>' +
@@ -81,6 +82,8 @@ window.FOLIO_SAMPLE_CV =
   '      <p class="cv-entry__desc">Helped customers in a busy city-centre store</p></div>' +
   "  </div>" +
   "</section>" +
+  "</div>" +
+  '<div class="cv-page__side">' +
   '<section class="cv-page__section" data-cv-section="skills">' +
   '  <h2 class="cv-page__heading">Skills</h2>' +
   '  <ul class="cv-page__skills">' +
@@ -89,4 +92,12 @@ window.FOLIO_SAMPLE_CV =
   '    <li class="cv-page__skill">HTML &amp; CSS</li>' +
   '    <li class="cv-page__skill">Teamwork</li>' +
   "  </ul>" +
-  "</section>";
+  "</section>" +
+  '<section class="cv-page__section" data-cv-section="languages">' +
+  '  <h2 class="cv-page__heading">Languages</h2>' +
+  '  <ul class="cv-page__skills">' +
+  '    <li class="cv-page__skill">Dutch<span class="cv-page__level">Native</span></li>' +
+  '    <li class="cv-page__skill">English<span class="cv-page__level">Fluent</span></li>' +
+  "  </ul>" +
+  "</section>" +
+  "</div>";

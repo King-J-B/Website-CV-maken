@@ -42,17 +42,29 @@
   });
 
   function start(stored) {
-    // Order matches the flow diagram.
+    // Order matches the flow diagram. Extra sections only show up (in the
+    // menu and on the CV) after "Add section"; draft.extras lists them.
     var SECTIONS = [
       { id: "personal", label: "Personal details" },
       { id: "about", label: "About me" },
       { id: "education", label: "Education" },
       { id: "experience", label: "Experience" },
-      { id: "skills", label: "Skills", optional: true }
+      { id: "skills", label: "Skills", optional: true },
+      { id: "projects", label: "Projects", extra: true, description: "School projects, hobby projects or things you built." },
+      { id: "volunteering", label: "Volunteering", extra: true, description: "Volunteer work, for example at a club or a festival." },
+      { id: "certificates", label: "Certificates", extra: true, description: "Courses, diplomas and certificates, like a language certificate." },
+      { id: "languages", label: "Languages", extra: true, description: "The languages you speak, with your level." },
+      { id: "hobbies", label: "Hobbies", extra: true, description: "What you like to do in your free time." }
     ];
 
+    var EXTRA_IDS = SECTIONS.filter(function (section) {
+      return section.extra;
+    }).map(function (section) {
+      return section.id;
+    });
+
     // Sections whose draft data is a list: { items: [...] }
-    var LIST_SECTIONS = ["education", "experience", "skills"];
+    var LIST_SECTIONS = ["education", "experience", "skills"].concat(EXTRA_IDS);
 
     // Sections whose draft data is a set of fields: { name: "...", ... }
     var FIELD_SECTIONS = ["personal", "about"];
@@ -86,8 +98,6 @@
       ]
     };
 
-    var LEVELS = ["Beginner", "Intermediate", "Advanced", "Expert"];
-    var MAX_SKILLS = 30;
 
     /* ------------------------------------------------------------------------
        Draft storage
@@ -104,6 +114,7 @@
         updatedAt: null,
         template: TEMPLATES[0].id,
         design: { color: "", font: "", spacing: "" },
+        extras: [],
         sections: {}
       };
       LIST_SECTIONS.forEach(function (id) {
@@ -128,6 +139,9 @@
           });
           Object.keys(stored.sections).forEach(function (id) {
             draft.sections[id] = stored.sections[id];
+          });
+          draft.extras = EXTRA_IDS.filter(function (id) {
+            return Array.isArray(stored.extras) && stored.extras.indexOf(id) !== -1;
           });
         }
       } catch (error) {
@@ -245,6 +259,17 @@
       return null;
     }
 
+    function isAdded(id) {
+      return draft.extras.indexOf(id) !== -1;
+    }
+
+    // The sections in the menu: the five main ones, plus the added extras.
+    function visibleSections() {
+      return SECTIONS.filter(function (section) {
+        return !section.extra || isAdded(section.id);
+      });
+    }
+
     function sectionUrl(id) {
       return "?cv=" + encodeURIComponent(CV_ID) + "&section=" + encodeURIComponent(id);
     }
@@ -264,7 +289,7 @@
       nav.innerHTML = "";
       picker.innerHTML = "";
 
-      SECTIONS.forEach(function (section, index) {
+      visibleSections().forEach(function (section, index) {
         var item = document.createElement("li");
         var link = document.createElement("a");
         link.className = "ed-nav__link";
@@ -302,6 +327,12 @@
         option.selected = section.id === current;
         picker.appendChild(option);
       });
+
+      // Phones: "Add section" is the last choice in the section picker.
+      var add = document.createElement("option");
+      add.value = "__add";
+      add.textContent = "+ Add section";
+      picker.appendChild(add);
     }
 
     function tag(text, className, label) {
@@ -323,7 +354,8 @@
     }
 
     function showSection(id, options) {
-      var section = sectionById(id) || SECTIONS[0];
+      var section = sectionById(id);
+      if (!section || visibleSections().indexOf(section) === -1) section = SECTIONS[0];
       current = section.id;
 
       document.querySelectorAll("[data-panel]").forEach(function (panel) {
@@ -332,9 +364,10 @@
       var panel = document.querySelector('[data-panel="' + section.id + '"]');
       panel.hidden = false;
 
-      var index = SECTIONS.indexOf(section);
-      setStep(prevLink, SECTIONS[index - 1], "← ");
-      setStep(nextLink, SECTIONS[index + 1], "Next: ");
+      var visible = visibleSections();
+      var index = visible.indexOf(section);
+      setStep(prevLink, visible[index - 1], "← ");
+      setStep(nextLink, visible[index + 1], "Next: ");
 
       document.title = section.label + " · Edit CV · Folio";
       renderNav();
@@ -358,6 +391,11 @@
     });
 
     picker.addEventListener("change", function () {
+      if (picker.value === "__add") {
+        picker.value = current; // the picker keeps showing where you are
+        openAddDialog();
+        return;
+      }
       showSection(picker.value, { push: true });
     });
 
@@ -387,110 +425,9 @@
     });
 
     /* ------------------------------------------------------------------------
-       Skills
+       Short lists: skills, languages and hobbies. Each item is a name with
+       an optional level, shown as chips on the CV.
        ------------------------------------------------------------------------ */
-
-    var skillForm = document.querySelector("[data-skill-form]");
-    var skillName = document.getElementById("skill-name");
-    var skillLevel = document.getElementById("skill-level");
-    var skillError = document.getElementById("skill-error");
-    var skillList = document.querySelector("[data-skill-list]");
-    var skillEmpty = document.querySelector("[data-skill-empty]");
-    var skillCount = document.querySelector("[data-skill-count]");
-    var previewList = document.querySelector("[data-preview-skill-list]");
-    var previewEmpty = document.querySelector("[data-preview-skill-empty]");
-
-    function skills() {
-      return draft.sections.skills.items;
-    }
-
-    function fillLevelOptions(select, selected) {
-      select.innerHTML = "";
-      [""].concat(LEVELS).forEach(function (level) {
-        var option = document.createElement("option");
-        option.value = level;
-        option.textContent = level || "No level";
-        option.selected = level === (selected || "");
-        select.appendChild(option);
-      });
-    }
-
-    function setSkillError(message) {
-      skillError.textContent = message || "";
-      skillError.hidden = !message;
-      if (message) skillName.setAttribute("aria-invalid", "true");
-      else skillName.removeAttribute("aria-invalid");
-    }
-
-    function renderSkills() {
-      var items = skills();
-      skillList.innerHTML = "";
-      previewList.innerHTML = "";
-
-      items.forEach(function (skill, index) {
-        // Editor row
-        var row = document.createElement("li");
-        row.className = "skill-item";
-
-        var name = document.createElement("span");
-        name.className = "skill-item__name";
-        name.textContent = skill.name;
-        name.setAttribute("data-no-translate", "");
-
-        var level = document.createElement("select");
-        level.className = "ed-select ed-select--compact";
-        level.setAttribute("aria-label", "Level for " + skill.name);
-        fillLevelOptions(level, skill.level);
-        level.addEventListener("change", function () {
-          skill.level = level.value;
-          renderPreviewOnly();
-          scheduleSave();
-        });
-
-        var moveUp = iconButton("↑", "Move " + skill.name + " up", index === 0, function () {
-          moveSkill(index, -1);
-        });
-        var moveDown = iconButton("↓", "Move " + skill.name + " down", index === items.length - 1, function () {
-          moveSkill(index, 1);
-        });
-        var remove = iconButton("×", "Remove " + skill.name, false, function () {
-          items.splice(index, 1);
-          update();
-          // Keep keyboard focus nearby after the row disappears.
-          var rows = skillList.querySelectorAll(".skill-item__remove");
-          (rows[index] || rows[index - 1] || skillName).focus();
-        });
-        remove.classList.add("skill-item__remove");
-
-        row.appendChild(name);
-        row.appendChild(level);
-        row.appendChild(moveUp);
-        row.appendChild(moveDown);
-        row.appendChild(remove);
-        skillList.appendChild(row);
-      });
-
-      skillEmpty.hidden = items.length > 0;
-      skillCount.textContent = items.length ? "Your skills (" + items.length + ")" : "Your skills";
-      renderPreviewOnly();
-    }
-
-    function renderPreviewOnly() {
-      previewList.innerHTML = "";
-      skills().forEach(function (skill) {
-        var chip = document.createElement("li");
-        chip.className = "cv-page__skill";
-        chip.textContent = skill.name;
-        if (skill.level) {
-          var level = document.createElement("span");
-          level.className = "cv-page__level";
-          level.textContent = L(skill.level);
-          chip.appendChild(level);
-        }
-        previewList.appendChild(chip);
-      });
-      previewEmpty.hidden = skills().length > 0;
-    }
 
     function iconButton(text, label, disabled, onClick) {
       var button = document.createElement("button");
@@ -512,54 +449,187 @@
       (same.disabled ? other : same).focus();
     }
 
-    function moveSkill(index, delta) {
-      var items = skills();
-      var target = index + delta;
-      var moved = items.splice(index, 1)[0];
-      items.splice(target, 0, moved);
-      update();
-      var buttons = skillList.querySelectorAll(".skill-item")[target].querySelectorAll(".ed-icon-btn");
-      focusMoveButton(buttons, delta);
+    function fillLevelOptions(select, levels, selected) {
+      select.innerHTML = "";
+      [""].concat(levels).forEach(function (level) {
+        var option = document.createElement("option");
+        option.value = level;
+        option.textContent = level || "No level";
+        option.selected = level === (selected || "");
+        select.appendChild(option);
+      });
     }
 
-    function update() {
-      renderSkills();
-      renderNav();
-      scheduleSave();
+    function chipSection(cfg) {
+      var panel = document.querySelector('[data-panel="' + cfg.id + '"]');
+      var form = panel.querySelector("[data-chip-form]");
+      var nameInput = panel.querySelector("[data-chip-name]");
+      var levelSelect = panel.querySelector("[data-chip-level]");
+      var error = panel.querySelector("[data-chip-error]");
+      var list = panel.querySelector("[data-chip-list]");
+      var empty = panel.querySelector("[data-chip-empty]");
+      var count = panel.querySelector("[data-chip-count]");
+      var previewList = document.querySelector('[data-preview-chips="' + cfg.id + '"]');
+      var previewEmpty = document.querySelector('[data-preview-chips-empty="' + cfg.id + '"]');
+
+      function items() {
+        return draft.sections[cfg.id].items;
+      }
+
+      function setError(message) {
+        error.textContent = message || "";
+        error.hidden = !message;
+        if (message) nameInput.setAttribute("aria-invalid", "true");
+        else nameInput.removeAttribute("aria-invalid");
+      }
+
+      function render() {
+        var all = items();
+        list.innerHTML = "";
+
+        all.forEach(function (item, index) {
+          var row = document.createElement("li");
+          row.className = "skill-item";
+
+          var name = document.createElement("span");
+          name.className = "skill-item__name";
+          name.textContent = item.name;
+          name.setAttribute("data-no-translate", "");
+          row.appendChild(name);
+
+          if (cfg.levels) {
+            var level = document.createElement("select");
+            level.className = "ed-select ed-select--compact";
+            level.setAttribute("aria-label", "Level for " + item.name);
+            fillLevelOptions(level, cfg.levels, item.level);
+            level.addEventListener("change", function () {
+              item.level = level.value;
+              renderPreview();
+              scheduleSave();
+            });
+            row.appendChild(level);
+          }
+
+          row.appendChild(iconButton("↑", "Move " + item.name + " up", index === 0, function () {
+            move(index, -1);
+          }));
+          row.appendChild(iconButton("↓", "Move " + item.name + " down", index === all.length - 1, function () {
+            move(index, 1);
+          }));
+          var remove = iconButton("×", "Remove " + item.name, false, function () {
+            all.splice(index, 1);
+            update();
+            // Keep keyboard focus nearby after the row disappears.
+            var rows = list.querySelectorAll(".skill-item__remove");
+            (rows[index] || rows[index - 1] || nameInput).focus();
+          });
+          remove.classList.add("skill-item__remove");
+          row.appendChild(remove);
+          list.appendChild(row);
+        });
+
+        empty.hidden = all.length > 0;
+        count.textContent = all.length ? cfg.countLabel + " (" + all.length + ")" : cfg.countLabel;
+        renderPreview();
+      }
+
+      function renderPreview() {
+        previewList.innerHTML = "";
+        items().forEach(function (item) {
+          var chip = document.createElement("li");
+          chip.className = "cv-page__skill";
+          chip.textContent = item.name;
+          if (item.level) {
+            var level = document.createElement("span");
+            level.className = "cv-page__level";
+            level.textContent = L(item.level);
+            chip.appendChild(level);
+          }
+          previewList.appendChild(chip);
+        });
+        previewEmpty.hidden = items().length > 0;
+      }
+
+      function move(index, delta) {
+        var all = items();
+        var target = index + delta;
+        var moved = all.splice(index, 1)[0];
+        all.splice(target, 0, moved);
+        update();
+        var buttons = list.querySelectorAll(".skill-item")[target].querySelectorAll(".ed-icon-btn");
+        focusMoveButton(buttons, delta);
+      }
+
+      function update() {
+        render();
+        renderNav();
+        scheduleSave();
+      }
+
+      form.addEventListener("submit", function (event) {
+        event.preventDefault();
+        var name = nameInput.value.replace(/\s+/g, " ").trim();
+
+        if (!name) {
+          setError(cfg.emptyMessage);
+          nameInput.focus();
+          return;
+        }
+        var duplicate = items().filter(function (item) {
+          return item.name.toLowerCase() === name.toLowerCase();
+        })[0];
+        if (duplicate) {
+          setError("You already added " + duplicate.name + ".");
+          nameInput.focus();
+          return;
+        }
+        if (items().length >= cfg.max) {
+          setError(cfg.maxMessage);
+          return;
+        }
+
+        setError("");
+        items().push({ id: Date.now().toString(36), name: name, level: levelSelect ? levelSelect.value : "" });
+        nameInput.value = "";
+        if (levelSelect) levelSelect.value = "";
+        nameInput.focus();
+        update();
+      });
+
+      nameInput.addEventListener("input", function () {
+        if (nameInput.getAttribute("aria-invalid") === "true") setError("");
+      });
+
+      if (levelSelect) fillLevelOptions(levelSelect, cfg.levels, "");
+
+      return { render: render, renderPreview: renderPreview };
     }
 
-    skillForm.addEventListener("submit", function (event) {
-      event.preventDefault();
-      var name = skillName.value.replace(/\s+/g, " ").trim();
-
-      if (!name) {
-        setSkillError("Enter a skill, for example Figma or Teamwork.");
-        skillName.focus();
-        return;
-      }
-      var duplicate = skills().filter(function (skill) {
-        return skill.name.toLowerCase() === name.toLowerCase();
-      })[0];
-      if (duplicate) {
-        setSkillError("You already added " + duplicate.name + ".");
-        skillName.focus();
-        return;
-      }
-      if (skills().length >= MAX_SKILLS) {
-        setSkillError("You can add up to " + MAX_SKILLS + " skills. Remove one to add another.");
-        return;
-      }
-
-      setSkillError("");
-      skills().push({ id: Date.now().toString(36), name: name, level: skillLevel.value });
-      skillName.value = "";
-      skillLevel.value = "";
-      skillName.focus();
-      update();
+    var skillList = chipSection({
+      id: "skills",
+      levels: ["Beginner", "Intermediate", "Advanced", "Expert"],
+      max: 30,
+      countLabel: "Your skills",
+      emptyMessage: "Enter a skill, for example Figma or Teamwork.",
+      maxMessage: "You can add up to 30 skills. Remove one to add another."
     });
 
-    skillName.addEventListener("input", function () {
-      if (skillName.getAttribute("aria-invalid") === "true") setSkillError("");
+    var languageList = chipSection({
+      id: "languages",
+      levels: ["Native", "Fluent", "Good", "Basic"],
+      max: 15,
+      countLabel: "Your languages",
+      emptyMessage: "Enter a language, for example English.",
+      maxMessage: "You can add up to 15 languages. Remove one to add another."
+    });
+
+    var hobbyList = chipSection({
+      id: "hobbies",
+      levels: null,
+      max: 15,
+      countLabel: "Your hobbies",
+      emptyMessage: "Enter a hobby, for example Running.",
+      maxMessage: "You can add up to 15 hobbies. Remove one to add another."
     });
 
     /* ------------------------------------------------------------------------
@@ -1181,6 +1251,221 @@
       ]
     });
 
+    var projects = entrySection({
+      id: "projects",
+      titleField: "name",
+      placeField: "organisation",
+      newTitle: "New project",
+      currentLabel: "I'm still working on it",
+      bullets: true,
+      confirmRemove: function (name) {
+        return {
+          title: "Remove this project?",
+          message: "“" + name + "” will be removed from your CV. This can't be undone."
+        };
+      },
+      fields: [
+        {
+          name: "name",
+          label: "Project name",
+          required: true,
+          requiredMessage: "Enter the name of the project.",
+          placeholder: "For example: Folio, a CV builder",
+          wide: true
+        },
+        { name: "organisation", label: "For whom", placeholder: "For example: Vista college" },
+        { dates: true },
+        {
+          name: "description",
+          label: "What you did",
+          hint: "One task or result per line. Each line becomes a bullet point.",
+          multiline: true,
+          maxLength: 1000,
+          placeholder: "Built the website with HTML, CSS and JavaScript\nWorked in a team of two",
+          wide: true
+        }
+      ]
+    });
+
+    var volunteering = entrySection({
+      id: "volunteering",
+      titleField: "role",
+      placeField: "organisation",
+      newTitle: "New volunteer work",
+      currentLabel: "I still do this",
+      bullets: true,
+      confirmRemove: function (name) {
+        return {
+          title: "Remove this volunteer work?",
+          message: "“" + name + "” will be removed from your CV. This can't be undone."
+        };
+      },
+      fields: [
+        {
+          name: "role",
+          label: "What you do",
+          required: true,
+          requiredMessage: "Enter what you do, for example Football coach.",
+          placeholder: "For example: Football coach",
+          wide: true
+        },
+        {
+          name: "organisation",
+          label: "Organisation",
+          required: true,
+          requiredMessage: "Enter the organisation.",
+          placeholder: "For example: VV Breda"
+        },
+        { name: "city", label: "City", placeholder: "For example: Breda", maxLength: 60 },
+        { dates: true },
+        {
+          name: "description",
+          label: "Description",
+          hint: "One task or result per line. Each line becomes a bullet point.",
+          multiline: true,
+          maxLength: 600,
+          placeholder: "Train a youth team twice a week",
+          wide: true
+        }
+      ]
+    });
+
+    var certificates = entrySection({
+      id: "certificates",
+      titleField: "name",
+      placeField: "issuer",
+      newTitle: "New certificate",
+      confirmRemove: function (name) {
+        return {
+          title: "Remove this certificate?",
+          message: "“" + name + "” will be removed from your CV. This can't be undone."
+        };
+      },
+      fields: [
+        {
+          name: "name",
+          label: "Certificate or course",
+          required: true,
+          requiredMessage: "Enter the name of the certificate or course.",
+          placeholder: "For example: Cambridge English B2 First",
+          wide: true
+        },
+        { name: "issuer", label: "Issued by", placeholder: "For example: Cambridge English" },
+        { name: "year", label: "Year", placeholder: "For example: 2024", maxLength: 4 }
+      ]
+    });
+
+    /* ------------------------------------------------------------------------
+       Extra sections (projects, volunteering, certificates, languages,
+       hobbies): in the menu and on the CV only after "Add section".
+       ------------------------------------------------------------------------ */
+
+    var addDialog = document.querySelector("[data-add-dialog]");
+    var addList = document.querySelector("[data-add-list]");
+
+    // On the CV, sections that aren't added are hidden.
+    function showExtrasOnCv() {
+      EXTRA_IDS.forEach(function (id) {
+        var section = document.querySelector('[data-cv-page] [data-cv-section="' + id + '"]');
+        section.hidden = !isAdded(id);
+      });
+    }
+
+    function addSection(id) {
+      if (!isAdded(id)) {
+        draft.extras.push(id);
+        // Keep the fixed order, whatever order they were added in.
+        draft.extras.sort(function (a, b) {
+          return EXTRA_IDS.indexOf(a) - EXTRA_IDS.indexOf(b);
+        });
+      }
+      showExtrasOnCv();
+      setMode("edit");
+      showSection(id, { push: true, focus: true });
+      scheduleSave();
+      updateFit();
+    }
+
+    function openAddDialog() {
+      addList.innerHTML = "";
+      var available = EXTRA_IDS.filter(function (id) {
+        return !isAdded(id);
+      });
+      available.forEach(function (id) {
+        var section = sectionById(id);
+        var choice = el("button", "ed-add-choice");
+        choice.type = "button";
+        choice.appendChild(el("strong", "", section.label));
+        choice.appendChild(el("span", "", section.description));
+        choice.addEventListener("click", function () {
+          addDialog.close();
+          addSection(id);
+        });
+        addList.appendChild(choice);
+      });
+      if (!available.length) addList.appendChild(el("p", "ed-empty", "All sections are on your CV already."));
+      addDialog.showModal();
+      var first = addList.querySelector("button");
+      if (first) first.focus();
+    }
+
+    document.querySelectorAll("[data-add-section]").forEach(function (button) {
+      button.addEventListener("click", openAddDialog);
+    });
+    addDialog.querySelector("[data-add-cancel]").addEventListener("click", function () {
+      addDialog.close();
+    });
+    addDialog.addEventListener("click", function (event) {
+      if (event.target === addDialog) addDialog.close(); // a click next to the box
+    });
+
+    // "Remove this section": asks first when something is filled in.
+    document.querySelectorAll("[data-remove-section]").forEach(function (button) {
+      button.addEventListener("click", function () {
+        var id = button.closest("[data-panel]").dataset.panel;
+        var section = sectionById(id);
+        var finish = function () {
+          var index = visibleSections().indexOf(section);
+          draft.sections[id].items = [];
+          draft.extras = draft.extras.filter(function (extra) {
+            return extra !== id;
+          });
+          refreshSection(id);
+          showExtrasOnCv();
+          showSection(visibleSections()[index - 1].id, { push: true, focus: true });
+          scheduleSave();
+          updateFit();
+        };
+        if (!draft.sections[id].items.length) {
+          finish();
+          return;
+        }
+        folioConfirm({
+          title: "Remove this section?",
+          message: "“" + section.label + "” and everything in it will be removed from your CV. This can't be undone.",
+          confirmLabel: "Remove",
+          cancelLabel: "Cancel"
+        }).then(function (confirmed) {
+          if (confirmed) finish();
+        });
+      });
+    });
+
+    // Draw one section again (after removing it, or a language switch).
+    function refreshSection(id) {
+      var lists = {
+        education: education, experience: experience, projects: projects,
+        volunteering: volunteering, certificates: certificates
+      };
+      var chips = { skills: skillList, languages: languageList, hobbies: hobbyList };
+      if (lists[id]) {
+        lists[id].render();
+        lists[id].renderPreview();
+      } else if (chips[id]) {
+        chips[id].render();
+      }
+    }
+
     /* ------------------------------------------------------------------------
        Live A4 preview: the page keeps its A4 shape and scales to fit.
        ------------------------------------------------------------------------ */
@@ -1435,23 +1720,17 @@
        ------------------------------------------------------------------------ */
 
     // Dates and skill levels on the CV follow the chosen language.
+    var ALL_LISTS = ["education", "experience", "projects", "volunteering", "certificates", "skills", "languages", "hobbies"];
+
     document.addEventListener("folio:languagechange", function () {
-      renderSkills();
-      education.render();
-      education.renderPreview();
-      experience.render();
-      experience.renderPreview();
+      ALL_LISTS.forEach(refreshSection);
       updateFit();
     });
 
     renderPersonalPreview();
     renderAboutPreview();
-    fillLevelOptions(skillLevel, "");
-    renderSkills();
-    education.render();
-    education.renderPreview();
-    experience.render();
-    experience.renderPreview();
+    ALL_LISTS.forEach(refreshSection);
+    showExtrasOnCv();
     // Flow: the editor opens at Personal details unless a section is linked.
     showSection(new URLSearchParams(window.location.search).get("section") || SECTIONS[0].id);
     applyTemplate();

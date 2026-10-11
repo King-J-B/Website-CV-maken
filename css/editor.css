@@ -171,6 +171,71 @@ a {
   background: var(--bg-selected);
 }
 
+/* "Remove this section" at the bottom of an extra section */
+.ed-remove-section {
+  display: block;
+  margin-top: 16px;
+  color: var(--danger);
+}
+
+/* The "Add section" window */
+.ed-add-dialog {
+  width: min(480px, calc(100% - 32px));
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  box-shadow: 0 24px 64px -16px rgba(14, 24, 48, 0.45), 0 0 0 1px var(--border-decorative);
+}
+
+.ed-add-dialog::backdrop {
+  background: rgba(14, 24, 48, 0.45);
+}
+
+.ed-add-dialog__box {
+  display: grid;
+  gap: 12px;
+  padding: 24px;
+}
+
+.ed-add-dialog__title {
+  font-size: 20px;
+}
+
+.ed-add-dialog__list {
+  display: grid;
+  gap: 8px;
+}
+
+.ed-add-choice {
+  display: grid;
+  gap: 2px;
+  padding: 12px 14px;
+  border: 1px solid var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font: inherit;
+  text-align: left;
+  cursor: pointer;
+}
+
+.ed-add-choice:hover {
+  border-color: var(--action-primary);
+  background: var(--bg-selected);
+}
+
+.ed-add-choice span {
+  color: var(--text-secondary);
+  font-size: 13px;
+}
+
+.ed-add-dialog__box > .ed-btn {
+  justify-self: end;
+}
+
 /* --------------------------------------------------------------------------
    Buttons and fields
    -------------------------------------------------------------------------- */
@@ -370,6 +435,37 @@ a {
   background: var(--bg-surface);
   box-shadow: 0 0 0 1px var(--border-decorative), 0 6px 16px -8px var(--shadow-tint);
   font-weight: 600;
+}
+
+/* "+ Add section" under the menu */
+.ed-nav__add {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  width: 100%;
+  min-height: 44px;
+  margin-top: 8px;
+  padding: 6px 10px;
+  border: 1px dashed var(--border-subtle);
+  border-radius: var(--radius-sm);
+  background: transparent;
+  color: var(--action-primary);
+  font: inherit;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ed-nav__add:hover {
+  border-color: var(--action-primary);
+  background: var(--bg-surface);
+}
+
+.ed-nav__add span {
+  display: grid;
+  place-items: center;
+  width: 26px;
+  height: 26px;
+  font-size: 18px;
 }
 
 .ed-nav__num {

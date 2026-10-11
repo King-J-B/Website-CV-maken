@@ -39,7 +39,9 @@ window.FolioRender = (function () {
     return (month ? L(MONTHS[month - 1]) + " " : "") + year;
   }
 
+  // "mei 2021 – heden"; a certificate only has a year.
   function formatRange(item) {
+    if (!item.startYear && !item.endYear && item.year) return String(item.year).trim();
     var start = formatDate(item.startMonth, item.startYear);
     var end = item.current ? L("Present") : formatDate(item.endMonth, item.endYear);
     if (start && end) return start + " – " + end;
@@ -127,40 +129,55 @@ window.FolioRender = (function () {
     }
     cv.appendChild(head);
 
+    // Two groups, like the editor: Split shows them as two columns.
+    var main = el("div", "cv-page__main");
+    var side = el("div", "cv-page__side");
+
     // Only filled-in sections, like in the PDF
     var about = ((sections.about || {}).text || "").trim();
     if (about) {
       var aboutSection = section("about", "About me");
       aboutSection.appendChild(el("p", "cv-page__about", about));
-      cv.appendChild(aboutSection);
+      main.appendChild(aboutSection);
     }
 
     [
       { id: "education", heading: "Education", title: "study", place: "school", bullets: false },
-      { id: "experience", heading: "Experience", title: "role", place: "company", bullets: true }
+      { id: "experience", heading: "Experience", title: "role", place: "company", bullets: true },
+      { id: "projects", heading: "Projects", title: "name", place: "organisation", bullets: true },
+      { id: "volunteering", heading: "Volunteering", title: "role", place: "organisation", bullets: true },
+      { id: "certificates", heading: "Certificates", title: "name", place: "issuer", bullets: false }
     ].forEach(function (cfg) {
       var box = entries((sections[cfg.id] || {}).items, cfg.title, cfg.place, cfg.bullets);
       if (!box.children.length) return;
       var node = section(cfg.id, cfg.heading);
       node.appendChild(box);
-      cv.appendChild(node);
+      main.appendChild(node);
     });
 
-    var skills = ((sections.skills || {}).items || []).filter(function (skill) {
-      return (skill.name || "").trim();
-    });
-    if (skills.length) {
-      var skillSection = section("skills", "Skills");
+    // Short lists: name (and level) as chips
+    [
+      { id: "skills", heading: "Skills" },
+      { id: "languages", heading: "Languages" },
+      { id: "hobbies", heading: "Hobbies" }
+    ].forEach(function (cfg) {
+      var items = ((sections[cfg.id] || {}).items || []).filter(function (item) {
+        return (item.name || "").trim();
+      });
+      if (!items.length) return;
+      var node = section(cfg.id, cfg.heading);
       var chips = el("ul", "cv-page__skills");
-      skills.forEach(function (skill) {
-        var chip = el("li", "cv-page__skill", skill.name.trim());
-        if (skill.level) chip.appendChild(el("span", "cv-page__level", L(skill.level)));
+      items.forEach(function (item) {
+        var chip = el("li", "cv-page__skill", item.name.trim());
+        if (item.level) chip.appendChild(el("span", "cv-page__level", L(item.level)));
         chips.appendChild(chip);
       });
-      skillSection.appendChild(chips);
-      cv.appendChild(skillSection);
-    }
+      node.appendChild(chips);
+      side.appendChild(node);
+    });
 
+    cv.appendChild(main);
+    cv.appendChild(side);
     return cv;
   }
 

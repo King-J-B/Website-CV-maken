@@ -82,12 +82,14 @@ The pages talk to these PHP files with JSON. They need PHP, so test with `php -S
 - **With an account:** CVs are saved online (and CVs made as a guest move into the account after signing in), Personal details fill new CVs, forgot password by e-mail, delete the account.
 - **My resumes:** every CV shows its real preview; a CV is named after the person until you rename it (✎); ⧉ makes a copy, for example for another vacancy.
 - **Six templates:** Modern, Classic, Minimal, Split, Timeline, Concise.
+- **Sections:** Personal details, About me, Education, Experience and Skills, plus extra sections you can add (and remove): Projects, Volunteering, Certificates, Languages, Hobbies.
 - **Dutch and English** on every page (the flags), **light and dark mode**; both are remembered.
 - **Privacy and Terms** pages.
 
 ## Still to do
 
-- More sections in the editor (languages, projects, certificates, hobbies), and reordering or hiding sections
+- A photo on the CV
+- Reordering sections
 - Change password on Personal details
 - Sign in with Google or LinkedIn (the buttons are in the HTML, hidden)
 - A photo on About us
