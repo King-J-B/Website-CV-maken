@@ -931,6 +931,66 @@
 }
 
 /* --------------------------------------------------------------------------
+   Photo (optional): top right of the header, round or square (Design >
+   Photo). Classic puts it centred above the name, Split in the coloured
+   band, Concise a bit smaller. It is an image, so it never changes the
+   order of the text in the PDF.
+   -------------------------------------------------------------------------- */
+
+.cv-page__photo {
+  position: absolute;
+  top: 0;
+  right: 0;
+  display: block;
+  width: 112px;
+  height: 112px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
+.cv-page[data-photo="square"] .cv-page__photo {
+  border-radius: 10px;
+}
+
+/* Room for the photo next to the name and contact details */
+.cv-page__head:has(> .cv-page__photo:not([hidden])) {
+  position: relative;
+  min-height: 112px;
+  padding-right: 140px;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__head:has(> .cv-page__photo:not([hidden])) {
+  min-height: auto;
+  padding-right: 0;
+}
+
+:where(.cv-page[data-template="classic"]) .cv-page__photo {
+  position: static;
+  margin: 0 auto 16px;
+}
+
+:where(.cv-page[data-template="split"]) .cv-page__head:has(> .cv-page__photo:not([hidden])) {
+  min-height: auto; /* never 0: in the Split grid the header row could then be squeezed */
+  padding-right: 200px;
+}
+
+:where(.cv-page[data-template="split"]) .cv-page__photo {
+  top: 40px;
+  right: 60px;
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.85);
+}
+
+:where(.cv-page[data-template="concise"]) .cv-page__head:has(> .cv-page__photo:not([hidden])) {
+  min-height: 84px;
+  padding-right: 108px;
+}
+
+:where(.cv-page[data-template="concise"]) .cv-page__photo {
+  width: 84px;
+  height: 84px;
+}
+
+/* --------------------------------------------------------------------------
    States: every template. Keep last; these must win over template rules.
    -------------------------------------------------------------------------- */
 

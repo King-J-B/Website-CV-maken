@@ -575,7 +575,6 @@ const pairs = [
   ["je voornaam, achternaam en e-mailadres;", "your first name, last name and email address;"],
   ["je wachtwoord als versleutelde code: wij kunnen het zelf niet lezen;", "your password as an encrypted code: we cannot read it ourselves;"],
   ["wat je invult bij Persoonlijke gegevens: functietitel, woonplaats, telefoon en website;", "what you fill in under Personal details: job title, city, phone and website;"],
-  ["je cv's;", "your resumes;"],
   ["wanneer je je account maakte, akkoord ging met de voorwaarden en voor het laatst inlogde.", "when you created your account, accepted the terms and last signed in."],
   ["Waarvoor gebruiken we ze?", "What do we use them for?"],
   ["Alleen om Folio te laten werken: zodat je kunt inloggen en je cv's op elk apparaat terugvindt. We sturen geen nieuwsbrieven, geven niets door aan anderen en gebruiken geen advertenties of trackers.", "Only to make Folio work: so you can sign in and find your resumes on any device. We send no newsletters, share nothing with others and use no ads or trackers."],
@@ -685,6 +684,21 @@ const pairs = [
   ["Hier komen je certificaten.", "Your certificates will appear here."],
   ["Hier komen je talen.", "Your languages will appear here."],
   ["Hier komen je hobby's.", "Your hobbies will appear here."],
+
+  // Photo on the CV
+  ["Foto", "Photo"],
+  ["Foto toevoegen", "Add photo"],
+  ["Andere foto", "Change photo"],
+  ["Foto verwijderen", "Remove photo"],
+  ["Een duidelijke foto van je gezicht werkt het best. Hij wordt vierkant gemaakt en alleen op dit cv gebruikt.", "A clear photo of your face works best. It is cut to a square and only used on this CV."],
+  ["Kies een foto: een JPG-, PNG- of WebP-bestand.", "Choose a photo: a JPG, PNG or WebP file."],
+  ["Deze foto is te groot. Kies er een onder 15 MB.", "This photo is too big. Choose one under 15 MB."],
+  ["Dit bestand kan niet als foto worden geopend.", "This file can't be opened as a photo."],
+  ["Rond", "Round"],
+  ["Vierkant", "Square"],
+  ["Deze foto kan niet worden opgeslagen. Voeg hem opnieuw toe.", "This photo can't be saved. Please add it again."],
+  ["Dit cv is te groot om op te slaan.", "This CV is too large to save."],
+  ["je cv's, met de foto als je die toevoegt;", "your resumes, with the photo if you add one;"],
 
   // Messages from the server (api/*.php)
   ["Controleer de gemarkeerde velden.", "Check the highlighted fields."],

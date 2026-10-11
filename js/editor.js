@@ -95,6 +95,10 @@
         { id: "compact", name: "Compact" },
         { id: "", name: "Normal" },
         { id: "roomy", name: "Roomy" }
+      ],
+      photo: [
+        { id: "", name: "Round" },
+        { id: "square", name: "Square" }
       ]
     };
 
@@ -113,7 +117,7 @@
         version: 1,
         updatedAt: null,
         template: TEMPLATES[0].id,
-        design: { color: "", font: "", spacing: "" },
+        design: { color: "", font: "", spacing: "", photo: "" },
         extras: [],
         sections: {}
       };
@@ -742,6 +746,96 @@
     // Show messages for saved values that are not valid (for example after a reload).
     personalInputs.forEach(function (input) {
       if (input.value) checkPersonal(input);
+    });
+
+    /* Photo: the browser cuts it to a square and makes it small (400 x 400,
+       a JPEG of about 30-60 kB), so it can be saved inside the CV itself. */
+
+    var PHOTO_SIZE = 400;
+    var PHOTO_MAX_FILE = 15 * 1024 * 1024; // the original file, before making it small
+    var photoInput = document.querySelector("[data-photo-input]");
+    var photoPreview = document.querySelector("[data-photo-preview]");
+    var photoPickLabel = document.querySelector("[data-photo-pick-label]");
+    var photoRemove = document.querySelector("[data-photo-remove]");
+    var photoError = document.querySelector("[data-photo-error]");
+    var cvPhoto = document.querySelector("[data-preview-photo]");
+
+    function setPhotoError(message) {
+      photoError.textContent = message || "";
+      photoError.hidden = !message;
+    }
+
+    // Resolves with the photo as a small square JPEG (a data: address).
+    function makePhoto(file) {
+      return new Promise(function (resolve, reject) {
+        if (!/^image\/(jpeg|png|webp)$/.test(file.type)) {
+          reject(new Error("Choose a photo: a JPG, PNG or WebP file."));
+          return;
+        }
+        if (file.size > PHOTO_MAX_FILE) {
+          reject(new Error("This photo is too big. Choose one under 15 MB."));
+          return;
+        }
+        var url = URL.createObjectURL(file);
+        var image = new Image();
+        image.onload = function () {
+          // The largest square that fits; a bit above the middle, where the face usually is.
+          var side = Math.min(image.naturalWidth, image.naturalHeight);
+          var left = (image.naturalWidth - side) / 2;
+          var top = (image.naturalHeight - side) * 0.3;
+          var canvas = document.createElement("canvas");
+          canvas.width = canvas.height = PHOTO_SIZE;
+          var context = canvas.getContext("2d");
+          context.fillStyle = "#ffffff"; // a see-through PNG gets a white background
+          context.fillRect(0, 0, PHOTO_SIZE, PHOTO_SIZE);
+          context.drawImage(image, left, top, side, side, 0, 0, PHOTO_SIZE, PHOTO_SIZE);
+          URL.revokeObjectURL(url);
+          resolve(canvas.toDataURL("image/jpeg", 0.85));
+        };
+        image.onerror = function () {
+          URL.revokeObjectURL(url);
+          reject(new Error("This file can't be opened as a photo."));
+        };
+        image.src = url;
+      });
+    }
+
+    function renderPhoto() {
+      var photo = personal().photo || "";
+      photoPreview.hidden = cvPhoto.hidden = !photo;
+      photoPreview.src = cvPhoto.src = photo || "";
+      if (!photo) {
+        photoPreview.removeAttribute("src");
+        cvPhoto.removeAttribute("src");
+      }
+      photoPickLabel.textContent = photo ? "Change photo" : "Add photo";
+      photoRemove.hidden = !photo;
+      // Round or square only matters with a photo.
+      document.querySelector("[data-photo-shape]").hidden = !photo;
+    }
+
+    photoInput.addEventListener("change", function () {
+      var file = photoInput.files[0];
+      photoInput.value = ""; // the same file can be chosen again
+      if (!file) return;
+      setPhotoError("");
+      makePhoto(file).then(function (photo) {
+        personal().photo = photo;
+        renderPhoto();
+        updateFit();
+        scheduleSave();
+      }, function (error) {
+        setPhotoError(error.message);
+      });
+    });
+
+    photoRemove.addEventListener("click", function () {
+      delete personal().photo;
+      setPhotoError("");
+      renderPhoto();
+      updateFit();
+      scheduleSave();
+      photoInput.focus();
     });
 
     /* ------------------------------------------------------------------------
@@ -1582,8 +1676,23 @@
       spacingOptions.appendChild(label);
     });
 
+    var photoOptions = document.querySelector("[data-photo-options]");
+    DESIGN.photo.forEach(function (option) {
+      var label = document.createElement("label");
+      var input = document.createElement("input");
+      input.type = "radio";
+      input.name = "design-photo";
+      input.value = option.id;
+      input.addEventListener("change", function () {
+        setDesign("photo", option.id);
+      });
+      label.appendChild(input);
+      label.appendChild(tag(option.name, ""));
+      photoOptions.appendChild(label);
+    });
+
     document.querySelector("[data-design-reset]").addEventListener("click", function () {
-      draft.design = { color: "", font: "", spacing: "" };
+      draft.design = { color: "", font: "", spacing: "", photo: "" };
       applyDesign();
       updateFit();
       scheduleSave();
@@ -1601,6 +1710,9 @@
       });
       spacingOptions.querySelectorAll("input").forEach(function (input) {
         input.checked = input.value === draft.design.spacing;
+      });
+      photoOptions.querySelectorAll("input").forEach(function (input) {
+        input.checked = input.value === (draft.design.photo || "");
       });
       fontPicker.value = draft.design.font;
 
@@ -1728,6 +1840,7 @@
     });
 
     renderPersonalPreview();
+    renderPhoto();
     renderAboutPreview();
     ALL_LISTS.forEach(refreshSection);
     showExtrasOnCv();

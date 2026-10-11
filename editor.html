@@ -9,14 +9,14 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/folio-mark.png">
   <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
-  <link rel="stylesheet" href="css/colors.css?v=36">
-  <link rel="stylesheet" href="css/cv-templates.css?v=36">
-  <link rel="stylesheet" href="css/controls.css?v=36">
-  <link rel="stylesheet" href="css/editor.css?v=36">
-  <link rel="stylesheet" href="css/confirm-dialog.css?v=36">
+  <link rel="stylesheet" href="css/colors.css?v=37">
+  <link rel="stylesheet" href="css/cv-templates.css?v=37">
+  <link rel="stylesheet" href="css/controls.css?v=37">
+  <link rel="stylesheet" href="css/editor.css?v=37">
+  <link rel="stylesheet" href="css/confirm-dialog.css?v=37">
 </head>
 <body>
-  <script src="js/theme.js?v=36"></script>
+  <script src="js/theme.js?v=37"></script>
   <a class="skip-link" href="#editor-main">Skip to editor</a>
 
   <header class="ed-topbar">
@@ -101,6 +101,25 @@
         <p class="ed-eyebrow">Start here</p>
         <h1 class="ed-title" tabindex="-1">Personal details</h1>
         <p class="ed-sub">This goes at the top of your CV. Only your name is needed; add the contact details you want employers to use.</p>
+
+        <!-- Photo: made square and small in the browser, saved with this CV -->
+        <div class="ed-photo">
+          <div class="ed-photo__frame" aria-hidden="true">
+            <img class="ed-photo__img" data-photo-preview alt="" hidden>
+          </div>
+          <div class="ed-photo__body">
+            <p class="ed-label">Photo <span class="ed-optional">(optional)</span></p>
+            <div class="ed-photo__actions">
+              <label class="ed-btn ed-btn--secondary ed-photo__pick">
+                <input class="visually-hidden" type="file" accept="image/jpeg,image/png,image/webp" data-photo-input aria-describedby="photo-hint photo-error">
+                <span data-photo-pick-label>Add photo</span>
+              </label>
+              <button class="ed-link ed-photo__remove" type="button" data-photo-remove hidden>Remove photo</button>
+            </div>
+            <p class="ed-hint" id="photo-hint">A clear photo of your face works best. It is cut to a square and only used on this CV.</p>
+            <p class="ed-error" id="photo-error" data-photo-error hidden></p>
+          </div>
+        </div>
 
         <div class="ed-grid">
           <div class="ed-field ed-field--wide">
@@ -326,6 +345,11 @@
           <div class="ed-segment" data-spacing-options></div>
         </fieldset>
 
+        <fieldset class="ed-design__group" data-photo-shape hidden>
+          <legend class="ed-label">Photo</legend>
+          <div class="ed-segment" data-photo-options></div>
+        </fieldset>
+
         <button class="ed-link ed-design__reset" type="button" data-design-reset>Reset to the template's design</button>
       </div>
 
@@ -337,6 +361,7 @@
       <div class="ed-preview__stage" data-preview-stage>
         <article class="cv-page" data-cv-page data-template="modern">
           <header class="cv-page__head">
+            <img class="cv-page__photo" data-preview-photo alt="" hidden>
             <p class="cv-page__name is-placeholder" data-preview-name>Your name</p>
             <p class="cv-page__role is-placeholder" data-preview-title>Job title</p>
             <ul class="cv-page__contact" data-preview-contact hidden></ul>
@@ -416,12 +441,12 @@
     </div>
   </dialog>
 
-  <script src="js/translate.js?v=36"></script>
-  <script src="js/account.js?v=36"></script>
-  <script src="js/templates-data.js?v=36"></script>
-  <script src="js/cv-store.js?v=36"></script>
-  <script src="js/confirm-dialog.js?v=36"></script>
-  <script src="js/cv-render.js?v=36"></script>
-  <script src="js/editor.js?v=36"></script>
+  <script src="js/translate.js?v=37"></script>
+  <script src="js/account.js?v=37"></script>
+  <script src="js/templates-data.js?v=37"></script>
+  <script src="js/cv-store.js?v=37"></script>
+  <script src="js/confirm-dialog.js?v=37"></script>
+  <script src="js/cv-render.js?v=37"></script>
+  <script src="js/editor.js?v=37"></script>
 </body>
 </html>
