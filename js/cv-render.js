@@ -11,6 +11,9 @@
 
    Words of our own (headings, dates, levels) follow the chosen language
    (js/translate.js). The user's own text is used as typed.
+
+   With content.anonymous it draws the anonymous version (js/anonymize.js,
+   load it before this file).
    ========================================================================== */
 
 window.FolioRender = (function () {
@@ -75,7 +78,8 @@ window.FolioRender = (function () {
     return node;
   }
 
-  function entries(items, titleField, placeField, bullets) {
+  // Anonymous CVs show a duration (or nothing) instead of dates (js/anonymize.js).
+  function entries(items, titleField, placeField, bullets, anonymousSection) {
     var box = el("div", "cv-page__entries");
     (items || []).forEach(function (item) {
       var title = (item[titleField] || "").trim();
@@ -87,7 +91,8 @@ window.FolioRender = (function () {
       var entry = el("div", "cv-entry");
       var top = el("div", "cv-entry__top");
       top.appendChild(el("p", "cv-entry__title", title));
-      top.appendChild(el("p", "cv-entry__dates", formatRange(item)));
+      var dates = anonymousSection ? window.FolioAnonymize.dates(anonymousSection, item) : formatRange(item);
+      top.appendChild(el("p", "cv-entry__dates", dates));
       entry.appendChild(top);
       if (place) entry.appendChild(el("p", "cv-entry__sub", place));
       var text = (item.description || "").trim();
@@ -99,6 +104,10 @@ window.FolioRender = (function () {
 
   function page(content) {
     content = content || {};
+    // Anonymous mode: draw the copy without photo, name, contact details,
+    // dates and hobbies (js/anonymize.js; a shared link is already cleaned).
+    var anonymous = content.anonymous === true && Boolean(window.FolioAnonymize);
+    if (anonymous) content = window.FolioAnonymize.content(content);
     var sections = content.sections || {};
     var personal = sections.personal || {};
     var design = content.design || {};
@@ -118,7 +127,7 @@ window.FolioRender = (function () {
       photo.src = personal.photo;
       head.appendChild(photo);
     }
-    var name = (personal.name || "").trim();
+    var name = anonymous ? L("Candidate") : (personal.name || "").trim();
     var nameLine = el("p", "cv-page__name" + (name ? "" : " is-placeholder"), name || L("Your name"));
     head.appendChild(nameLine);
     if ((personal.title || "").trim()) head.appendChild(el("p", "cv-page__role", personal.title.trim()));
@@ -155,7 +164,7 @@ window.FolioRender = (function () {
       { id: "volunteering", heading: "Volunteering", title: "role", place: "organisation", bullets: true },
       { id: "certificates", heading: "Certificates", title: "name", place: "issuer", bullets: false }
     ].forEach(function (cfg) {
-      var box = entries((sections[cfg.id] || {}).items, cfg.title, cfg.place, cfg.bullets);
+      var box = entries((sections[cfg.id] || {}).items, cfg.title, cfg.place, cfg.bullets, anonymous ? cfg.id : null);
       if (!box.children.length) return;
       var node = section(cfg.id, cfg.heading);
       node.appendChild(box);

@@ -601,6 +601,19 @@ const pairs = [
   ["Kopieer de geselecteerde link met Ctrl+C (of ⌘+C).", "Copy the selected link with Ctrl+C (or ⌘+C)."],
   ["Je link kon niet worden geladen. Probeer het opnieuw.", "Your link could not be loaded. Please try again."],
 
+  // Anonymous mode (js/anonymize.js)
+  ["Anoniem", "Anonymous"],
+  ["Anoniem cv", "Anonymous CV"],
+  ["Kandidaat", "Candidate"],
+  ["Je foto, naam, contactgegevens, jaartallen en hobby's worden verborgen, ook in de PDF en je gedeelde link. Je gegevens blijven bewaard: zet het uit om ze weer te tonen.", "Your photo, name, contact details, dates and hobbies are hidden, also in the PDF and your shared link. Your details stay saved: switch it off to show them again."],
+  ["Controleer je eigen teksten", "Check your own texts"],
+  ["je naam", "your name"],
+  ["je woonplaats", "your city"],
+  ["een leeftijd", "an age"],
+  ["een jaartal", "a year"],
+  ["Naar de tekst", "Go to text"],
+  ["Dit cv is anoniem: ook de link toont geen foto, naam of contactgegevens.", "This CV is anonymous: the link shows no photo, name or contact details either."],
+
   // Privacy: shared CVs
   ["Laatst bijgewerkt: 13 oktober 2026", "Last updated: 13 October 2026"],
   ["Een cv delen", "Sharing a CV"],
