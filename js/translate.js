@@ -559,6 +559,12 @@ const pairs = [
   ["Het wachtwoord klopt niet.", "The password is incorrect."],
   ["Wie we zijn", "Who we are"],
 
+  // Changing the password (Personal details)
+  ["Beveiliging", "Security"],
+  ["Wachtwoord wijzigen", "Change password"],
+  ["Huidig wachtwoord", "Current password"],
+  ["Minstens 12 tekens", "At least 12 characters"],
+
   // Privacy and terms pages
   ["Privacyverklaring", "Privacy Policy"],
   ["Gebruiksvoorwaarden", "Terms of Service"],

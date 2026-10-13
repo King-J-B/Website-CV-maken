@@ -10,16 +10,16 @@
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet" />
-    <link rel="stylesheet" href="css/colors.css?v=37" />
-    <link rel="stylesheet" href="css/base.css?v=37" />
-    <link rel="stylesheet" href="css/components.css?v=37" />
-    <link rel="stylesheet" href="css/pages.css?v=37" />
-    <link rel="stylesheet" href="css/responsive.css?v=37" />
-    <link rel="stylesheet" href="css/confirm-dialog.css?v=37" />
+    <link rel="stylesheet" href="css/colors.css?v=38" />
+    <link rel="stylesheet" href="css/base.css?v=38" />
+    <link rel="stylesheet" href="css/components.css?v=38" />
+    <link rel="stylesheet" href="css/pages.css?v=38" />
+    <link rel="stylesheet" href="css/responsive.css?v=38" />
+    <link rel="stylesheet" href="css/confirm-dialog.css?v=38" />
   </head>
 
   <body>
-    <script src="js/theme.js?v=37"></script>
+    <script src="js/theme.js?v=38"></script>
     <div class="app-shell">
       <header class="topbar">
         <a class="brand" href="index.html" aria-label="Folio home">
@@ -146,6 +146,34 @@
           </aside>
         </section>
 
+        <section class="details-card password-card" aria-labelledby="passwordTitle">
+          <div class="section-header">
+            <div>
+              <p class="eyebrow">Beveiliging</p>
+              <h2 id="passwordTitle">Wachtwoord wijzigen</h2>
+            </div>
+          </div>
+
+          <form class="details-form" id="passwordForm" novalidate>
+            <div class="form-row">
+              <label>
+                Huidig wachtwoord
+                <input id="currentPassword" type="password" autocomplete="current-password" maxlength="200" />
+              </label>
+
+              <label>
+                Nieuw wachtwoord
+                <input id="newPassword" type="password" autocomplete="new-password" maxlength="200" aria-describedby="newPasswordHint" />
+                <span class="field-hint" id="newPasswordHint">Minstens 12 tekens</span>
+              </label>
+            </div>
+
+            <div>
+              <button class="secondary-button" id="passwordButton" type="submit">Wachtwoord wijzigen</button>
+            </div>
+          </form>
+        </section>
+
         <section class="danger-zone" aria-labelledby="deleteTitle">
           <div>
             <h2 id="deleteTitle">Account verwijderen</h2>
@@ -158,9 +186,9 @@
 
     <div class="toast hidden" id="toastMessage" aria-live="polite"></div>
 
-    <script src="js/translate.js?v=37"></script>
-    <script src="js/account.js?v=37"></script>
-    <script src="js/confirm-dialog.js?v=37"></script>
+    <script src="js/translate.js?v=38"></script>
+    <script src="js/account.js?v=38"></script>
+    <script src="js/confirm-dialog.js?v=38"></script>
     <script>
       const saveButton = document.querySelector("#saveButton");
       const toast = document.querySelector("#toastMessage");
@@ -273,6 +301,61 @@
           showToast(message
             ? FolioLang.t(message)
             : english() ? "Could not save your details. Please try again." : "Opslaan is niet gelukt. Probeer het opnieuw.");
+        });
+      });
+
+      // Change the password: the current one first, then the new one.
+      const passwordForm = document.querySelector("#passwordForm");
+      const passwordButton = document.querySelector("#passwordButton");
+      const passwordFields = {
+        currentPassword: document.querySelector("#currentPassword"),
+        newPassword: document.querySelector("#newPassword"),
+      };
+
+      passwordForm.addEventListener("submit", (event) => {
+        event.preventDefault();
+        Object.values(passwordFields).forEach((input) => input.removeAttribute("aria-invalid"));
+
+        // Check the easy things here, the server checks them again.
+        let wrong = null;
+        if (!passwordFields.currentPassword.value) wrong = ["currentPassword", "Vul je wachtwoord in."];
+        else if (passwordFields.newPassword.value.length < 12) wrong = ["newPassword", "Gebruik minstens 12 tekens."];
+        if (wrong) {
+          passwordFields[wrong[0]].setAttribute("aria-invalid", "true");
+          passwordFields[wrong[0]].focus();
+          showToast(FolioLang.t(wrong[1]));
+          return;
+        }
+
+        passwordButton.disabled = true;
+        fetch("api/change-password.php", {
+          method: "POST",
+          credentials: "same-origin",
+          headers: { "Content-Type": "application/json", Accept: "application/json" },
+          body: JSON.stringify({
+            currentPassword: passwordFields.currentPassword.value,
+            newPassword: passwordFields.newPassword.value,
+          }),
+        }).then((response) =>
+          response.json().catch(() => ({})).then((data) => {
+            if (response.ok) {
+              passwordForm.reset();
+              showToast(english() ? "Password changed" : "Wachtwoord gewijzigd");
+              return;
+            }
+            const key = Object.keys(data.fields || {})[0];
+            if (passwordFields[key]) {
+              passwordFields[key].setAttribute("aria-invalid", "true");
+              passwordFields[key].focus();
+            }
+            showToast(data.message
+              ? FolioLang.t(data.message)
+              : english() ? "Changing your password did not work. Please try again." : "Wachtwoord wijzigen is niet gelukt. Probeer het opnieuw.");
+          })
+        ).catch(() => {
+          showToast(english() ? "Changing your password did not work. Please try again." : "Wachtwoord wijzigen is niet gelukt. Probeer het opnieuw.");
+        }).finally(() => {
+          passwordButton.disabled = false;
         });
       });
 
