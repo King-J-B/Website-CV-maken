@@ -3,7 +3,7 @@
    Folio — database check
 
    Open api/check.php in the browser. It says whether PHP can reach the
-   database and whether the tables from database.sql exist. It never shows
+   database and whether the tables from database/database.sql exist. It never shows
    passwords or error details, because this page is public.
    ========================================================================== */
 

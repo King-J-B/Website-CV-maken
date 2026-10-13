@@ -1,0 +1,3 @@
+# Folio — the database files are for us, not for visitors (the .htaccess
+# in the main folder blocks .sql files too; this closes the whole folder).
+Require all denied

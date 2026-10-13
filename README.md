@@ -32,15 +32,26 @@ Then open http://localhost:5173/ (the home page). Accounts need the database (be
 Accounts and online CVs use PHP and MySQL. The pages above still work without them.
 
 1. Start **Apache** and **MySQL** in the XAMPP Control Panel.
-2. In phpMyAdmin (http://localhost/phpmyadmin): **New** → database `folio` → Create. Then select it → **Import** → `database.sql`.
+2. In phpMyAdmin (http://localhost/phpmyadmin): **New** → database `folio` → Create. Then select it → **Import** → `database/database.sql`.
 3. Copy `api/config.example.php` to `api/config.php`. The example values work for XAMPP.
 4. Run `php -S localhost:5173` and open http://localhost:5173/api/check.php. It should say `"database":"connected","tables":"ok"`.
 
-**On cPanel:** make a database and user under *MySQL Databases*, import `database.sql` in phpMyAdmin, and put `api/config.php` with those details on the server (it is never in GitHub).
+**On cPanel:** make a database and user under *MySQL Databases*, import `database/database.sql` in phpMyAdmin, and put `api/config.php` with those details on the server (it is never in GitHub).
 
 ### Where the files are
 
+One folder per kind of code. The pages stay in the main folder, because their place is their web address (moving them would break bookmarks and shared links).
+
 | Folder / file | What it is |
+|---|---|
+| `*.html`, `cv.php` | The pages (see the list below) |
+| `css/` | Styles (CSS) |
+| `js/` | Scripts (JavaScript) |
+| `api/` | The backend (PHP) |
+| `database/` | The database (SQL) |
+| `images/` | Logos, the favicon and Arthur |
+
+| Page | What it is |
 |---|---|
 | `index.html` | Home page (start page) |
 | `templates.html` | Choose a template |
@@ -49,12 +60,17 @@ Accounts and online CVs use PHP and MySQL. The pages above still work without th
 | `about-us.html`, `personal-details.html` | About us, account details (and deleting the account) |
 | `privacy.html`, `terms.html` | Privacy policy and terms of service |
 | `sign-in.html`, `sign-up.html`, `forgot-password.html`, `reset-password.html` | Account pages, all using the PHP backend |
-| `css/` | All styles. `colors.css` holds every colour; `cv-templates.css` holds the CV templates |
-| `js/` | All scripts. `cv-store.js` is the only code that saves CVs; `templates-data.js` lists the templates; `translate.js` holds every Dutch/English text (add new texts there); `theme.js` does light/dark mode |
-| `images/` | Logos and the favicon |
-| `database.sql` | Creates the `users` and `cvs` tables |
-| `database-update-1.sql` … `database-update-3.sql` | Only for a database made with an older `database.sql` (the live one): import them once, in order |
-| `api/` | PHP backend, see below |
+| `cv.php` | A shared CV, read-only (the personal link `cv.php?c=<code>`) |
+
+| Inside the folders | What it is |
+|---|---|
+| `css/colors.css`, `css/cv-templates.css` | Every colour; the CV templates |
+| `js/cv-store.js` | The only code that saves CVs |
+| `js/translate.js` | Every Dutch/English text (add new texts there) |
+| `js/anonymize.js`, `js/cv-score.js` | Anonymous mode; the CV score and tips |
+| `js/share-dialog.js`, `js/chatbot.js` | The Share box; Arthur, the chatbot |
+| `database/database.sql` | Creates all tables for a new database |
+| `database/database-update-1.sql` … `-5.sql` | Only for a database made with an older `database.sql` (the live one): import them once, in order |
 
 ### The API (`api/`)
 
@@ -68,6 +84,9 @@ The pages talk to these PHP files with JSON. They need PHP, so test with `php -S
 | `me.php` | GET → `{ user }` when signed in, `{ user: null }` for guests |
 | `cvs.php` | The signed-in user's CVs: GET (list or `?id=`), POST (new), PATCH `?id=` (save, rename), DELETE `?id=` |
 | `profile.php` | GET / POST the Personal details (new CVs start with them), DELETE the account |
+| `change-password.php` | POST `{ currentPassword, newPassword }` → changes the password |
+| `share.php` | GET / POST `?id=` `{ shared }` → switches a CV's personal link on or off |
+| `chat.php` | POST `{ message, language }` → Arthur's answer (Ollama; address in `config.php`) |
 | `password-reset.php` | POST `{ email, lang }` → e-mails a reset link (same answer for unknown addresses; max 3 per hour) |
 | `reset-password.php` | GET `?token=` → is the link still valid; POST `{ token, password }` → new password, signed in |
 | `mail.php` | Sends e-mail. With `'mail' => 'log'` in `config.php` (XAMPP) it writes the e-mail to `folio-mail.log` in the temp folder instead |
@@ -85,11 +104,14 @@ The pages talk to these PHP files with JSON. They need PHP, so test with `php -S
 - **Sections:** Personal details, About me, Education, Experience and Skills, plus extra sections you can add (and remove): Projects, Volunteering, Certificates, Languages, Hobbies.
 - **Dutch and English** on every page (the flags), **light and dark mode**; both are remembered.
 - **Privacy and Terms** pages.
+- **Share:** a personal link to a CV (on/off), sent by e-mail, WhatsApp or LinkedIn.
+- **Anonymous mode** for blind hiring, and a **CV score** with tips.
+- **Arthur**, a chatbot (needs an Ollama server to answer).
 
 ## Still to do
 
 - Reordering sections
-- Change password on Personal details
+- An Ollama server for Arthur on the live site
 - Sign in with Google or LinkedIn (the buttons are in the HTML, hidden)
 - A photo on About us
 
@@ -114,7 +136,7 @@ Take values from the Figma file rather than guessing. The basics:
 - One branch per task (for example `feature/duplicate-cv`), a pull request to `main`, and merge only when it is tested. Never push straight to `main`.
 - Changed a CSS or JS file? Raise the `?v=` number in every page, so browsers load the new file.
 - New text on a page? Add it to `js/translate.js` as `["Dutch", "English"]`, or the English version stays Dutch. Text people type is never translated; mark such places with `data-no-translate`.
-- A database change goes in `database.sql` **and** in a new `database-update-N.sql` for the live database. Going live: import the update first, then upload the files.
+- A database change goes in `database/database.sql` **and** in a new `database/database-update-N.sql` for the live database. Going live: import the update first, then upload the files.
 - `api/config.php` holds the database password: it is never in GitHub.
 
 ## Team
