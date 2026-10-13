@@ -1286,17 +1286,24 @@ a {
 }
 
 /* --------------------------------------------------------------------------
-   Phone: "My resumes" is hidden (the logo goes there); Download PDF stays.
+   Phone: "My resumes" is hidden (the logo goes there); Share and Download
+   PDF stay.
    -------------------------------------------------------------------------- */
 
 @media (max-width: 767px) {
-  .ed-topbar .ed-export {
+  .ed-topbar .ed-export,
+  .ed-topbar .ed-share {
     display: inline-flex;
     flex-shrink: 0;
     padding: 0 12px;
   }
 
-  /* Row 1: logo and Download PDF. Row 2: save status, theme and flags.
+  .ed-topbar .ed-share {
+    order: 1;
+    margin-left: auto;
+  }
+
+  /* Row 1: logo, Share and Download PDF. Row 2: save status, theme and flags.
      The bar scrolls away; the section picker below stays at the top. */
   .ed-topbar {
     position: static;
@@ -1307,7 +1314,6 @@ a {
 
   .ed-topbar .ed-export {
     order: 1;
-    margin-left: auto;
   }
 
   .ed-save {

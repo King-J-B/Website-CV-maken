@@ -50,6 +50,9 @@ function showToast(message) {
   }, 2200);
 }
 
+// Three connected dots: the usual "share" sign.
+const SHARE_ICON = `<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><circle cx="18" cy="5" r="3"/><circle cx="6" cy="12" r="3"/><circle cx="18" cy="19" r="3"/><path d="M8.6 13.5l6.8 4M15.4 6.5l-6.8 4"/></svg>`;
+
 function createResumeCard(resume) {
   const isExisting = resume.type === "existing";
   const buttonText = isExisting
@@ -95,6 +98,7 @@ function createResumeCard(resume) {
             <div class="card-icons">
               <button class="card-icon-button" type="button" data-rename-id="${resume.id}" aria-label="${getText("Hernoemen", "Rename")}" title="${getText("Hernoemen", "Rename")}">✎</button>
               <button class="card-icon-button" type="button" data-duplicate-id="${resume.id}" aria-label="${getText("Dupliceren", "Duplicate")}" title="${getText("Dupliceren", "Duplicate")}">⧉</button>
+              <button class="card-icon-button" type="button" data-share-id="${resume.id}" aria-label="${getText("Delen", "Share")}" title="${getText("Delen", "Share")}">${SHARE_ICON}</button>
             </div>` : ""}
         </div>
         <p class="resume-meta">${template}</p>
@@ -305,6 +309,23 @@ async function duplicateResume(id) {
   loadResumeList();
 }
 
+// The Share box (js/share-dialog.js). "Download PDF" opens the editor,
+// which then opens the print window.
+function shareResume(id) {
+  const resume = resumes.find((item) => item.id === id);
+  if (!resume) {
+    return;
+  }
+
+  folioShare({
+    id,
+    title: resume.title,
+    onPdf: () => {
+      window.location.href = `editor.html?cv=${encodeURIComponent(id)}&download=1`;
+    },
+  });
+}
+
 async function deleteResume(id) {
   const resume = resumes.find((item) => item.id === id);
   if (!resume) {
@@ -351,6 +372,7 @@ resumeView.addEventListener("click", (event) => {
   const deleteButton = event.target.closest("[data-delete-id]");
   const renameButton = event.target.closest("[data-rename-id]");
   const duplicateButton = event.target.closest("[data-duplicate-id]");
+  const shareButton = event.target.closest("[data-share-id]");
   const startButton = event.target.closest("[data-start-card]");
   const clearSearchButton = event.target.closest("[data-clear-search]");
 
@@ -368,6 +390,11 @@ resumeView.addEventListener("click", (event) => {
 
   if (renameButton) {
     renameResume(Number(renameButton.dataset.renameId));
+    return;
+  }
+
+  if (shareButton) {
+    shareResume(Number(shareButton.dataset.shareId));
     return;
   }
 
