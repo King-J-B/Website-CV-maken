@@ -474,6 +474,20 @@ body {
   }
 }
 
+/* Personal details: changing the password */
+.password-card {
+  margin-top: 24px;
+}
+
+/* Both fields at the top, even though only one has a hint below it */
+.password-card label {
+  align-content: start;
+}
+
+.details-form .field-hint {
+  font-weight: 400;
+}
+
 /* Personal details: deleting the account, kept apart at the bottom */
 .danger-zone {
   display: flex;
