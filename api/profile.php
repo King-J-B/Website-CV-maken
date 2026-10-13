@@ -68,7 +68,7 @@ $fields = [
     'website'   => text_field($data, 'website'),
 ];
 
-// The longest text each column can hold (database.sql).
+// The longest text each column can hold (database/database.sql).
 $maxLength = ['firstName' => 100, 'lastName' => 100, 'email' => 255, 'jobTitle' => 150, 'city' => 100, 'phone' => 50, 'website' => 255];
 
 $errors = [];
