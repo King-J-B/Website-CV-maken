@@ -614,6 +614,32 @@ const pairs = [
   ["Naar de tekst", "Go to text"],
   ["Dit cv is anoniem: ook de link toont geen foto, naam of contactgegevens.", "This CV is anonymous: the link shows no photo, name or contact details either."],
 
+  // CV score (js/cv-score.js)
+  ["Cv-score", "CV score"],
+  ["Folio telt wat er op je cv staat en of het compleet is. Het beoordeelt niet hoe goed het geschreven is.", "Folio counts what is on your CV and whether it is complete. It doesn't judge how well it is written."],
+  ["Niets meer toe te voegen: je cv is compleet.", "Nothing left to add: your CV is complete."],
+  ["Naar het onderdeel", "Go to section"],
+  ["Sterk", "Strong"],
+  ["Op weg", "On your way"],
+  ["Net begonnen", "Just started"],
+  ["Geheel", "Overall"],
+  ["Voeg je naam toe. Die staat bovenaan je cv.", "Add your name. It goes at the top of your CV."],
+  ["Voeg je e-mailadres toe, zodat een werkgever je kan bereiken.", "Add your email address, so an employer can reach you."],
+  ["Voeg je telefoonnummer toe, zodat een werkgever je kan bellen.", "Add your phone number, so an employer can call you."],
+  ["Voeg je woonplaats toe.", "Add the city where you live."],
+  ["Voeg je LinkedIn toe, of een website met je werk.", "Add your LinkedIn or a website with your work."],
+  ["Schrijf een korte introductie bij Over mij: wie je bent, waar je goed in bent en wat je zoekt.", "Write a short introduction in About me: who you are, what you are good at and what you are looking for."],
+  ["Je Over mij is kort. Schrijf 2 tot 4 zinnen over wie je bent en wat je zoekt.", "Your About me is short. Write 2 to 4 sentences about who you are and what you are looking for."],
+  ["Je Over mij is lang. Recruiters lezen snel: houd het onder 450 tekens.", "Your About me is long. Recruiters skim: keep it under 450 characters."],
+  ["Voeg een baan, stage of bijbaan toe bij Werkervaring. Projecten en vrijwilligerswerk tellen ook mee.", "Add a job, internship or side job under Experience. Projects and volunteering count too."],
+  ["Voeg een baan, stage of bijbaan toe bij Werkervaring.", "Add a job, internship or side job under Experience."],
+  ["Voeg je huidige of laatste opleiding toe bij Opleiding.", "Add your current or most recent study under Education."],
+  ["Je hebt veel vaardigheden. Houd de 10 die het belangrijkst zijn voor de baan.", "You have a lot of skills. Keep the 10 that matter most for the job."],
+  ["Voeg nog 1 vaardigheid toe. 5 tot 10 werkt het best.", "Add 1 more skill. 5 to 10 works best."],
+  ["Je cv past niet op één A4. Kort een omschrijving in, of kies compacte ruimte bij Ontwerp.", "Your CV doesn't fit on one A4 page. Shorten a description, or choose compact spacing under Design."],
+  ["Voeg de talen toe die je spreekt (+ Onderdeel toevoegen).", "Add the languages you speak (+ Add section)."],
+  ["Vul het half ingevulde item in dit onderdeel aan, of haal het weg.", "Finish or remove the half-filled entry in this section."],
+
   // Privacy: shared CVs
   ["Laatst bijgewerkt: 13 oktober 2026", "Last updated: 13 October 2026"],
   ["Een cv delen", "Sharing a CV"],
@@ -776,6 +802,13 @@ const pairs = [
    {name} is kept as it is (user input), {#name} is a number and {*name} is
    translated as well. */
 const patterns = [
+  // CV score tips (js/cv-score.js)
+  ["Voeg nog {#n} vaardigheden toe. 5 tot 10 werkt het best.", "Add {#n} more skills. 5 to 10 works best."],
+  ["Voeg datums toe bij “{item}”.", "Add dates to “{item}”."],
+  ["Beschrijf wat je deed bij “{item}”.", "Describe what you did at “{item}”."],
+  ["Schrijf de omschrijving van “{item}” als een lijstje van 2 of 3 punten.", "Write the description of “{item}” as a list of 2 or 3 points."],
+  ["Voeg de school toe bij “{item}”.", "Add the school to “{item}”."],
+  ["Cv-score: {#n}/100, {*level}", "CV score: {#n}/100, {*level}"],
   ["{#n}. {*section} (binnenkort)", "{#n}. {*section} (soon)"],
   ["{#n}. {*section}", "{#n}. {*section}"],
   ["Niveau voor {skill}", "Level for {skill}"],

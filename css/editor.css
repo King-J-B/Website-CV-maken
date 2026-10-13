@@ -1024,6 +1024,170 @@ a {
   font-size: 13px;
 }
 
+/* CV score (js/cv-score.js). The colour follows the level:
+   just started grey, on your way orange, good blue, strong green. */
+.ed-score,
+.ed-score-panel {
+  --score-color: var(--text-secondary);
+  --score-bg: var(--bg-disabled);
+}
+
+.ed-score[data-level="on-way"],
+.ed-score-panel[data-level="on-way"] {
+  --score-color: var(--warning);
+  --score-bg: var(--warning-bg);
+}
+
+.ed-score[data-level="good"],
+.ed-score-panel[data-level="good"] {
+  --score-color: var(--action-primary);
+  --score-bg: var(--bg-selected);
+}
+
+.ed-score[data-level="strong"],
+.ed-score-panel[data-level="strong"] {
+  --score-color: var(--success);
+  --score-bg: var(--success-bg);
+}
+
+.ed-score {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  height: 36px;
+  padding: 0 12px 0 4px;
+  border: 1px solid var(--border-control);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+  color: var(--text-primary);
+  font-size: 13px;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.ed-score:hover,
+.ed-score[aria-expanded="true"] {
+  border-color: var(--score-color);
+}
+
+.ed-score__number {
+  display: grid;
+  min-width: 28px;
+  height: 28px;
+  place-items: center;
+  border: 2px solid var(--score-color);
+  border-radius: 50%;
+  background: var(--score-bg);
+  color: var(--score-color);
+  font-size: 12px;
+  font-weight: 700;
+}
+
+.ed-score-panel {
+  display: grid;
+  gap: 10px;
+  margin-bottom: 12px;
+  padding: 16px;
+  border: 1px solid var(--border-decorative);
+  border-radius: var(--radius-md);
+  background: var(--bg-surface);
+  font-size: 13px;
+}
+
+.ed-score-panel[hidden] {
+  display: none;
+}
+
+.ed-score-panel__head {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.ed-score-panel__total {
+  color: var(--score-color);
+  font-size: 28px;
+  font-weight: 700;
+  line-height: 1;
+}
+
+.ed-score-panel__level {
+  padding: 2px 10px;
+  border-radius: 999px;
+  background: var(--score-bg);
+  color: var(--score-color);
+  font-weight: 700;
+}
+
+.ed-score-panel__parts,
+.ed-score-panel__tips {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ed-score-part {
+  display: grid;
+  grid-template-columns: minmax(110px, 1fr) 2fr 44px;
+  align-items: center;
+  gap: 10px;
+}
+
+.ed-score-part__bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: var(--bg-disabled);
+}
+
+.ed-score-part__fill {
+  display: block;
+  height: 100%;
+  border-radius: inherit;
+  background: var(--score-color);
+}
+
+.ed-score-part__points {
+  color: var(--text-secondary);
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+.ed-score-panel__title {
+  margin-top: 4px;
+  color: var(--text-strong);
+  font-size: 14px;
+  font-weight: 700;
+}
+
+.ed-score-tip {
+  display: flex;
+  align-items: baseline;
+  gap: 10px;
+}
+
+.ed-score-tip__gain {
+  flex-shrink: 0;
+  min-width: 32px;
+  padding: 1px 6px;
+  border-radius: 999px;
+  background: var(--success-bg);
+  color: var(--success);
+  font-weight: 700;
+  text-align: center;
+}
+
+.ed-score-tip__go {
+  font-size: 13px;
+}
+
+.ed-score-panel__done {
+  color: var(--success);
+  font-weight: 600;
+}
+
 .ed-design {
   display: flex;
   flex-wrap: wrap;
@@ -1479,6 +1643,7 @@ a {
   .ed-form,
   .ed-template-bar,
   .ed-design,
+  .ed-score-panel,
   .ed-anon-note,
   .ed-fit-warning,
   .ed-preview__caption,

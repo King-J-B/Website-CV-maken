@@ -9,15 +9,15 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/folio-mark.png">
   <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
-  <link rel="stylesheet" href="css/colors.css?v=41">
-  <link rel="stylesheet" href="css/cv-templates.css?v=41">
-  <link rel="stylesheet" href="css/controls.css?v=41">
-  <link rel="stylesheet" href="css/editor.css?v=41">
-  <link rel="stylesheet" href="css/confirm-dialog.css?v=41">
-  <link rel="stylesheet" href="css/share-dialog.css?v=41">
+  <link rel="stylesheet" href="css/colors.css?v=42">
+  <link rel="stylesheet" href="css/cv-templates.css?v=42">
+  <link rel="stylesheet" href="css/controls.css?v=42">
+  <link rel="stylesheet" href="css/editor.css?v=42">
+  <link rel="stylesheet" href="css/confirm-dialog.css?v=42">
+  <link rel="stylesheet" href="css/share-dialog.css?v=42">
 </head>
 <body>
-  <script src="js/theme.js?v=41"></script>
+  <script src="js/theme.js?v=42"></script>
   <a class="skip-link" href="#editor-main">Skip to editor</a>
 
   <header class="ed-topbar">
@@ -332,6 +332,11 @@
           <span class="ed-anon-toggle__switch" aria-hidden="true"></span>
           Anonymous
         </button>
+        <!-- CV score: a checklist of what is on the CV, with tips (js/cv-score.js) -->
+        <button class="ed-score" type="button" aria-expanded="false" aria-controls="score-panel" data-score-toggle>
+          <span class="ed-score__number" data-score-number data-no-translate>0</span>
+          <span>CV score</span>
+        </button>
         <a class="ed-link-button" href="templates.html" data-browse-templates>Browse templates</a>
       </div>
 
@@ -358,6 +363,19 @@
         </fieldset>
 
         <button class="ed-link ed-design__reset" type="button" data-design-reset>Reset to the template's design</button>
+      </div>
+
+      <!-- CV score: points per part and the tips that help most -->
+      <div class="ed-score-panel" id="score-panel" data-score-panel hidden>
+        <div class="ed-score-panel__head">
+          <p class="ed-score-panel__total"><span data-score-total data-no-translate>0</span>/100</p>
+          <p class="ed-score-panel__level" data-score-level></p>
+        </div>
+        <p class="ed-hint">Folio counts what is on your CV and whether it is complete. It doesn't judge how well it is written.</p>
+        <ul class="ed-score-panel__parts" data-score-parts></ul>
+        <h2 class="ed-score-panel__title">Tips</h2>
+        <ol class="ed-score-panel__tips" data-score-tips></ol>
+        <p class="ed-score-panel__done" data-score-done hidden>Nothing left to add: your CV is complete.</p>
       </div>
 
       <div class="ed-anon-note" data-anonymous-note hidden>
@@ -457,14 +475,15 @@
     </div>
   </dialog>
 
-  <script src="js/translate.js?v=41"></script>
-  <script src="js/account.js?v=41"></script>
-  <script src="js/templates-data.js?v=41"></script>
-  <script src="js/cv-store.js?v=41"></script>
-  <script src="js/confirm-dialog.js?v=41"></script>
-  <script src="js/share-dialog.js?v=41"></script>
-  <script src="js/anonymize.js?v=41"></script>
-  <script src="js/cv-render.js?v=41"></script>
-  <script src="js/editor.js?v=41"></script>
+  <script src="js/translate.js?v=42"></script>
+  <script src="js/account.js?v=42"></script>
+  <script src="js/templates-data.js?v=42"></script>
+  <script src="js/cv-store.js?v=42"></script>
+  <script src="js/confirm-dialog.js?v=42"></script>
+  <script src="js/share-dialog.js?v=42"></script>
+  <script src="js/anonymize.js?v=42"></script>
+  <script src="js/cv-score.js?v=42"></script>
+  <script src="js/cv-render.js?v=42"></script>
+  <script src="js/editor.js?v=42"></script>
 </body>
 </html>

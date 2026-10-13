@@ -219,7 +219,19 @@ const previewObserver = "ResizeObserver" in window
 function fillPreviews() {
   resumeView.querySelectorAll("[data-cv-preview]").forEach((box) => {
     FolioStore.load(box.dataset.cvPreview).then((content) => {
-      box.appendChild(FolioRender.page(content));
+      const page = FolioRender.page(content);
+      box.appendChild(page);
+
+      // The CV score (js/cv-score.js), next to "last edited".
+      const result = FolioScore.score(content, { fits: FolioScore.fits(page) });
+      const score = document.createElement("span");
+      score.className = "resume-score";
+      score.dataset.level = result.level.id;
+      score.dataset.noTranslate = "";
+      score.title = `${getText("Cv-score", "CV score")}: ${result.level.label}`;
+      score.textContent = `${result.total}/100`;
+      box.closest(".resume-card").querySelector(".resume-updated").append(" ", score);
+
       // Anonymous CVs (blind hiring) get a label next to the template name.
       if (content && content.anonymous) {
         const label = document.createElement("span");
