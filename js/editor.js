@@ -228,6 +228,7 @@
     // Saving runs in the background after every change.
     function scheduleSave() {
       checkAnonymousTexts(); // after every change: do own texts still give you away?
+      renderScore();
       setSaveState("saving");
       window.clearTimeout(saveTimer);
       saveTimer = window.setTimeout(writeDraft, SAVE_DELAY);
@@ -1763,6 +1764,7 @@
         warning.hidden = !tooLong;
       });
       fitPreview();
+      renderScore(); // "fits on one A4" is part of the score
     }
 
     function fitPreview() {
@@ -1846,6 +1848,80 @@
     });
 
     /* ------------------------------------------------------------------------
+       CV score: 0–100 with points per part and tips (rules in js/cv-score.js).
+       Worked out again after every change, so a tip's effect shows at once.
+       Only for the user: never on the PDF or the shared link.
+       ------------------------------------------------------------------------ */
+
+    var scoreToggle = document.querySelector("[data-score-toggle]");
+    var scorePanel = document.querySelector("[data-score-panel]");
+    var MAX_TIPS = 5;
+
+    // A tip's button: open the section (an extra section is added first).
+    function goToSection(id) {
+      var section = sectionById(id);
+      if (!section) return;
+      if (section.extra && !isAdded(id)) {
+        addSection(id);
+        return;
+      }
+      setMode("edit");
+      showSection(id, { push: true, focus: true });
+    }
+
+    function renderScore() {
+      if (!scorePanel) return; // not set up yet
+      var result = window.FolioScore.score(draft, { fits: overflowPx <= 0 });
+
+      scoreToggle.dataset.level = result.level.id;
+      scoreToggle.querySelector("[data-score-number]").textContent = result.total;
+      scoreToggle.setAttribute("aria-label", L("CV score") + ": " + result.total + "/100, " + result.level.label);
+      scorePanel.dataset.level = result.level.id;
+      scorePanel.querySelector("[data-score-total]").textContent = result.total;
+      scorePanel.querySelector("[data-score-level]").textContent = result.level.label;
+
+      var partList = scorePanel.querySelector("[data-score-parts]");
+      partList.innerHTML = "";
+      result.parts.forEach(function (part) {
+        var item = el("li", "ed-score-part");
+        item.appendChild(el("span", "ed-score-part__label", part.label));
+        var bar = el("span", "ed-score-part__bar");
+        var fill = el("span", "ed-score-part__fill");
+        fill.style.width = Math.round(part.points / part.max * 100) + "%";
+        bar.appendChild(fill);
+        item.appendChild(bar);
+        item.appendChild(el("span", "ed-score-part__points", part.points + "/" + part.max));
+        partList.appendChild(item);
+      });
+
+      var tipList = scorePanel.querySelector("[data-score-tips]");
+      tipList.innerHTML = "";
+      result.tips.slice(0, MAX_TIPS).forEach(function (tip) {
+        var item = el("li", "ed-score-tip");
+        item.appendChild(el("span", "ed-score-tip__gain", "+" + tip.gain));
+        var body = el("span", "ed-score-tip__text", tip.text);
+        if (tip.section) {
+          var go = el("button", "ed-link ed-score-tip__go", L("Go to section"));
+          go.type = "button";
+          go.addEventListener("click", function () {
+            goToSection(tip.section);
+          });
+          body.appendChild(document.createTextNode(" "));
+          body.appendChild(go);
+        }
+        item.appendChild(body);
+        tipList.appendChild(item);
+      });
+      scorePanel.querySelector("[data-score-done]").hidden = result.tips.length > 0;
+    }
+
+    scoreToggle.addEventListener("click", function () {
+      var open = scorePanel.hidden;
+      scorePanel.hidden = !open;
+      scoreToggle.setAttribute("aria-expanded", String(open));
+    });
+
+    /* ------------------------------------------------------------------------
        Export: Download PDF / Print. Uses the browser's own print window
        ("Save as PDF"), so the PDF has real, selectable text that CV scanners
        (ATS) can read. The print styles at the end of editor.css show only the
@@ -1922,6 +1998,7 @@
       ALL_LISTS.forEach(refreshSection);
       renderPersonalPreview(); // "Kandidaat" / "Candidate"
       checkAnonymousTexts();
+      renderScore();
       updateFit();
     });
 
@@ -1936,6 +2013,7 @@
     applyTemplate();
     updateFit();
     fitPreview();
+    renderScore();
 
     // "Download PDF" in the Share box on My resumes opens the editor with
     // ?download=1. Removed from the address, so a reload doesn't ask again.

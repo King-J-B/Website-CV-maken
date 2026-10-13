@@ -210,6 +210,35 @@ body {
   font-size: 0.92rem;
 }
 
+/* The CV score next to "last edited" (js/cv-score.js), coloured by level */
+.resume-score {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--bg-disabled);
+  color: var(--text-secondary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  font-variant-numeric: tabular-nums;
+  vertical-align: 1px;
+}
+
+.resume-score[data-level="on-way"] {
+  background: var(--warning-bg);
+  color: var(--warning);
+}
+
+.resume-score[data-level="good"] {
+  background: var(--color-surface-soft);
+  color: var(--color-primary);
+}
+
+.resume-score[data-level="strong"] {
+  background: var(--success-bg);
+  color: var(--success);
+}
+
 /* "Anoniem" next to the template name (anonymous mode, js/anonymize.js) */
 .resume-badge {
   display: inline-block;
