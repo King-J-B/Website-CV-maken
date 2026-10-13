@@ -4,7 +4,8 @@
 
    GET    api/profile.php   → { profile: {firstName, lastName, email, jobTitle, city, phone, website} }
    POST   api/profile.php   { the same fields } → { profile }
-   DELETE api/profile.php   { password } → { ok: true }: deletes the account and all its CVs
+   DELETE api/profile.php   { password } → { ok: true }: deletes the account, all its CVs
+                            and its questions to Arthur (the chatbot)
 
    New CVs start with these details (see api/cvs.php).
    ========================================================================== */
@@ -37,6 +38,15 @@ if ($_SERVER['REQUEST_METHOD'] === 'DELETE') {
     $password = is_string($data['password'] ?? null) ? $data['password'] : '';
     if (!password_verify($password, $user['password_hash'])) {
         send_json(401, ['message' => 'The password is incorrect.', 'fields' => ['password' => 'The password is incorrect.']]);
+    }
+
+    // Questions to Arthur (the chatbot) go too, not only after 30 days. A
+    // database without that table yet (update 5) must not stop the delete.
+    try {
+        $query = db()->prepare('DELETE FROM chatbot_messages WHERE user_id = ?');
+        $query->execute([$user['id']]);
+    } catch (PDOException $error) {
+        error_log('Folio: chatbot messages not deleted: ' . $error->getMessage());
     }
 
     $query = db()->prepare('DELETE FROM users WHERE id = ?');

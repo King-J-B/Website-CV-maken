@@ -1,120 +1,138 @@
-const chatbotHtml = `
-  <div class="chatbot">
-    <button class="chatbot-toggle" id="chatbotToggle" type="button">
-      <img src="images/arthur.png" alt="Arthur" />
-      <span>Arthur</span>
-    </button>
+/* ==========================================================================
+   Folio — Arthur, the chatbot (made by Jesse)
 
-    <div class="chatbot-panel hidden" id="chatbotPanel">
-      <div class="chatbot-header">
-        <div class="chatbot-header-info">
-          <img class="chatbot-avatar" src="images/arthur.png" alt="Arthur" />
+   A button bottom right opens a small chat window. Questions go to
+   api/chat.php, which asks the AI (Ollama) and saves the conversation for
+   30 days (see the privacy statement).
 
-          <div>
-            <strong>Arthur</strong>
-            <span>Vraag iets over je cv</span>
-          </div>
-        </div>
+   Load it last on a page, after js/translate.js:
+     <link rel="stylesheet" href="css/chatbot.css">
+     <script src="js/chatbot.js"></script>
 
-        <button id="chatbotClose" type="button">×</button>
-      </div>
+   Texts are English here; js/translate.js shows them in the chosen language.
+   Arthur's answers and the user's own questions are never translated.
+   ========================================================================== */
 
-      <div class="chatbot-messages" id="chatbotMessages">
-        <div class="chat-message bot">
-          Hoi! Ik ben Arthur, de Folio assistent. Waar kan ik je mee helpen?
-        </div>
-      </div>
+(function () {
+  "use strict";
 
-      <form class="chatbot-form" id="chatbotForm">
-        <input id="chatbotInput" type="text" placeholder="Typ je vraag..." autocomplete="off" />
-        <button type="submit">Stuur</button>
-      </form>
-    </div>
-  </div>
-`;
+  var MAX_LENGTH = 1000; // the same limit as api/chat.php
+  var ENDPOINT = "api/chat.php";
 
-document.body.insertAdjacentHTML("beforeend", chatbotHtml);
-
-const chatbotToggle = document.querySelector("#chatbotToggle");
-const chatbotPanel = document.querySelector("#chatbotPanel");
-const chatbotClose = document.querySelector("#chatbotClose");
-const chatbotForm = document.querySelector("#chatbotForm");
-const chatbotInput = document.querySelector("#chatbotInput");
-const chatbotMessages = document.querySelector("#chatbotMessages");
-
-const chatbotEndpoint = "api/chat.php";
-
-function addChatMessage(text, type) {
-  const message = document.createElement("div");
-  message.className = `chat-message ${type}`;
-  message.textContent = text;
-  chatbotMessages.appendChild(message);
-  chatbotMessages.scrollTop = chatbotMessages.scrollHeight;
-}
-
-function removeThinkingMessage() {
-  const lastMessage = chatbotMessages.lastElementChild;
-
-  if (lastMessage && lastMessage.textContent === "Arthur denkt even na...") {
-    lastMessage.remove();
-  }
-}
-
-chatbotToggle.addEventListener("click", () => {
-  chatbotPanel.classList.toggle("hidden");
-});
-
-chatbotClose.addEventListener("click", () => {
-  chatbotPanel.classList.add("hidden");
-});
-
-chatbotForm.addEventListener("submit", async (event) => {
-  event.preventDefault();
-
-  const question = chatbotInput.value.trim();
-
-  if (!question) {
-    return;
+  function L(text) {
+    return window.FolioLang ? window.FolioLang.t(text) : text;
   }
 
-  addChatMessage(question, "user");
-  chatbotInput.value = "";
+  document.body.insertAdjacentHTML("beforeend",
+    '<div class="chatbot">' +
+    '  <button class="chatbot-toggle" type="button" aria-expanded="false" aria-controls="chatbotPanel" data-chatbot-toggle>' +
+    '    <img src="images/arthur.png" alt="">' +
+    "    <span>Arthur</span>" +
+    "  </button>" +
 
-  addChatMessage("Arthur denkt even na...", "bot");
+    '  <section class="chatbot-panel" id="chatbotPanel" aria-labelledby="chatbotTitle" hidden>' +
+    '    <div class="chatbot-header">' +
+    '      <div class="chatbot-header-info">' +
+    '        <img class="chatbot-avatar" src="images/arthur.png" alt="">' +
+    "        <div>" +
+    '          <strong id="chatbotTitle">Arthur</strong>' +
+    "          <span>Ask anything about your CV</span>" +
+    "        </div>" +
+    "      </div>" +
+    '      <button class="chatbot-close" type="button" aria-label="Close chat" data-chatbot-close>×</button>' +
+    "    </div>" +
 
-  try {
-    const response = await fetch(chatbotEndpoint, {
+    // Arthur's answers and the user's questions: never translated.
+    '    <div class="chatbot-messages" role="log" aria-live="polite" data-no-translate data-chatbot-messages></div>' +
+    '    <p class="chatbot-note">Arthur is an AI and can make mistakes. Don\'t share private details.</p>' +
+
+    '    <form class="chatbot-form" data-chatbot-form>' +
+    '      <label class="visually-hidden" for="chatbotInput">Your question</label>' +
+    '      <input id="chatbotInput" type="text" placeholder="Type your question…" autocomplete="off" maxlength="' + MAX_LENGTH + '">' +
+    '      <button type="submit">Send</button>' +
+    "    </form>" +
+    "  </section>" +
+    "</div>");
+
+  document.body.classList.add("has-chatbot"); // room at the bottom (css/chatbot.css)
+  var root = document.querySelector(".chatbot");
+  var toggle = root.querySelector("[data-chatbot-toggle]");
+  var panel = root.querySelector("#chatbotPanel");
+  var messages = root.querySelector("[data-chatbot-messages]");
+  var form = root.querySelector("[data-chatbot-form]");
+  var input = root.querySelector("#chatbotInput");
+  var sendButton = form.querySelector("button");
+  var greeted = false;
+
+  function addMessage(text, type) {
+    var message = document.createElement("div");
+    message.className = "chat-message " + type;
+    message.textContent = text;
+    messages.appendChild(message);
+    messages.scrollTop = messages.scrollHeight;
+    return message;
+  }
+
+  function open() {
+    panel.hidden = false;
+    toggle.setAttribute("aria-expanded", "true");
+    // The greeting in the language of the moment it opens.
+    if (!greeted) {
+      addMessage(L("Hi! I'm Arthur, the Folio assistant. How can I help you?"), "bot");
+      greeted = true;
+    }
+    input.focus();
+  }
+
+  function close() {
+    panel.hidden = true;
+    toggle.setAttribute("aria-expanded", "false");
+    toggle.focus();
+  }
+
+  toggle.addEventListener("click", function () {
+    if (panel.hidden) open();
+    else close();
+  });
+  root.querySelector("[data-chatbot-close]").addEventListener("click", close);
+  root.addEventListener("keydown", function (event) {
+    if (event.key === "Escape" && !panel.hidden) close();
+  });
+
+  form.addEventListener("submit", function (event) {
+    event.preventDefault();
+    var question = input.value.trim();
+    if (!question || sendButton.disabled) return;
+
+    addMessage(question, "user");
+    input.value = "";
+    sendButton.disabled = true;
+    var thinking = addMessage(L("Arthur is thinking…"), "bot is-thinking");
+
+    fetch(ENDPOINT, {
       method: "POST",
-      headers: {
-        "Content-Type": "application/json"
-      },
+      credentials: "same-origin",
+      headers: { "Content-Type": "application/json", Accept: "application/json" },
       body: JSON.stringify({
-        message: question
+        message: question,
+        language: window.FolioLang && window.FolioLang.current === "en" ? "en" : "nl"
       })
-    });
-
-    const responseText = await response.text();
-
-    let data;
-
-    try {
-      data = JSON.parse(responseText);
-    } catch (error) {
-      removeThinkingMessage();
-      addChatMessage("Arthur kreeg geen geldig antwoord van de server.", "bot");
-      return;
-    }
-
-    removeThinkingMessage();
-
-    if (!response.ok) {
-      addChatMessage(data.reply || "Arthur kreeg een serverfout.", "bot");
-      return;
-    }
-
-    addChatMessage(data.reply || "Arthur kon geen antwoord maken.", "bot");
-  } catch (error) {
-    removeThinkingMessage();
-    addChatMessage("Arthur kan nu geen verbinding maken met de server.", "bot");
-  }
-});
+    })
+      .then(function (response) {
+        return response.json().catch(function () {
+          return {};
+        });
+      })
+      .then(function (data) {
+        // reply: Arthur's answer; message: an error from the server (in English).
+        addMessage(data.reply || L(data.message || "Arthur couldn't answer. Please try again."), "bot");
+      }, function () {
+        addMessage(L("Arthur can't connect to the server right now."), "bot");
+      })
+      .finally(function () {
+        thinking.remove();
+        sendButton.disabled = false;
+        input.focus();
+      });
+  });
+})();
