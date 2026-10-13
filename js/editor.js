@@ -206,6 +206,8 @@
       saveTimer = null;
       draft.updatedAt = new Date().toISOString();
       var content = JSON.parse(JSON.stringify(draft)); // the CV as it is right now
+      // The language of the headings, so a shared link (cv.php) shows them the same.
+      content.language = window.FolioLang && window.FolioLang.current === "en" ? "en" : "nl";
       var info = saveInfo();
       pendingSaves += 1;
       saveQueue = saveQueue

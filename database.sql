@@ -48,11 +48,15 @@ CREATE TABLE IF NOT EXISTS cvs (
   template   VARCHAR(30)  NOT NULL DEFAULT 'modern',
   -- Everything the editor saves (sections, design), stored as JSON text.
   content    JSON         NOT NULL,
+  -- The secret code in the personal link (cv.php?c=...). NULL = the link is off.
+  share_token CHAR(32)    NULL,
+  shared_at  DATETIME     NULL,  -- when the link was switched on
   created_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
   updated_at DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP ON UPDATE CURRENT_TIMESTAMP,
 
   PRIMARY KEY (id),
   KEY cvs_user_id (user_id),
+  UNIQUE KEY cvs_share_token (share_token),
   -- Deleting a user also deletes their CVs.
   CONSTRAINT cvs_user_fk FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;

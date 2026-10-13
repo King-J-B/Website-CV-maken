@@ -563,7 +563,19 @@ const pairs = [
   ["Beveiliging", "Security"],
   ["Wachtwoord wijzigen", "Change password"],
   ["Huidig wachtwoord", "Current password"],
-  ["Minstens 12 tekens", "At least 12 characters"],
+
+  // A shared CV (cv.php)
+  ["Cv niet gevonden", "CV not found"],
+  ["Dit cv is niet (meer) te zien", "This CV can't be viewed (anymore)"],
+  ["De link klopt niet, of de eigenaar deelt dit cv niet meer.", "The link is wrong, or the owner no longer shares this CV."],
+  ["Dit cv kan nu niet worden geladen", "This CV can't be loaded right now"],
+  ["Probeer het over een paar minuten opnieuw.", "Please try again in a few minutes."],
+
+  // Privacy: shared CVs
+  ["Laatst bijgewerkt: 13 oktober 2026", "Last updated: 13 October 2026"],
+  ["Een cv delen", "Sharing a CV"],
+  ["Zet je bij een cv de persoonlijke link aan, dan kan iedereen met die link dat cv bekijken, met alles wat erop staat: ook je foto, e-mailadres en telefoonnummer. Bekijken kan, aanpassen niet. Zoekmachines zoals Google nemen de pagina niet op. Zet je de link uit of verwijder je het cv, dan werkt de link meteen niet meer.", "If you switch on the personal link for a CV, anyone with that link can view that CV, with everything on it: including your photo, email address and phone number. They can view it, not change it. Search engines such as Google don't list the page. If you switch the link off or delete the CV, the link stops working straight away."],
+  ["Folio werkt alleen via een beveiligde verbinding (https). Wachtwoorden worden versleuteld opgeslagen en alleen jij kunt je eigen cv's openen, behalve een cv waarvan je zelf de link deelt.", "Folio only works over a secure connection (https). Passwords are stored encrypted and only you can open your own resumes, except a resume whose link you share yourself."],
 
   // Privacy and terms pages
   ["Privacyverklaring", "Privacy Policy"],
@@ -759,7 +771,8 @@ translations.nl["New CV"] = "Nieuw cv";
 
 /* --------------------------------------------------------------------------
    The translator. It runs on every page:
-   - the chosen language is remembered (localStorage), Dutch by default
+   - the chosen language is remembered (localStorage), Dutch by default;
+     <html data-fixed-lang="en"> fixes it for one page (cv.php)
    - it translates the whole page, and keeps translating text that scripts
      add later (the editor, My resumes cards, error messages)
    - it never touches what people typed: inputs, anything inside
@@ -773,6 +786,9 @@ translations.nl["New CV"] = "Nieuw cv";
   const ATTRIBUTES = ["placeholder", "aria-label", "title", "alt"];
 
   function readLanguage() {
+    // A page can fix its language (a shared CV shows the owner's language).
+    const fixed = document.documentElement.dataset.fixedLang;
+    if (fixed === "nl" || fixed === "en") return fixed;
     try {
       return localStorage.getItem(STORAGE_KEY) === "en" ? "en" : "nl";
     } catch (error) {
