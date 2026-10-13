@@ -1,0 +1,284 @@
+/* ==========================================================================
+   Folio — "Share" box (see js/share-dialog.js)
+   Same look as the confirmation box. Uses the shared colours from
+   colors.css; on My resumes the --color-* variables from pages.css take over.
+   ========================================================================== */
+
+.folio-share {
+  width: min(520px, calc(100% - 32px));
+  max-height: calc(100% - 32px);
+  margin: auto;
+  padding: 0;
+  border: 0;
+  border-radius: 16px;
+  background: var(--color-surface, var(--bg-surface));
+  color: var(--color-ink, var(--text-primary));
+  box-shadow: 0 24px 64px -16px rgba(14, 24, 48, 0.45), 0 0 0 1px var(--color-line, var(--border-decorative));
+  font: 400 15px/1.5 "Inter", system-ui, -apple-system, "Segoe UI", Roboto, sans-serif;
+}
+
+.folio-share::backdrop {
+  background: rgba(14, 24, 48, 0.45);
+}
+
+.folio-share__box {
+  display: grid;
+  gap: 18px;
+  padding: 24px;
+}
+
+.folio-share__head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: 12px;
+}
+
+.folio-share__title {
+  margin: 0;
+  font-size: 20px;
+  font-weight: 700;
+  line-height: 1.3;
+  letter-spacing: -0.01em;
+}
+
+.folio-share__cv {
+  margin: 2px 0 0;
+  color: var(--color-muted, var(--text-secondary));
+  font-size: 14px;
+  overflow-wrap: anywhere;
+}
+
+.folio-share__close {
+  flex-shrink: 0;
+  width: 40px;
+  height: 40px;
+  margin: -6px -8px 0 0;
+  border: 0;
+  border-radius: 8px;
+  background: transparent;
+  color: inherit;
+  font-size: 26px;
+  line-height: 1;
+  cursor: pointer;
+}
+
+.folio-share__close:hover {
+  background: var(--color-surface-soft, var(--bg-selected));
+}
+
+/* Each part (PDF, link, guest) is a block with a thin line above it */
+.folio-share__part {
+  display: grid;
+  gap: 12px;
+  padding-top: 18px;
+  border-top: 1px solid var(--color-line, var(--border-decorative));
+}
+
+.folio-share__part[hidden],
+.folio-share [hidden] {
+  display: none;
+}
+
+.folio-share__row {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 16px;
+}
+
+.folio-share__label {
+  margin: 0 0 2px;
+  font-size: 15px;
+  font-weight: 700;
+}
+
+.folio-share__text,
+.folio-share__note {
+  margin: 0;
+  color: var(--color-muted, var(--text-secondary));
+  font-size: 14px;
+}
+
+.folio-share__button {
+  display: inline-flex;
+  flex-shrink: 0;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 16px;
+  border: 1px solid var(--color-button-line, var(--border-subtle));
+  border-radius: 8px;
+  background: var(--color-surface, var(--bg-surface));
+  color: var(--color-ink, var(--text-primary));
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  white-space: nowrap;
+  cursor: pointer;
+}
+
+.folio-share__button:hover {
+  background: var(--color-surface-soft, var(--bg-selected));
+}
+
+.folio-share__button--primary {
+  border-color: transparent;
+  background: var(--action-primary);
+  color: var(--text-on-action);
+}
+
+.folio-share__button--primary:hover {
+  background: var(--action-primary-hover);
+}
+
+/* The on/off switch for the personal link */
+.folio-share__switch {
+  position: relative;
+  flex-shrink: 0;
+  width: 52px;
+  height: 30px;
+  padding: 0;
+  border: 0;
+  border-radius: 999px;
+  background: var(--border-control);
+  cursor: pointer;
+  transition: background 0.15s;
+}
+
+.folio-share__knob {
+  position: absolute;
+  top: 3px;
+  left: 3px;
+  width: 24px;
+  height: 24px;
+  border-radius: 50%;
+  background: #ffffff;
+  box-shadow: 0 1px 3px rgba(14, 24, 48, 0.3);
+  transition: transform 0.15s;
+}
+
+.folio-share__switch[aria-checked="true"] {
+  background: var(--action-primary);
+}
+
+.folio-share__switch[aria-checked="true"] .folio-share__knob {
+  transform: translateX(22px);
+}
+
+.folio-share__switch:disabled {
+  opacity: 0.6;
+  cursor: wait;
+}
+
+/* The link itself, with Copy next to it */
+.folio-share__link {
+  display: flex;
+  gap: 8px;
+}
+
+.folio-share__url {
+  flex: 1;
+  min-width: 0;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--color-control, var(--border-control));
+  border-radius: 8px;
+  background: var(--color-surface-soft, var(--bg-canvas));
+  color: inherit;
+  font: inherit;
+  font-size: 14px;
+}
+
+.folio-share__send {
+  display: grid;
+  gap: 8px;
+}
+
+.folio-share__channels {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(110px, 1fr));
+  gap: 8px;
+}
+
+.folio-share__channel {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  padding: 0 12px;
+  border: 1px solid var(--color-button-line, var(--border-subtle));
+  border-radius: 8px;
+  background: var(--color-surface, var(--bg-surface));
+  color: var(--color-ink, var(--text-primary));
+  font: inherit;
+  font-size: 14px;
+  font-weight: 600;
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.folio-share__channel:hover {
+  border-color: var(--action-primary);
+  background: var(--color-surface-soft, var(--bg-selected));
+}
+
+.folio-share__guest-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+}
+
+.folio-share__status {
+  min-height: 1.5em;
+  margin: -6px 0 0;
+  color: var(--color-muted, var(--text-secondary));
+  font-size: 14px;
+}
+
+.folio-share__status:empty {
+  display: none;
+}
+
+.folio-share button:focus-visible,
+.folio-share a:focus-visible,
+.folio-share input:focus-visible {
+  outline: 2px solid var(--color-primary, var(--action-primary));
+  outline-offset: 2px;
+}
+
+.folio-share .visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  white-space: nowrap;
+}
+
+@media (max-width: 480px) {
+  .folio-share__box {
+    padding: 20px;
+  }
+
+  .folio-share__row {
+    align-items: flex-start;
+  }
+
+  .folio-share__part:first-of-type .folio-share__row {
+    flex-direction: column;
+    align-items: stretch;
+  }
+
+  .folio-share__link {
+    flex-direction: column;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .folio-share__switch,
+  .folio-share__knob {
+    transition: none;
+  }
+}

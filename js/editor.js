@@ -1829,6 +1829,19 @@
 
     exportButton.addEventListener("click", exportPdf);
 
+    // Share: PDF, personal link, e-mail, WhatsApp, LinkedIn (js/share-dialog.js).
+    // Saved first, so the link shows what is on screen.
+    document.querySelector("[data-share]").addEventListener("click", function () {
+      flushSave();
+      var name = personalValue("name");
+      window.folioShare({
+        id: CV_ID,
+        title: name ? name + " - cv" : "",
+        name: name,
+        onPdf: exportPdf
+      });
+    });
+
     /* ------------------------------------------------------------------------
        Start
        ------------------------------------------------------------------------ */
@@ -1851,5 +1864,14 @@
     applyTemplate();
     updateFit();
     fitPreview();
+
+    // "Download PDF" in the Share box on My resumes opens the editor with
+    // ?download=1. Removed from the address, so a reload doesn't ask again.
+    var params = new URLSearchParams(window.location.search);
+    if (params.get("download")) {
+      params.delete("download");
+      window.history.replaceState(null, "", "?" + params.toString());
+      exportPdf();
+    }
   }
 })();
