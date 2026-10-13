@@ -104,7 +104,7 @@ function anonymize_cv(object $content): object
     return $content;
 }
 
-const ASSET_VERSION = 42; // the same ?v= as the .html pages
+const ASSET_VERSION = 43; // the same ?v= as the .html pages
 
 if ($cv) {
     // As objects (not PHP arrays), so an empty {} stays {} and not [].

@@ -21,4 +21,9 @@ return [
     // from no-reply@<the site's domain>.
     // 'mail'      => 'log',   // XAMPP can't send e-mail: write it to a file instead (see api/mail.php)
     // 'mail_from' => 'no-reply@example.com',
+
+    // Arthur, the chatbot (api/chat.php). Optional: without these lines
+    // Arthur uses Ollama on this computer with the model below.
+    // 'chat_url'   => 'http://localhost:11434/api/chat',
+    // 'chat_model' => 'llama3.2:3b',
 ];

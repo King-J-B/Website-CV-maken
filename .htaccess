@@ -2,9 +2,12 @@
 
 # Always use https (the lock in the address bar), so logging in is never sent
 # unencrypted. The second line stops a redirect loop if a proxy already did https.
+# The third line skips your own computer (XAMPP has no https), so localhost
+# keeps working: don't rename or delete this file for that.
 RewriteEngine On
 RewriteCond %{HTTPS} off
 RewriteCond %{HTTP:X-Forwarded-Proto} !https
+RewriteCond %{HTTP_HOST} !^(localhost|127\.0\.0\.1)(:[0-9]+)?$ [NC]
 RewriteRule ^ https://%{HTTP_HOST}%{REQUEST_URI} [L,R=301]
 
 # Database files and team notes are for us, not for visitors.

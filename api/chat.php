@@ -1,108 +1,107 @@
 <?php
-session_start();
+/* ==========================================================================
+   Folio — Arthur, the chatbot (made by Jesse; js/chatbot.js)
 
-header("Content-Type: application/json");
+   POST api/chat.php  { message, language: "nl" | "en" } → { reply }
 
-$host = "localhost";
-$dbname = "folio";
-$username = "root";
-$password = "";
+   Arthur's answers come from Ollama: an AI program that runs on a computer
+   (http://localhost:11434). Another address or model can be set in
+   config.php ('chat_url', 'chat_model', see config.example.php).
 
-if (!isset($_SESSION["chatbot_session_id"])) {
-  $_SESSION["chatbot_session_id"] = bin2hex(random_bytes(16));
+   Every question and answer is saved in chatbot_messages (with the user's
+   id when signed in) and wiped after 30 days, as the privacy statement says.
+   ========================================================================== */
+
+require __DIR__ . '/session.php';
+
+const CHAT_MAX_LENGTH = 1000; // the same limit as js/chatbot.js
+const CHAT_KEEP_DAYS = 30;
+
+require_method('POST');
+$data = read_json();
+
+$message = text_field($data, 'message');
+$english = ($data['language'] ?? '') === 'en';
+
+// Arthur's fixed sentences, in the language of the page.
+function say(bool $english, string $dutch, string $englishText): string
+{
+    return $english ? $englishText : $dutch;
 }
 
-$sessionId = $_SESSION["chatbot_session_id"];
-$userId = $_SESSION["user_id"] ?? null;
-
-$rawInput = file_get_contents("php://input");
-$data = json_decode($rawInput, true);
-
-$message = trim($data["message"] ?? "");
-
-if ($message === "") {
-  echo json_encode([
-    "reply" => "Typ eerst een bericht."
-  ]);
-  exit;
+if ($message === '') {
+    send_json(422, ['message' => 'Type a question first.']);
+}
+if (mb_strlen($message) > CHAT_MAX_LENGTH) {
+    send_json(422, ['message' => 'Your question is too long. Keep it under 1000 characters.']);
 }
 
-if (!function_exists("curl_init")) {
-  echo json_encode([
-    "reply" => "Arthur fout: cURL staat niet aan in PHP/XAMPP."
-  ]);
-  exit;
+// A random code per browser session, so one conversation can be followed.
+if (empty($_SESSION['chatbot_session_id'])) {
+    $_SESSION['chatbot_session_id'] = bin2hex(random_bytes(16));
 }
+$user = current_user();
 
+$settings = config();
 $payload = [
-  "model" => "llama3.2:3b",
-  "messages" => [
-    [
-      "role" => "system",
-      "content" => "Je naam is Arthur. Je bent de vriendelijke chatbot van Folio. Help bezoekers kort en duidelijk met vragen over cv's maken, templates, personal details, accounts en de Folio website. Antwoord standaard in dezelfde taal als de gebruiker."
+    'model'    => $settings['chat_model'] ?? 'llama3.2:3b',
+    'messages' => [
+        [
+            'role'    => 'system',
+            'content' => 'Je naam is Arthur. Je bent de vriendelijke chatbot van Folio. Help bezoekers kort en duidelijk met vragen over cv\'s maken, templates, personal details, accounts en de Folio website. Antwoord standaard in dezelfde taal als de gebruiker.',
+        ],
+        ['role' => 'user', 'content' => $message],
     ],
-    [
-      "role" => "user",
-      "content" => $message
-    ]
-  ],
-  "stream" => false
+    'stream'   => false,
 ];
 
-$ch = curl_init("http://localhost:11434/api/chat");
-
-curl_setopt_array($ch, [
-  CURLOPT_RETURNTRANSFER => true,
-  CURLOPT_POST => true,
-  CURLOPT_HTTPHEADER => [
-    "Content-Type: application/json"
-  ],
-  CURLOPT_POSTFIELDS => json_encode($payload),
-  CURLOPT_TIMEOUT => 60
-]);
-
-$response = curl_exec($ch);
-$error = curl_error($ch);
-$httpCode = curl_getinfo($ch, CURLINFO_HTTP_CODE);
-curl_close($ch);
-
-if ($error) {
-  $reply = "Arthur kan Ollama niet bereiken. Controleer of Ollama aanstaat.";
+$reply = null;
+if (!function_exists('curl_init')) {
+    error_log('Folio chat: cURL is not enabled in PHP.');
 } else {
-  $result = json_decode($response, true);
-
-  if ($httpCode < 200 || $httpCode >= 300) {
-    $reply = "Arthur kreeg een fout van Ollama.";
-  } else {
-    $reply = $result["message"]["content"] ?? "Sorry, Arthur kon geen antwoord maken.";
-  }
+    $ch = curl_init($settings['chat_url'] ?? 'http://localhost:11434/api/chat');
+    curl_setopt_array($ch, [
+        CURLOPT_RETURNTRANSFER => true,
+        CURLOPT_POST           => true,
+        CURLOPT_HTTPHEADER     => ['Content-Type: application/json'],
+        CURLOPT_POSTFIELDS     => json_encode($payload),
+        CURLOPT_CONNECTTIMEOUT => 5,
+        CURLOPT_TIMEOUT        => 60,
+    ]);
+    $response = curl_exec($ch);
+    $status = curl_getinfo($ch, CURLINFO_HTTP_CODE);
+    if ($response === false || $status < 200 || $status >= 300) {
+        error_log('Folio chat: Ollama did not answer (' . ($response === false ? curl_error($ch) : 'HTTP ' . $status) . ').');
+    } else {
+        $result = json_decode($response, true);
+        $content = $result['message']['content'] ?? '';
+        $reply = is_string($content) && trim($content) !== '' ? trim($content) : null;
+    }
+    curl_close($ch);
 }
 
+// No AI available (for example on the web host, where Ollama doesn't run):
+// say so kindly and don't save anything.
+if ($reply === null) {
+    send_json(200, [
+        'reply'       => say($english,
+            'Arthur is er nu even niet. Probeer het later opnieuw.',
+            "Arthur isn't available right now. Please try again later."),
+        'unavailable' => true,
+    ]);
+}
+
+// Save the conversation, and wipe what is older than 30 days. If saving
+// fails, Arthur still answers.
 try {
-  $pdo = new PDO(
-    "mysql:host=$host;dbname=$dbname;charset=utf8mb4",
-    $username,
-    $password,
-    [
-      PDO::ATTR_ERRMODE => PDO::ERRMODE_EXCEPTION
-    ]
-  );
+    $query = db()->prepare(
+        'INSERT INTO chatbot_messages (user_id, session_id, user_message, bot_reply) VALUES (?, ?, ?, ?)'
+    );
+    $query->execute([$user ? (int) $user['id'] : null, $_SESSION['chatbot_session_id'], $message, $reply]);
 
-  $statement = $pdo->prepare("
-    INSERT INTO chatbot_messages (user_id, session_id, user_message, bot_reply)
-    VALUES (:user_id, :session_id, :user_message, :bot_reply)
-  ");
-
-  $statement->execute([
-    ":user_id" => $userId,
-    ":session_id" => $sessionId,
-    ":user_message" => $message,
-    ":bot_reply" => $reply
-  ]);
-} catch (PDOException $databaseError) {
-  // Arthur blijft werken, ook als opslaan in de database mislukt.
+    db()->exec('DELETE FROM chatbot_messages WHERE created_at < NOW() - INTERVAL ' . CHAT_KEEP_DAYS . ' DAY');
+} catch (PDOException $error) {
+    error_log('Folio chat: could not save the message: ' . $error->getMessage());
 }
 
-echo json_encode([
-  "reply" => $reply
-]);
+send_json(200, ['reply' => $reply]);

@@ -640,6 +640,25 @@ const pairs = [
   ["Voeg de talen toe die je spreekt (+ Onderdeel toevoegen).", "Add the languages you speak (+ Add section)."],
   ["Vul het half ingevulde item in dit onderdeel aan, of haal het weg.", "Finish or remove the half-filled entry in this section."],
 
+  // Arthur, the chatbot (js/chatbot.js, api/chat.php)
+  ["Stel een vraag over je cv", "Ask anything about your CV"],
+  ["Chat sluiten", "Close chat"],
+  ["Arthur is een AI en kan fouten maken. Deel geen privégegevens.", "Arthur is an AI and can make mistakes. Don't share private details."],
+  ["Je vraag", "Your question"],
+  ["Typ je vraag…", "Type your question…"],
+  ["Stuur", "Send"],
+  ["Hoi! Ik ben Arthur, de Folio-assistent. Waarmee kan ik je helpen?", "Hi! I'm Arthur, the Folio assistant. How can I help you?"],
+  ["Arthur denkt even na…", "Arthur is thinking…"],
+  ["Arthur kon geen antwoord geven. Probeer het opnieuw.", "Arthur couldn't answer. Please try again."],
+  ["Arthur kan nu geen verbinding maken met de server.", "Arthur can't connect to the server right now."],
+  ["Typ eerst een vraag.", "Type a question first."],
+  ["Je vraag is te lang. Houd het onder 1000 tekens.", "Your question is too long. Keep it under 1000 characters."],
+
+  // Privacy: Arthur
+  ["Arthur, de chatbot", "Arthur, the chatbot"],
+  ["Stel je een vraag aan Arthur, dan bewaren we je vraag en zijn antwoord 30 dagen, met je account erbij als je bent ingelogd. Daarna wissen we ze automatisch. Arthur is een AI-programma dat op een computer van ons draait: je vragen gaan niet naar een ander bedrijf. Deel geen privégegevens met Arthur. Verwijder je je account, dan wissen we ook meteen je vragen aan Arthur.", "If you ask Arthur a question, we keep your question and his answer for 30 days, linked to your account if you are signed in. After that we wipe them automatically. Arthur is an AI program that runs on a computer of ours: your questions don't go to another company. Don't share private details with Arthur. If you delete your account, we also wipe your questions to Arthur straight away."],
+  ["Zolang je account bestaat. Verwijder je je account, dan wissen we meteen je gegevens en al je cv's. Vragen aan Arthur bewaren we hooguit 30 dagen.", "As long as your account exists. If you delete your account, we erase your data and all your resumes straight away. Questions to Arthur are kept for 30 days at most."],
+
   // Privacy: shared CVs
   ["Laatst bijgewerkt: 13 oktober 2026", "Last updated: 13 October 2026"],
   ["Een cv delen", "Sharing a CV"],

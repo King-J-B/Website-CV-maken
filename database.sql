@@ -76,3 +76,21 @@ CREATE TABLE IF NOT EXISTS password_resets (
   KEY password_resets_user (user_id),
   CONSTRAINT password_resets_user_fk FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
+
+-- What people ask Arthur, the chatbot, and what he answers (api/chat.php).
+-- Wiped after 30 days. user_id is empty for guests; deleting an account
+-- empties it too.
+CREATE TABLE IF NOT EXISTS chatbot_messages (
+  id           INT UNSIGNED NOT NULL AUTO_INCREMENT,
+  user_id      INT UNSIGNED NULL,
+  session_id   VARCHAR(100) NOT NULL,  -- one code per browser session (one conversation)
+  user_message TEXT         NOT NULL,
+  bot_reply    TEXT         NOT NULL,
+  created_at   DATETIME     NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+  PRIMARY KEY (id),
+  KEY chatbot_messages_user_id (user_id),
+  KEY chatbot_messages_session_id (session_id),
+  KEY chatbot_messages_created_at (created_at),  -- for wiping old messages
+  CONSTRAINT chatbot_messages_user_fk FOREIGN KEY (user_id) REFERENCES users (id) ON DELETE SET NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_unicode_ci;
