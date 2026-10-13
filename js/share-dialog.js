@@ -5,6 +5,7 @@
        id: 7,                  // the CV's id
        title: "Sam - cv",      // shown under the heading (the user's own text)
        name: "Sam de Vries",   // optional: for the e-mail; loaded when missing
+       anonymous: false,       // optional: the CV is anonymous (no name in the e-mail)
        onPdf: function () {}   // what "Download PDF" does on this page
      });
 
@@ -74,6 +75,7 @@
       '      <button class="folio-share__button folio-share__button--primary" type="button" data-share-copy>Copy link</button>' +
       "    </div>" +
       '    <p class="folio-share__note" data-share-latest hidden>Your link always shows the latest version of your CV.</p>' +
+      '    <p class="folio-share__note folio-share__note--anonymous" data-share-anonymous hidden>This CV is anonymous: the link shows no photo, name or contact details either.</p>' +
 
       '    <div class="folio-share__send" data-share-send hidden>' +
       '      <h3 class="folio-share__label">Send the link</h3>' +
@@ -101,7 +103,7 @@
     document.body.appendChild(dialog);
 
     [
-      "cv", "close", "pdf", "account", "switch", "link", "url", "copy", "latest",
+      "cv", "close", "pdf", "account", "switch", "link", "url", "copy", "latest", "anonymous",
       "send", "email", "whatsapp", "linkedin", "more", "off", "guest", "status"
     ].forEach(function (name) {
       parts[name] = dialog.querySelector("[data-share-" + name + "]");
@@ -239,6 +241,7 @@
     if (!dialog) build();
 
     current = { id: options.id, title: options.title || "", name: options.name || "", onPdf: options.onPdf };
+    parts.anonymous.hidden = !options.anonymous;
     parts.cv.textContent = current.title;
     parts.cv.hidden = !current.title;
     parts.more.hidden = typeof navigator.share !== "function";
@@ -269,11 +272,13 @@
         parts.switch.disabled = false;
       });
 
-      // The name for the e-mail, from the CV itself.
-      if (!opened.name) {
+      // The name for the e-mail, from the CV itself (an anonymous CV: none).
+      if (!opened.name && !options.anonymous) {
         window.FolioStore.load(opened.id).then(function (content) {
           var personal = (content && content.sections && content.sections.personal) || {};
-          opened.name = (personal.name || "").trim();
+          var anonymous = Boolean(content && content.anonymous);
+          if (current === opened) parts.anonymous.hidden = !anonymous;
+          opened.name = anonymous ? "" : (personal.name || "").trim();
           if (current === opened && opened.url) show({ shared: true, url: opened.url });
         }, function () {});
       }

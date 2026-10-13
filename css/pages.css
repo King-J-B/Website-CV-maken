@@ -210,6 +210,19 @@ body {
   font-size: 0.92rem;
 }
 
+/* "Anoniem" next to the template name (anonymous mode, js/anonymize.js) */
+.resume-badge {
+  display: inline-block;
+  margin-left: 4px;
+  padding: 1px 8px;
+  border-radius: 999px;
+  background: var(--color-surface-soft);
+  color: var(--color-primary);
+  font-size: 0.78rem;
+  font-weight: 700;
+  vertical-align: 1px;
+}
+
 .card-actions {
   justify-content: space-between;
 }

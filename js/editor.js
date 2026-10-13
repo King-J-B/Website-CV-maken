@@ -119,6 +119,7 @@
         template: TEMPLATES[0].id,
         design: { color: "", font: "", spacing: "", photo: "" },
         extras: [],
+        anonymous: false, // blind hiring: see js/anonymize.js
         sections: {}
       };
       LIST_SECTIONS.forEach(function (id) {
@@ -147,6 +148,7 @@
           draft.extras = EXTRA_IDS.filter(function (id) {
             return Array.isArray(stored.extras) && stored.extras.indexOf(id) !== -1;
           });
+          draft.anonymous = stored.anonymous === true;
         }
       } catch (error) {
         // No storage or unreadable draft: start with an empty CV.
@@ -225,6 +227,7 @@
 
     // Saving runs in the background after every change.
     function scheduleSave() {
+      checkAnonymousTexts(); // after every change: do own texts still give you away?
       setSaveState("saving");
       window.clearTimeout(saveTimer);
       saveTimer = window.setTimeout(writeDraft, SAVE_DELAY);
@@ -705,10 +708,16 @@
     }
 
     function renderPersonalPreview() {
-      setPreviewLine(previewName, personalValue("name"), "Your name");
+      // Anonymous: "Candidate" instead of the name, and no contact details.
+      if (draft.anonymous) setPreviewLine(previewName, L("Candidate"), "");
+      else setPreviewLine(previewName, personalValue("name"), "Your name");
       setPreviewLine(previewTitle, personalValue("title"), "Job title");
 
       previewContact.innerHTML = "";
+      if (draft.anonymous) {
+        previewContact.hidden = true;
+        return;
+      }
       [
         personalValue("email"),
         personalValue("phone"),
@@ -804,7 +813,8 @@
 
     function renderPhoto() {
       var photo = personal().photo || "";
-      photoPreview.hidden = cvPhoto.hidden = !photo;
+      photoPreview.hidden = !photo;
+      cvPhoto.hidden = !photo || draft.anonymous; // anonymous CVs never show the photo
       photoPreview.src = cvPhoto.src = photo || "";
       if (!photo) {
         photoPreview.removeAttribute("src");
@@ -1237,7 +1247,9 @@
           var entry = el("div", "cv-entry");
           var top = el("div", "cv-entry__top");
           top.appendChild(el("p", "cv-entry__title", heading));
-          top.appendChild(el("p", "cv-entry__dates", formatRange(item)));
+          // Anonymous: a duration (or nothing) instead of dates.
+          var dates = draft.anonymous ? window.FolioAnonymize.dates(cfg.id, item) : formatRange(item);
+          top.appendChild(el("p", "cv-entry__dates", dates));
           entry.appendChild(top);
           if (place) entry.appendChild(el("p", "cv-entry__sub", place));
           var description = (item.description || "").trim();
@@ -1463,7 +1475,8 @@
     function showExtrasOnCv() {
       EXTRA_IDS.forEach(function (id) {
         var section = document.querySelector('[data-cv-page] [data-cv-section="' + id + '"]');
-        section.hidden = !isAdded(id);
+        var hiddenWhenAnonymous = draft.anonymous && window.FolioAnonymize.HIDDEN_SECTIONS.indexOf(id) !== -1;
+        section.hidden = !isAdded(id) || hiddenWhenAnonymous;
       });
     }
 
@@ -1778,6 +1791,61 @@
     }
 
     /* ------------------------------------------------------------------------
+       Anonymous mode (blind hiring). One switch per CV: the preview, the PDF,
+       the shared link and the card on My resumes hide the photo, name,
+       contact details, dates and hobbies (rules in js/anonymize.js). The
+       details stay saved. Own texts can't be cut, so we point at them.
+       ------------------------------------------------------------------------ */
+
+    var anonymousToggle = document.querySelector("[data-anonymous-toggle]");
+    var anonymousNote = document.querySelector("[data-anonymous-note]");
+    var anonymousIssues = document.querySelector("[data-anonymous-issues]");
+    var anonymousList = document.querySelector("[data-anonymous-list]");
+
+    function checkAnonymousTexts() {
+      if (!anonymousList) return; // not set up yet
+      anonymousList.innerHTML = "";
+      var results = draft.anonymous ? window.FolioAnonymize.check(draft) : [];
+      anonymousIssues.hidden = !results.length;
+      results.forEach(function (result) {
+        var section = sectionById(result.section);
+        var label = L(section ? section.label : result.section);
+        var item = document.createElement("li");
+        // "About me: your name, a year" — the words are ours, so translate them here.
+        item.appendChild(document.createTextNode(label + ": " + result.found.map(L).join(", ") + " "));
+        var go = document.createElement("button");
+        go.type = "button";
+        go.className = "ed-link";
+        go.textContent = L("Go to text");
+        go.addEventListener("click", function () {
+          setMode("edit");
+          showSection(result.section, { push: true, focus: true });
+        });
+        item.appendChild(go);
+        anonymousList.appendChild(item);
+      });
+    }
+
+    function renderAnonymous() {
+      anonymousToggle.setAttribute("aria-checked", String(draft.anonymous));
+      anonymousNote.hidden = !draft.anonymous;
+      renderPersonalPreview();
+      renderPhoto();
+      showExtrasOnCv();
+      [education, experience, projects, volunteering, certificates].forEach(function (list) {
+        list.renderPreview();
+      });
+      checkAnonymousTexts();
+      updateFit();
+    }
+
+    anonymousToggle.addEventListener("click", function () {
+      draft.anonymous = !draft.anonymous;
+      renderAnonymous();
+      scheduleSave();
+    });
+
+    /* ------------------------------------------------------------------------
        Export: Download PDF / Print. Uses the browser's own print window
        ("Save as PDF"), so the PDF has real, selectable text that CV scanners
        (ATS) can read. The print styles at the end of editor.css show only the
@@ -1790,7 +1858,7 @@
       flushSave();
 
       var name = personalValue("name");
-      if (!name) {
+      if (!name && !draft.anonymous) {
         folioConfirm({
           title: "Add your name first",
           message: "Your name goes at the top of your CV. Fill it in under Personal details, then download your PDF.",
@@ -1819,9 +1887,9 @@
         tone: "primary"
       }).then(function (go) {
         if (!go) return;
-        // The PDF's file name comes from the page title.
+        // The PDF's file name comes from the page title (anonymous: no name in it).
         var pageTitle = document.title;
-        document.title = name + " - CV";
+        document.title = draft.anonymous ? L("Anonymous CV") : name + " - CV";
         window.print();
         document.title = pageTitle;
       });
@@ -1837,7 +1905,8 @@
       window.folioShare({
         id: CV_ID,
         title: name ? name + " - cv" : "",
-        name: name,
+        name: draft.anonymous ? "" : name, // anonymous: the e-mail doesn't sign with the name
+        anonymous: draft.anonymous,
         onPdf: exportPdf
       });
     });
@@ -1851,6 +1920,8 @@
 
     document.addEventListener("folio:languagechange", function () {
       ALL_LISTS.forEach(refreshSection);
+      renderPersonalPreview(); // "Kandidaat" / "Candidate"
+      checkAnonymousTexts();
       updateFit();
     });
 
@@ -1859,6 +1930,7 @@
     renderAboutPreview();
     ALL_LISTS.forEach(refreshSection);
     showExtrasOnCv();
+    renderAnonymous();
     // Flow: the editor opens at Personal details unless a section is linked.
     showSection(new URLSearchParams(window.location.search).get("section") || SECTIONS[0].id);
     applyTemplate();

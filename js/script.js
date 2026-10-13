@@ -220,6 +220,13 @@ function fillPreviews() {
   resumeView.querySelectorAll("[data-cv-preview]").forEach((box) => {
     FolioStore.load(box.dataset.cvPreview).then((content) => {
       box.appendChild(FolioRender.page(content));
+      // Anonymous CVs (blind hiring) get a label next to the template name.
+      if (content && content.anonymous) {
+        const label = document.createElement("span");
+        label.className = "resume-badge";
+        label.textContent = getText("Anoniem", "Anonymous");
+        box.closest(".resume-card").querySelector(".resume-meta").append(" ", label);
+      }
       FolioRender.fit(box);
       if (previewObserver) previewObserver.observe(box);
     }, () => {

@@ -43,7 +43,68 @@ function e(string $text): string
     return htmlspecialchars($text, ENT_QUOTES, 'UTF-8');
 }
 
-const ASSET_VERSION = 40; // the same ?v= as the .html pages
+// How long something lasted, in months (same as months() in js/anonymize.js).
+function duration_months(object $item): ?int
+{
+    $startYear = (int) ($item->startYear ?? 0);
+    if (!$startYear) {
+        return null;
+    }
+    $current = !empty($item->current);
+    $endYear = $current ? (int) date('Y') : (int) ($item->endYear ?? 0);
+    if (!$endYear) {
+        return null;
+    }
+    $startMonth = (int) ($item->startMonth ?? 0);
+    $endMonth = $current ? (int) date('n') : (int) ($item->endMonth ?? 0);
+
+    $total = $startMonth && $endMonth
+        ? ($endYear - $startYear) * 12 + ($endMonth - $startMonth) + 1
+        : ($endYear - $startYear) * 12;
+    return $total > 0 ? $total : null;
+}
+
+/* Anonymous mode (blind hiring): take the hidden details out BEFORE the page
+   is sent, so they are not even in the page source. The same rules as
+   js/anonymize.js: change them in both places. */
+function anonymize_cv(object $content): object
+{
+    $sections = isset($content->sections) && is_object($content->sections) ? $content->sections : new stdClass();
+    $title = $sections->personal->title ?? '';
+    $sections->personal = is_string($title) && $title !== '' ? (object) ['title' => $title] : new stdClass();
+
+    $dateFields = ['startMonth', 'startYear', 'endMonth', 'endYear', 'current', 'year'];
+    foreach (['experience', 'projects', 'volunteering', 'education', 'certificates'] as $id) {
+        $items = $sections->$id->items ?? null;
+        if (!is_array($items)) {
+            continue;
+        }
+        foreach ($items as $item) {
+            if (!is_object($item)) {
+                continue;
+            }
+            if (in_array($id, ['experience', 'projects', 'volunteering'], true)) {
+                $months = duration_months($item);
+                if ($months) {
+                    $item->durationMonths = $months;
+                }
+            }
+            foreach ($dateFields as $field) {
+                unset($item->$field);
+            }
+        }
+    }
+
+    unset($sections->hobbies);
+    if (isset($content->extras) && is_array($content->extras)) {
+        $content->extras = array_values(array_diff($content->extras, ['hobbies']));
+    }
+    $content->sections = $sections;
+    $content->anonymous = true;
+    return $content;
+}
+
+const ASSET_VERSION = 41; // the same ?v= as the .html pages
 
 if ($cv) {
     // As objects (not PHP arrays), so an empty {} stays {} and not [].
@@ -52,10 +113,19 @@ if ($cv) {
         $content = new stdClass();
     }
     $language = ($content->language ?? '') === 'en' ? 'en' : 'nl';
+    $anonymous = ($content->anonymous ?? false) === true;
+    if ($anonymous) {
+        $content = anonymize_cv($content);
+    }
     $personal = $content->sections->personal ?? null;
     $name = is_string($personal->name ?? null) ? trim($personal->name) : '';
     $role = is_string($personal->title ?? null) ? trim($personal->title) : '';
-    $pageTitle = $name !== '' ? $name . ($language === 'en' ? ' – CV' : ' – cv') : $cv['title'];
+    if ($anonymous) {
+        // Not the CV's own title either: that is often "Name - cv".
+        $pageTitle = $language === 'en' ? 'Anonymous CV' : 'Anoniem cv';
+    } else {
+        $pageTitle = $name !== '' ? $name . ($language === 'en' ? ' – CV' : ' – cv') : $cv['title'];
+    }
 } else {
     http_response_code($failed ? 503 : 404);
     $language = null;
@@ -98,6 +168,7 @@ if ($cv) {
          codes, so text in the CV can never close this script tag. -->
     <script type="application/json" id="cvContent"><?= json_encode($content, JSON_HEX_TAG | JSON_HEX_AMP | JSON_HEX_APOS | JSON_HEX_QUOT | JSON_UNESCAPED_UNICODE) ?></script>
     <script src="js/translate.js?v=<?= ASSET_VERSION ?>"></script>
+    <script src="js/anonymize.js?v=<?= ASSET_VERSION ?>"></script>
     <script src="js/cv-render.js?v=<?= ASSET_VERSION ?>"></script>
     <script>
       (function () {

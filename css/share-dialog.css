@@ -191,6 +191,13 @@
   font-size: 14px;
 }
 
+.folio-share__note--anonymous {
+  padding: 8px 12px;
+  border-radius: 8px;
+  background: var(--color-surface-soft, var(--bg-selected));
+  color: var(--color-ink, var(--text-primary));
+}
+
 .folio-share__send {
   display: grid;
   gap: 8px;
