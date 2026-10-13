@@ -2,8 +2,8 @@
 /* ==========================================================================
    Folio — the signed-in user's CVs
 
-   GET    api/cvs.php          → { cvs: [ {id, title, titleAuto, template, updatedAt} ] }, newest first
-   GET    api/cvs.php?id=5     → { cv: {id, title, titleAuto, template, updatedAt, content} }
+   GET    api/cvs.php          → { cvs: [ {id, title, titleAuto, template, updatedAt, shared} ] }, newest first
+   GET    api/cvs.php?id=5     → { cv: {id, title, titleAuto, template, updatedAt, shared, content} }
    POST   api/cvs.php          { template, title?, content? }       → 201 { cv }
    PATCH  api/cvs.php?id=5     { content?, title?, personName? }    → { cv }
    DELETE api/cvs.php?id=5     → { ok: true }
@@ -33,6 +33,7 @@ function cv_summary(array $row): array
         'titleAuto' => (bool) $row['title_auto'],
         'template'  => $row['template'],
         'updatedAt' => strtotime($row['updated_at']) * 1000, // milliseconds, like JavaScript's Date.now()
+        'shared'    => $row['share_token'] !== null,          // the personal link is on (api/share.php)
     ];
 }
 
@@ -94,7 +95,7 @@ switch ($_SERVER['REQUEST_METHOD']) {
         }
 
         $query = db()->prepare(
-            'SELECT id, title, title_auto, template, updated_at FROM cvs WHERE user_id = ? ORDER BY updated_at DESC, id DESC'
+            'SELECT id, title, title_auto, template, share_token, updated_at FROM cvs WHERE user_id = ? ORDER BY updated_at DESC, id DESC'
         );
         $query->execute([$userId]);
         send_json(200, ['cvs' => array_map('cv_summary', $query->fetchAll())]);
