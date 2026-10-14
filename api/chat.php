@@ -42,17 +42,53 @@ if (empty($_SESSION['chatbot_session_id'])) {
 }
 $user = current_user();
 
+/* What Arthur knows about Folio. A small AI model knows nothing about this
+   site, so without these facts it makes up buttons and pages. Keep them
+   true: when a feature changes, change it here too. */
+const FOLIO_FACTS = <<<'FACTS'
+Over Folio:
+- Folio is een gratis cv-maker voor studenten en starters. Een schoolproject van Daan en Jesse (Vista college).
+- Je hebt geen account nodig. Zonder account blijft je cv alleen in je eigen browser, op dat apparaat. Met een gratis account (knop "Inloggen" rechtsboven, daar kun je ook een account aanmaken) staan je cv's online en kun je overal verder.
+- Een cv maken: klik op "Maak je cv", kies een template en vul je gegevens in. Rechts zie je meteen een voorbeeld op A4. Alles wordt vanzelf opgeslagen.
+- Er zijn 6 templates: Modern, Classic, Minimal, Split, Timeline en Concise. Wisselen kan in de editor boven het voorbeeld ("Template").
+- Onderdelen: Persoonlijke gegevens (met foto), Over mij, Opleiding, Werkervaring en Vaardigheden. Met "+ Onderdeel toevoegen" kun je Projecten, Vrijwilligerswerk, Certificaten, Talen en Hobby's toevoegen. De volgorde van de onderdelen kun je (nog) niet veranderen.
+- Bij "Ontwerp" boven het voorbeeld kies je kleur, lettertype, ruimte en een ronde of vierkante foto.
+- PDF: de blauwe knop "PDF downloaden" staat rechtsboven in de editor (niet bij Ontwerp). Klik erop; het printvenster van je browser opent; kies daar "Opslaan als PDF" en klik op Opslaan. De PDF heeft echte tekst die cv-scanners (ATS) kunnen lezen.
+- Delen: klik op "Delen" (in de editor of op een kaartje bij "Mijn cv's"). Zet je persoonlijke link aan; dan kun je de link kopiëren of versturen via e-mail, WhatsApp of LinkedIn. Wie de link heeft, kan je cv bekijken maar niet aanpassen. Link uit = hij werkt niet meer. Hiervoor heb je een account nodig.
+- Anoniem: met de schakelaar "Anoniem" boven het voorbeeld verbergt Folio je foto, naam, contactgegevens, jaartallen en hobby's (voor blind solliciteren). Je gegevens blijven bewaard.
+- Cv-score: het rondje "Cv-score" boven het voorbeeld geeft je cv een score van 0 tot 100, met tips om het beter te maken.
+- "Mijn cv's": al je cv's, met hernoemen (✎), dupliceren (⧉), delen en verwijderen.
+- Met een account: bij "Persoonlijke gegevens" vul je je gegevens één keer in (nieuwe cv's beginnen ermee), wijzig je je wachtwoord of verwijder je je account. Wachtwoord vergeten? Gebruik "Wachtwoord vergeten?" op de inlogpagina.
+- Rechtsboven wissel je tussen Nederlands en Engels (de vlaggen) en licht of donker (◐).
+- Folio kan NIET: sollicitatiebrieven maken, een Word-bestand maken, inloggen met Google of LinkedIn, of teksten voor je schrijven.
+FACTS;
+
+// The facts are Dutch; on the English site Arthur must translate them,
+// buttons included (the English site says "Download PDF", "Share", ...).
+$languageRule = $english
+    ? "- Answer ONLY in English, also when the facts below are in Dutch: translate them. Button names on the English site: \"Download PDF\", \"Share\", \"Design\", \"Anonymous\", \"CV score\", \"My resumes\", \"Sign in\", \"+ Add section\".\n"
+    : "- Antwoord in het Nederlands.\n";
+$instructions = "Je bent Arthur, de vriendelijke assistent van Folio. Je helpt bezoekers met hun cv en met de Folio-website.\n"
+    . "Regels:\n"
+    . $languageRule
+    . "- Houd het kort: hooguit 4 zinnen, of een korte lijst met stappen.\n"
+    . "- Gebruik voor vragen over Folio alleen de feiten hieronder. Verzin geen knoppen, pagina's of functies. Weet je het niet, zeg dat eerlijk.\n"
+    . "- Algemene cv-tips (wat zet je in Over mij, hoe beschrijf je werkervaring) mag je wel geven.\n"
+    . "- De bezoeker is niet Arthur: spreek hem aan met 'je'. Vraag nooit om privégegevens.\n\n"
+    . FOLIO_FACTS
+    // Last, because a small model listens best to what comes last.
+    . ($english ? "\n\nIMPORTANT: the visitor reads the English site. Write your whole answer in English, never in Dutch." : '');
+
 $settings = config();
 $payload = [
     'model'    => $settings['chat_model'] ?? 'llama3.2:3b',
     'messages' => [
-        [
-            'role'    => 'system',
-            'content' => 'Je naam is Arthur. Je bent de vriendelijke chatbot van Folio. Help bezoekers kort en duidelijk met vragen over cv\'s maken, templates, personal details, accounts en de Folio website. Antwoord standaard in dezelfde taal als de gebruiker.',
-        ],
+        ['role' => 'system', 'content' => $instructions],
         ['role' => 'user', 'content' => $message],
     ],
     'stream'   => false,
+    // Less "creative": a small model then sticks closer to the facts.
+    'options'  => ['temperature' => 0.3],
 ];
 
 $reply = null;
