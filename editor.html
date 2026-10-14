@@ -9,16 +9,16 @@
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
   <link rel="icon" type="image/png" href="images/folio-mark.png">
   <!-- ?v= makes browsers load fresh files after a change: raise it whenever a CSS or JS file changes -->
-  <link rel="stylesheet" href="css/colors.css?v=43">
-  <link rel="stylesheet" href="css/cv-templates.css?v=43">
-  <link rel="stylesheet" href="css/controls.css?v=43">
-  <link rel="stylesheet" href="css/editor.css?v=43">
-  <link rel="stylesheet" href="css/confirm-dialog.css?v=43">
-  <link rel="stylesheet" href="css/share-dialog.css?v=43">
-  <link rel="stylesheet" href="css/chatbot.css?v=43">
+  <link rel="stylesheet" href="css/colors.css?v=44">
+  <link rel="stylesheet" href="css/cv-templates.css?v=44">
+  <link rel="stylesheet" href="css/controls.css?v=44">
+  <link rel="stylesheet" href="css/editor.css?v=44">
+  <link rel="stylesheet" href="css/confirm-dialog.css?v=44">
+  <link rel="stylesheet" href="css/share-dialog.css?v=44">
+  <link rel="stylesheet" href="css/chatbot.css?v=44">
 </head>
 <body>
-  <script src="js/theme.js?v=43"></script>
+  <script src="js/theme.js?v=44"></script>
   <a class="skip-link" href="#editor-main">Skip to editor</a>
 
   <header class="ed-topbar">
@@ -64,6 +64,7 @@
       <p class="ed-nav__title">Sections</p>
       <ol class="ed-nav__list" data-section-nav></ol>
       <button class="ed-nav__add" type="button" data-add-section><span aria-hidden="true">+</span> Add section</button>
+      <button class="ed-nav__add" type="button" data-order-open><span aria-hidden="true">⇅</span> Change order</button>
     </nav>
 
     <main class="ed-form" id="editor-main" tabindex="-1">
@@ -363,6 +364,11 @@
           <div class="ed-segment" data-photo-options></div>
         </fieldset>
 
+        <div class="ed-design__group">
+          <p class="ed-label">Order</p>
+          <button class="ed-btn ed-btn--secondary ed-design__order" type="button" data-order-open><span aria-hidden="true">⇅</span> Change order</button>
+        </div>
+
         <button class="ed-link ed-design__reset" type="button" data-design-reset>Reset to the template's design</button>
       </div>
 
@@ -476,16 +482,30 @@
     </div>
   </dialog>
 
-  <script src="js/translate.js?v=43"></script>
-  <script src="js/account.js?v=43"></script>
-  <script src="js/templates-data.js?v=43"></script>
-  <script src="js/cv-store.js?v=43"></script>
-  <script src="js/confirm-dialog.js?v=43"></script>
-  <script src="js/share-dialog.js?v=43"></script>
-  <script src="js/anonymize.js?v=43"></script>
-  <script src="js/cv-score.js?v=43"></script>
-  <script src="js/cv-render.js?v=43"></script>
-  <script src="js/editor.js?v=43"></script>
-  <script src="js/chatbot.js?v=43"></script>
+  <!-- "Change order": move sections up or down (Personal details stay on top) -->
+  <dialog class="ed-add-dialog" data-order-dialog aria-labelledby="order-title">
+    <div class="ed-add-dialog__box">
+      <h2 class="ed-add-dialog__title" id="order-title">Order of your CV</h2>
+      <p class="ed-sub">Move a section up or down. Personal details always stay at the top.</p>
+      <p class="ed-hint" data-order-split hidden>In the Split template, Skills, Languages and Hobbies always stay in the left column.</p>
+      <ol class="ed-order-list" data-order-list></ol>
+      <div class="ed-order-actions">
+        <button class="ed-link" type="button" data-order-reset>Default order</button>
+        <button class="ed-btn ed-btn--primary" type="button" data-order-close>Done</button>
+      </div>
+    </div>
+  </dialog>
+
+  <script src="js/translate.js?v=44"></script>
+  <script src="js/account.js?v=44"></script>
+  <script src="js/templates-data.js?v=44"></script>
+  <script src="js/cv-store.js?v=44"></script>
+  <script src="js/confirm-dialog.js?v=44"></script>
+  <script src="js/share-dialog.js?v=44"></script>
+  <script src="js/anonymize.js?v=44"></script>
+  <script src="js/cv-score.js?v=44"></script>
+  <script src="js/cv-render.js?v=44"></script>
+  <script src="js/editor.js?v=44"></script>
+  <script src="js/chatbot.js?v=44"></script>
 </body>
 </html>

@@ -8,6 +8,8 @@
      FolioRender.page(content)      → <article class="cv-page"> element
      FolioRender.formatRange(item)  → "mei 2021 – heden"
      FolioRender.fit(stage)         → scales the page to the stage's width
+     FolioRender.order(content)     → the section ids in the CV's order
+     FolioRender.arrange(cv, content) → puts a drawn page's sections in that order
 
    Words of our own (headings, dates, levels) follow the chosen language
    (js/translate.js). The user's own text is used as typed.
@@ -20,6 +22,37 @@ window.FolioRender = (function () {
   "use strict";
 
   var A4_WIDTH = 794; // 210 mm at 96 dpi
+
+  /* The order of the sections under the head. Each CV can have its own
+     (content.order, chosen in the editor); missing sections follow in this
+     default order. Personal details are the head and always stay on top.
+     In the Split template the SIDE sections stay in the left column. */
+  var ORDER = ["about", "education", "experience", "projects", "volunteering", "certificates", "skills", "languages", "hobbies"];
+  var SIDE = ["skills", "languages", "hobbies"];
+
+  // The CV's own order, cleaned up: only known sections, each once, all there.
+  function order(content) {
+    var chosen = content && Array.isArray(content.order) ? content.order : [];
+    var result = chosen.filter(function (id, index) {
+      return ORDER.indexOf(id) !== -1 && chosen.indexOf(id) === index;
+    });
+    ORDER.forEach(function (id) {
+      if (result.indexOf(id) === -1) result.push(id);
+    });
+    return result;
+  }
+
+  // Put the sections of a drawn .cv-page in the CV's order. Used here and by
+  // the editor's live preview. The DOM order is also the PDF's reading order.
+  function arrange(cv, content) {
+    var main = cv.querySelector(".cv-page__main");
+    var side = cv.querySelector(".cv-page__side");
+    var split = cv.dataset.template === "split";
+    order(content).forEach(function (id) {
+      var node = cv.querySelector('[data-cv-section="' + id + '"]');
+      if (node) (split && SIDE.indexOf(id) !== -1 ? side : main).appendChild(node);
+    });
+  }
   var MONTHS = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 
   function L(text) {
@@ -194,6 +227,7 @@ window.FolioRender = (function () {
 
     cv.appendChild(main);
     cv.appendChild(side);
+    arrange(cv, content);
     return cv;
   }
 
@@ -204,5 +238,5 @@ window.FolioRender = (function () {
     cv.style.transform = "scale(" + stage.clientWidth / A4_WIDTH + ")";
   }
 
-  return { page: page, formatRange: formatRange, fit: fit };
+  return { page: page, formatRange: formatRange, fit: fit, order: order, arrange: arrange, SIDE: SIDE };
 })();

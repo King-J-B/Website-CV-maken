@@ -287,6 +287,43 @@ a {
   justify-self: end;
 }
 
+/* "Change order": one row per section with ↑ and ↓ */
+.ed-order-list {
+  display: grid;
+  gap: 6px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ed-order-item {
+  display: flex;
+  align-items: center;
+  gap: 4px;
+  min-height: 48px;
+  padding: 4px 6px 4px 14px;
+  border: 1px solid var(--border-decorative);
+  border-radius: var(--radius-sm);
+  background: var(--bg-surface);
+}
+
+.ed-order-item__label {
+  flex: 1;
+  font-weight: 600;
+}
+
+.ed-order-actions {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  margin-top: 4px;
+}
+
+.ed-design__order {
+  min-height: 36px;
+}
+
 /* --------------------------------------------------------------------------
    Buttons and fields
    -------------------------------------------------------------------------- */
