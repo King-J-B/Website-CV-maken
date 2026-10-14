@@ -120,6 +120,7 @@
         design: { color: "", font: "", spacing: "", photo: "" },
         extras: [],
         anonymous: false, // blind hiring: see js/anonymize.js
+        order: null, // the order of the sections, null = default (FolioRender.order)
         sections: {}
       };
       LIST_SECTIONS.forEach(function (id) {
@@ -149,6 +150,7 @@
             return Array.isArray(stored.extras) && stored.extras.indexOf(id) !== -1;
           });
           draft.anonymous = stored.anonymous === true;
+          draft.order = Array.isArray(stored.order) ? window.FolioRender.order(stored) : null;
         }
       } catch (error) {
         // No storage or unreadable draft: start with an empty CV.
@@ -273,11 +275,12 @@
       return draft.extras.indexOf(id) !== -1;
     }
 
-    // The sections in the menu: the five main ones, plus the added extras.
+    // The sections in the menu, in the CV's order: Personal details first,
+    // then the rest as chosen under "Order" (extras only once added).
     function visibleSections() {
-      return SECTIONS.filter(function (section) {
-        return !section.extra || isAdded(section.id);
-      });
+      return [sectionById("personal")].concat(window.FolioRender.order(draft).map(sectionById).filter(function (section) {
+        return section && (!section.extra || isAdded(section.id));
+      }));
     }
 
     function sectionUrl(id) {
@@ -1621,7 +1624,102 @@
       templatePicker.value = template.id;
       templateCaption.textContent = "A4 \u00b7 " + template.name + " template";
       applyDesign(); // the "Template colour" swatch follows the template
+      window.FolioRender.arrange(page, draft); // Split has a left column, the others don't
     }
+
+    /* ------------------------------------------------------------------------
+       Order: the user moves sections up or down ("Change order"). Saved as
+       draft.order; the preview, the PDF, the shared link, the card on My
+       resumes and the menu on the left all follow it (FolioRender.order).
+       ------------------------------------------------------------------------ */
+
+    var orderDialog = document.querySelector("[data-order-dialog]");
+    var orderList = document.querySelector("[data-order-list]");
+
+    // The sections in the dialog: the ones on the CV, without Personal details.
+    function orderedIds() {
+      return visibleSections().slice(1).map(function (section) {
+        return section.id;
+      });
+    }
+
+    function applyOrder() {
+      window.FolioRender.arrange(page, draft);
+      showSection(current); // the menu, the picker and Previous / Next follow the order
+      updateFit();
+      scheduleSave();
+    }
+
+    function renderOrderList(focusId, direction) {
+      orderList.innerHTML = "";
+      var ids = orderedIds();
+      ids.forEach(function (id, index) {
+        var label = sectionById(id).label;
+        var row = el("li", "ed-order-item");
+        row.appendChild(el("span", "ed-order-item__label", label));
+        // "Move Werkervaring up" becomes "Werkervaring omhoog" (translate.js patterns).
+        var up = iconButton("\u2191", "Move " + L(label) + " up", index === 0, function () {
+          moveSection(id, -1);
+        });
+        var down = iconButton("\u2193", "Move " + L(label) + " down", index === ids.length - 1, function () {
+          moveSection(id, 1);
+        });
+        up.dataset.move = "up";
+        down.dataset.move = "down";
+        row.appendChild(up);
+        row.appendChild(down);
+        row.dataset.id = id;
+        orderList.appendChild(row);
+      });
+      document.querySelector("[data-order-split]").hidden = draft.template !== "split";
+
+      // Keep focus on the same arrow, so it can be pressed again; at the top
+      // or bottom (disabled) use the other arrow.
+      if (focusId) {
+        var moved = orderList.querySelector('[data-id="' + focusId + '"]');
+        var same = moved.querySelector('[data-move="' + direction + '"]');
+        var other = moved.querySelector('[data-move="' + (direction === "up" ? "down" : "up") + '"]');
+        (same.disabled ? other : same).focus();
+      }
+    }
+
+    // Swap a section with its visible neighbour. Hidden sections (extras that
+    // aren't added) keep their place in the full order.
+    function moveSection(id, delta) {
+      var visible = orderedIds();
+      var neighbour = visible[visible.indexOf(id) + delta];
+      if (!neighbour) return;
+      var full = window.FolioRender.order(draft);
+      var a = full.indexOf(id);
+      var b = full.indexOf(neighbour);
+      full[a] = neighbour;
+      full[b] = id;
+      draft.order = full;
+      applyOrder();
+      renderOrderList(id, delta < 0 ? "up" : "down");
+    }
+
+    function openOrderDialog() {
+      renderOrderList();
+      orderDialog.showModal();
+      var first = orderList.querySelector("button:not(:disabled)");
+      if (first) first.focus();
+    }
+
+    document.querySelectorAll("[data-order-open]").forEach(function (button) {
+      button.addEventListener("click", openOrderDialog);
+    });
+    orderDialog.querySelector("[data-order-close]").addEventListener("click", function () {
+      orderDialog.close();
+    });
+    orderDialog.querySelector("[data-order-reset]").addEventListener("click", function () {
+      draft.order = null;
+      applyOrder();
+      renderOrderList();
+    });
+    orderDialog.addEventListener("click", function (event) {
+      if (event.target === orderDialog) orderDialog.close(); // a click next to the box
+    });
 
     /* Design options: colour, font and spacing on top of the template. Like
        the template, they only change how the same CV data looks. */

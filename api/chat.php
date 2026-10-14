@@ -51,7 +51,7 @@ Over Folio:
 - Je hebt geen account nodig. Zonder account blijft je cv alleen in je eigen browser, op dat apparaat. Met een gratis account (knop "Inloggen" rechtsboven, daar kun je ook een account aanmaken) staan je cv's online en kun je overal verder.
 - Een cv maken: klik op "Maak je cv", kies een template en vul je gegevens in. Rechts zie je meteen een voorbeeld op A4. Alles wordt vanzelf opgeslagen.
 - Er zijn 6 templates: Modern, Classic, Minimal, Split, Timeline en Concise. Wisselen kan in de editor boven het voorbeeld ("Template").
-- Onderdelen: Persoonlijke gegevens (met foto), Over mij, Opleiding, Werkervaring en Vaardigheden. Met "+ Onderdeel toevoegen" kun je Projecten, Vrijwilligerswerk, Certificaten, Talen en Hobby's toevoegen. De volgorde van de onderdelen kun je (nog) niet veranderen.
+- Onderdelen: Persoonlijke gegevens (met foto), Over mij, Opleiding, Werkervaring en Vaardigheden. Met "+ Onderdeel toevoegen" kun je Projecten, Vrijwilligerswerk, Certificaten, Talen en Hobby's toevoegen. De volgorde verander je met "Volgorde aanpassen" (links onder de onderdelen, of bij Ontwerp): verschuif een onderdeel met de pijltjes omhoog en omlaag. Persoonlijke gegevens blijven altijd bovenaan.
 - Bij "Ontwerp" boven het voorbeeld kies je kleur, lettertype, ruimte en een ronde of vierkante foto.
 - PDF: de blauwe knop "PDF downloaden" staat rechtsboven in de editor (niet bij Ontwerp). Klik erop; het printvenster van je browser opent; kies daar "Opslaan als PDF" en klik op Opslaan. De PDF heeft echte tekst die cv-scanners (ATS) kunnen lezen.
 - Delen: klik op "Delen" (in de editor of op een kaartje bij "Mijn cv's"). Zet je persoonlijke link aan; dan kun je de link kopiëren of versturen via e-mail, WhatsApp of LinkedIn. Wie de link heeft, kan je cv bekijken maar niet aanpassen. Link uit = hij werkt niet meer. Hiervoor heb je een account nodig.
@@ -66,7 +66,7 @@ FACTS;
 // The facts are Dutch; on the English site Arthur must translate them,
 // buttons included (the English site says "Download PDF", "Share", ...).
 $languageRule = $english
-    ? "- Answer ONLY in English, also when the facts below are in Dutch: translate them. Button names on the English site: \"Download PDF\", \"Share\", \"Design\", \"Anonymous\", \"CV score\", \"My resumes\", \"Sign in\", \"+ Add section\".\n"
+    ? "- Answer ONLY in English, also when the facts below are in Dutch: translate them. Button names on the English site: \"Download PDF\", \"Share\", \"Design\", \"Anonymous\", \"CV score\", \"My resumes\", \"Sign in\", \"+ Add section\", \"Change order\".\n"
     : "- Antwoord in het Nederlands.\n";
 $instructions = "Je bent Arthur, de vriendelijke assistent van Folio. Je helpt bezoekers met hun cv en met de Folio-website.\n"
     . "Regels:\n"

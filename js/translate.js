@@ -614,6 +614,14 @@ const pairs = [
   ["Naar de tekst", "Go to text"],
   ["Dit cv is anoniem: ook de link toont geen foto, naam of contactgegevens.", "This CV is anonymous: the link shows no photo, name or contact details either."],
 
+  // Change order (editor)
+  ["Volgorde", "Order"],
+  ["Volgorde aanpassen", "Change order"],
+  ["Volgorde van je cv", "Order of your CV"],
+  ["Verschuif een onderdeel omhoog of omlaag. Persoonlijke gegevens staan altijd bovenaan.", "Move a section up or down. Personal details always stay at the top."],
+  ["In de template Split staan Vaardigheden, Talen en Hobby's altijd in de linkerkolom.", "In the Split template, Skills, Languages and Hobbies always stay in the left column."],
+  ["Standaardvolgorde", "Default order"],
+
   // CV score (js/cv-score.js)
   ["Cv-score", "CV score"],
   ["Folio telt wat er op je cv staat en of het compleet is. Het beoordeelt niet hoe goed het geschreven is.", "Folio counts what is on your CV and whether it is complete. It doesn't judge how well it is written."],
